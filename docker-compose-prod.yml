@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  main:
+    image: localhost:5000/tariff-tool-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ${CMD:-"start"}
+    networks:
+      - traefik-public
+      - default
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.patchy-web-http.rule=Host(`tariff-tool.epicmorsel.com`)
+        - traefik.http.routers.patchy-web-http.entrypoints=http
+        - traefik.http.routers.patchy-web-http.middlewares=https-redirect
+        - traefik.http.routers.patchy-web-https.rule=Host(`tariff-tool.epicmorsel.com`)
+        - traefik.http.routers.patchy-web-https.entrypoints=https
+        - traefik.http.routers.patchy-web-https.tls=true
+        - traefik.http.routers.patchy-web-https.tls.certresolver=le
+        - traefik.http.services.patchy-web.loadbalancer.server.port=5173
+networks:
+  traefik-public:
+    external: true
