@@ -1,0 +1,7 @@
+// Global configuration for Vuetify. you only need a SCSS file if your modifying
+// component properties. https://next.vuetifyjs.com/en/features/sass-variables/
+@forward 'vuetify/settings' with (
+  $overlay-opacity: 0,
+  $navigation-drawer-content-overflow-y: auto,
+  $divider-opacity: 50%,
+);

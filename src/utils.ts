@@ -1,0 +1,57 @@
+import { get, set, isEqual, isArray, isObject } from 'lodash';
+import { v4 } from 'uuid';
+
+export function randomUUID() {
+  return v4(); // (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
+}
+
+export function *_deepKeyIterator(a: Record<string, unknown>, _p = ''): Generator<[string, any]> {
+  const _k = (k: string) => `${_p}${_p ? '.' : ''}${k}`;
+  for(const [k, v] of Object.entries(a)) {
+    if(isObject(v) && !isArray(v) ) {
+      for(const x of _deepKeyIterator(v as Record<string, unknown>, _k(k))) {
+        yield x;
+      }
+    } else {
+      yield [_k(k), v];
+    }
+  }
+}
+
+/**
+ * Find values in a that are not in b or are different to b.
+ */
+export function deepDiffObjects(a: Record<string, unknown>, b: Record<string, unknown>): any {
+  const res = {};
+  for(const [k, v] of _deepKeyIterator(a)) {
+    if(!isEqual(get(b, k), v)) {
+      set(res, k, v);
+    }
+  }
+  return Object.keys(res).length ? res : null;
+}
+
+/**
+ * Find values in a that are not in b or are different to b.
+ */
+export function deepDiffObjects2(a: Record<string, unknown>, b: Record<string, unknown>): null | Record<string, any> {
+  const res: Record<string, any> = {};
+  for(const [k, v] of _deepKeyIterator(a)) {
+    if(!isEqual(get(b, k), v)) {
+      res[k] = v;
+    }
+  }
+  return Object.keys(res).length ? res : null;
+}
+
+export function latlngToString(latlng: any) {
+  if(latlng?.lat !== undefined && latlng?.lng !== undefined) {
+    return JSON.stringify({ lat: Math.round(latlng.lat*1e6)/1e6, lng: Math.round(latlng.lng*1e6)/1e6 });
+  }
+  return JSON.stringify(latlng);
+}
+
+export function setIntersection(a: unknown[] | undefined, b: unknown[] | undefined) {
+  if (!(a && a.length) || !(b && b.length)) return [];
+  return a.filter(v => b.includes(v));
+}

@@ -1,0 +1,39 @@
+// @import url(@mdi/font/scss/materialdesignicons.scss);
+
+@forward '@sgpinkus/mdi-font/scss/materialdesignicons.scss' with (
+  $mdi-version: "0",
+  $mdi-font-path: "@sgpinkus/mdi-font/fonts",
+);
+
+
+$mdi-version: "0" !important;
+
+html {
+  overflow: auto;
+}
+
+h1, p {
+  margin-bottom: 1rem;
+}
+
+a:link {
+  color: inherit;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  background-color: transparent;
+  text-decoration: underline;
+}

@@ -1,0 +1,7 @@
+export const SpaceChangeSyncRemoteDelay = 2000;
+export const LocationMaximumAge = 15000;
+export const LocationIsRecent = 35000;
+export const ConnectionTestInterval = 60000;
+export const SpaceMapPollRemoteIntervalMember = 15000;
+export const DateFormatISO8601 = 'YYYY-MM-DDTHH:mm:ssZ[Z]';
+export const SpaceMapPollRemoteIntervalOwner = 60000;
