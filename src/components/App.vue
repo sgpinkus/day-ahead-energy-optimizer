@@ -33,11 +33,7 @@ const doLocalStorageNotice = false;
   >
     <local-storage-notice></local-storage-notice>
   </v-dialog>
-  <system-bar></system-bar>
-  <AppNavDrawer></AppNavDrawer>
-  <v-main app>
-    <action-bar></action-bar>
-  </v-main>
+  <RouterView></RouterView>
   </v-app>
 </template>
 
