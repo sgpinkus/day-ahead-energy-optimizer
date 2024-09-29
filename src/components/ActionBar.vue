@@ -6,7 +6,6 @@ import { cloneDeep } from 'lodash';
 const actions = computed(() => model.messages.actions);
 const show = computed(() => !!model.messages.actions.length);
 
-
 function removeAction(id: string) {
   model.messages.removeAction(id);
 }

@@ -1,6 +1,7 @@
 import 'vuetify/styles'; // Global CSS has to be imported
 import { createApp } from 'vue';
 import App from '@/components/App.vue';
+import router from '@/router';
 import model from '@/model';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
@@ -12,8 +13,8 @@ let inShutDown = false;
 
 async function main() {
   await model.init();
-
   const app = createApp(App);
+  app.use(router);
   app.use(createVuetify({
     components,
     directives,
