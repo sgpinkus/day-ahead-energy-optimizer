@@ -1,10 +1,15 @@
 <script setup lang='ts'>
 import { computed } from 'vue';
-import { default as messages, removeAction } from '@/model/messages';
+import model from '@/model';
+import { cloneDeep } from 'lodash';
 
-const actions = computed(() => messages.actions);
-const show = computed(() => !!actions.value.length);
+const actions = computed(() => model.messages.actions);
+const show = computed(() => !!model.messages.actions.length);
 
+
+function removeAction(id: string) {
+  model.messages.removeAction(id);
+}
 </script>
 
 <template>
@@ -16,7 +21,7 @@ const show = computed(() => !!actions.value.length);
       location='bottom'
     >
       <div class='my-snacks'>
-        <template v-for='({ state, message, id }) in actions' :key='id'>
+        <template v-for='({ state, message, id }) in model.messages.actions' :key='id'>
             <p
               class='alert-message'
               @click="() => removeAction(id)"

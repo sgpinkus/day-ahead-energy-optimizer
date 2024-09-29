@@ -3,16 +3,14 @@
  */
 import { reactive } from 'vue';
 import { randomUUID } from '@/utils';
-import Spaces from './spaces';
-import Messages from './messages';
+import messages from './messages';
 
 
 class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
-  messages: Messages; // Messages singleton.
-  spaces: Spaces; // All spaces singleton
+  messages = messages;
   ui = {
     rail: false,
     hideObjects: false,
@@ -26,7 +24,6 @@ class Model {
    * Syncronously initialize state restoring from local storage if any.
    */
   constructor() {
-    this.messages = new Messages();
     this.testLocalStorage();
     let data: any = window.localStorage.getItem('patchy');
     data =  data ? JSON.parse(data) : undefined;
@@ -35,7 +32,6 @@ class Model {
     // console.debug('Model: ' + (connection?.token ? 'Restoring auth token from local storage' : 'No auth in local storage'));
     this.doneLocalStorageNotice = data?.doneLocalStorageNotice || false;
     if(uiData) this.ui = uiData;
-    this.spaces = new Spaces(spacesData);
   }
 
   /**
@@ -44,7 +40,6 @@ class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
-    this.spaces.reset();
   }
 
   /**
@@ -53,7 +48,6 @@ class Model {
    */
   async init() {
     if (this.doneInit) return;
-    await this.spaces.init();
     this.doneInit = true;
   }
 
@@ -68,7 +62,6 @@ class Model {
 
   toObject() {
     return {
-      spaces: this.spaces.toObject(),
       doneLocalStorageNotice: this.doneLocalStorageNotice,
       ui: this.ui,
     };

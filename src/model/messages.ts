@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { randomUUID } from '@/utils';
+import { reactive } from 'vue';
 
 export interface AlertDescription {
   title?: string,
@@ -62,6 +63,10 @@ class Model {
     this.alerts = [];
   }
 
+  getActions() {
+    return [...this.actions];
+  }
+
   addAction(action: ActionDescription, timeout = 10500) {
     log(action);
     const _action = {
@@ -122,4 +127,4 @@ class Model {
   }
 }
 
-export default Model;
+export default reactive(new Model());
