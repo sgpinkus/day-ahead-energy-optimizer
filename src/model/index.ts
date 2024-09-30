@@ -4,21 +4,20 @@
 import { reactive } from 'vue';
 import { randomUUID } from '@/utils';
 import messages from './messages';
+import components from './components';
 
+const events = new EventTarget();
 
 class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
-  ui = {
-    rail: false,
-    hideObjects: false,
-    hideUsers: false,
-    showUserLocations: true,
-    showOnlyMyLocation: false,
-    useUserLocationIcons: false,
-  };
+  components = components;
+  rail = false;
+  focusedComponentId: string | null = null;
+  editingComponentId: string | null = null;
+  basis = 48;
 
   /**
    * Syncronously initialize state restoring from local storage if any.

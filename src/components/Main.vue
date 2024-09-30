@@ -4,12 +4,14 @@ import LocalStorageNotice from './LocalStorageNotice.vue';
 import SystemBar from './SystemBar.vue';
 import AppNavDrawer from './AppNavDrawer.vue';
 import ActionBar from './ActionBar.vue';
+import ComponentListItem from './ComponentListItem.vue';
+import Bus from './Bus.vue';
 import model from '@/model';
 
-const rail = computed(() => model.ui.rail);
-const components = ref([]);
-const showObjectList = ref(false);
-
+const rail = computed(() => model.rail);
+const components = model.components;
+const showObjectList = ref(true);
+const focusedComponentId = ref('');
 
 </script>
 
@@ -17,39 +19,44 @@ const showObjectList = ref(false);
   <system-bar></system-bar>
   <AppNavDrawer>
       <div class='details-content'>
-        <!-- <router-link to='/spaces'>
-          <v-list-item prepend-icon='mdi-arrow-left'>Spaces</v-list-item>
-        </router-link>
-        <v-divider></v-divider> -->
         <v-list class='flex-shrink-0'>
-          <v-list-subheader v-if='!rail'>Actions</v-list-subheader>
-            <div title='New Device'>
+          <v-list-subheader>Add Components</v-list-subheader>
               <v-list-item
+                title='Profile'
                 prepend-icon='mdi-map-marker-plus'
               >
-                <div class='d-flex flex-nowrap flex-row'>
-                  <v-list-item-title>New Profile</v-list-item-title>
-                </div>
               </v-list-item>
-            </div>
-            <div title='New Device'>
               <v-list-item
                 prepend-icon='mdi-vector-polyline-plus'
+                title='Flexible Load'
+                @click='components.addComponentType("flexibleload")'
               >
-                <div class='d-flex flex-nowrap flex-row'>
-                  <v-list-item-title>New Device</v-list-item-title>
-                </div>
-              </v-list-item>
-            </div>
-            <!-- <div title='Add Polygon'>
+              <!-- </v-list-item>
               <v-list-item
-                prepend-icon='mdi-shape-polygon-plus'
+                prepend-icon='mdi-vector-polyline-plus'
+                title='Solar (Classic)'
               >
-                <div class='d-flex flex-nowrap flex-row'>
-                  <v-list-item-title>Add Polygon</v-list-item-title>
-                </div>
               </v-list-item>
-            </div> -->
+              <v-list-item
+                prepend-icon='mdi-vector-polyline-plus'
+                title='Generator (Classic)'
+              >
+              </v-list-item>
+              <v-list-item
+                prepend-icon='mdi-vector-polyline-plus'
+                title='Battery Storage'
+              >
+              </v-list-item>
+              <v-list-item
+                prepend-icon='mdi-vector-polyline-plus'
+                title='Thermal Load'
+              >
+              </v-list-item>
+              <v-list-item
+                prepend-icon='mdi-vector-polyline-plus'
+                title='Custom Device'
+              > -->
+              </v-list-item>
         </v-list>
         <v-divider></v-divider>
         <v-list class='flex-shrink-0'>
@@ -66,11 +73,23 @@ const showObjectList = ref(false);
         <v-divider></v-divider>
         <template v-if='showObjectList && components.length'>
           <v-list class='item-list'>
+            <ComponentListItem v-for='item in components.getComponents()' :key='item.id'
+              :item=item
+              @edit='() => model.editingComponentId = item.id'
+              @delete='() => model.components.deleteComponent(item.id)'
+              :focused='model.focusedComponentId === item.id'
+              @click.stop='model.focusedComponentId = item.id'
+            >
+            </ComponentListItem>
           </v-list>
           <v-divider></v-divider>
         </template>
       </div>
   </AppNavDrawer>
+  <v-main>
+    <v-container fluid class='d-flex align-content-center flex-column h-100 ma-auto'><Bus></Bus></v-container>
+    <ActionBar></ActionBar>
+  </v-main>
 </template>
 
 <style scoped>
