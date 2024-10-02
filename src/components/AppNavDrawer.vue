@@ -66,7 +66,7 @@ function clickOutsideClear() {
       <v-list-item v-else-if='authOk === false' prepend-icon="mdi-login-variant" @click='login'>
         Login / Signup
       </v-list-item>
-      <template v-else>
+      <!-- <template v-else>
         <v-menu>
           <template v-slot:activator='{ props }'>
             <UserListItemCard
@@ -87,7 +87,7 @@ function clickOutsideClear() {
             </router-link>
           </v-list>
         </v-menu>
-      </template>
+      </template> -->
     </template>
     <template v-slot:default>
       <slot></slot>

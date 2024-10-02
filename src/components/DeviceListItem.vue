@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import type { ContainerComponent } from '@/model/components';
+import type { ContainerDevice } from '@/model/devices';
 import { computed } from 'vue';
 
 defineEmits(['edit', 'delete']);
 
 const icons = {
-  flexibleload: 'mdi-map-marker',
-  profile: 'mdi-vector-polyline',
+  load: 'mdi-map-marker',
+  supply: 'mdi-vector-polyline',
+  storage: 'mdi-vector-polyline',
+  fixed_load: 'mdi-vector-polyline',
 }
 
 interface props {
   focused?: boolean,
-  item: ContainerComponent,
+  item: ContainerDevice,
 }
 
 const { item, focused = false } = defineProps<props>();
@@ -25,7 +27,7 @@ const icon = computed(() => icons[item.type]);
       :id="`list-item-${item.id}`"
     >
       <div class='d-flex flex-nowrap flex-row'>
-        <v-list-item-title>{{ item.name || item.id }}</v-list-item-title>
+        <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
         <span style="flex: 1"></span>
         <!-- <v-btn flat density="compact" :block="false" @click.stop='activateItem'><v-icon>mdi-vector-polyline-edit</v-icon></v-btn>&nbsp; -->
         <v-btn flat density="compact" :block="false" @click.stop='$emit("edit")'><v-icon>mdi-pencil</v-icon></v-btn>&nbsp;

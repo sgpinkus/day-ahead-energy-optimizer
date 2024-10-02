@@ -1,36 +1,7 @@
-export type ComponentType = 'profile' | 'device' | 'bus';
-
-export type Component = any;
-
-export type AnonComponent = any;
-
-export interface IBaseComponent {
-  type: ComponentType;
-  id: string;
-  spaceId?: string;
-  displayProps?: Record<string, string | number | boolean | undefined>;
-  userProps?: Record<string, string | number | boolean | undefined>;
-}
-
-export interface IProfile extends IBaseComponent {
-  type: 'profile';
-}
-
-
-export interface IDevice extends IBaseComponent {
-  type: 'device';
-}
-
-
-export interface IBus extends IBaseComponent {
-  type: 'bus';
-}
-
 export interface ISpace {
   id: string,
   title?: string,
   description?: string,
-  objects: Record<string, Component>,
   version: number,
 }
 

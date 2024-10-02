@@ -1,3 +1,4 @@
+export const MyName = 'bus-builder';
 export const SpaceChangeSyncRemoteDelay = 2000;
 export const LocationMaximumAge = 15000;
 export const LocationIsRecent = 35000;

@@ -3,12 +3,12 @@ import model from '@/model';
 import { computed, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
 
-const componentNodes = computed(() => Object.values(model.components.getComponents())
-    .map(v =>  ({ id: v.id, label: v.name || v.id, fixed: false }))
+const deviceNodes = computed(() => Object.values(model.devices.getDevices())
+    .map(v =>  ({ id: v.id, label: v.title || v.id, fixed: false }))
 );
 
-const nodes = computed(() => new DataSet([{ id: 0, label: 'bus', fixed: true }, ... componentNodes.value]));
-const edges = computed(() => new DataSet(componentNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
+const nodes = computed(() => new DataSet([{ id: 0, label: 'bus', fixed: true }, ... deviceNodes.value]));
+const edges = computed(() => new DataSet(deviceNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
 const options = {
   autoResize: false,
   height: '100%',
@@ -26,12 +26,12 @@ watch(nodes, (newComponentNodes) => {
 })
 
 watch(model, () => {
-  if(model.focusedComponentId) network.selectNodes([model.focusedComponentId]);
+  if(model.focusedDeviceId) network.selectNodes([model.focusedDeviceId]);
 });
 
 function onClick(params: any) {
   const clickedNodeId = String(network.getNodeAt(params.pointer.DOM));
-  model.focusedComponentId = clickedNodeId;
+  model.focusedDeviceId = clickedNodeId;
 }
 
 </script>

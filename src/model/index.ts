@@ -4,7 +4,8 @@
 import { reactive } from 'vue';
 import { randomUUID } from '@/utils';
 import messages from './messages';
-import components from './components';
+import devices from './devices';
+import { MyName } from './constants';
 
 const events = new EventTarget();
 
@@ -13,24 +14,21 @@ class Model {
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
-  components = components;
+  devices = devices;
   rail = false;
-  focusedComponentId: string | null = null;
-  editingComponentId: string | null = null;
+  focusedDeviceId: string | null = null;
+  editingDeviceId: string | null = null;
   basis = 48;
 
   /**
    * Syncronously initialize state restoring from local storage if any.
    */
-  constructor() {
-    this.testLocalStorage();
-    let data: any = window.localStorage.getItem('patchy');
+  constructor(data: any) {
     data =  data ? JSON.parse(data) : undefined;
-    const { spaces: spacesData, ui: uiData } = data || {};
+    const { spaces: spacesData } = data || {};
     console.debug('Model: ' + (spacesData ? `Restoring ${Object.keys(spacesData.spaces).length} spaces from local storage` : 'No data in local storage'));
     // console.debug('Model: ' + (connection?.token ? 'Restoring auth token from local storage' : 'No auth in local storage'));
     this.doneLocalStorageNotice = data?.doneLocalStorageNotice || false;
-    if(uiData) this.ui = uiData;
   }
 
   /**
@@ -56,30 +54,39 @@ class Model {
    */
   shutdown() {
     console.log('Model: Shutting down');
-    window.localStorage.setItem('patchy', JSON.stringify(this.toObject()));
+    window.localStorage.setItem(MyName, JSON.stringify(this.toObject()));
   }
 
   toObject() {
     return {
       doneLocalStorageNotice: this.doneLocalStorageNotice,
-      ui: this.ui,
     };
   }
 
-  testLocalStorage() {
-    const a = this.messages.addAction({ state: 'started', message: 'Testing local storage access', contextName: 'Model' });
+  static fromObject(data: any) {
+    return new this(data);
+  }
+
+  static fromLocalStorage() {
+    this.testLocalStorage();
+    let data: any = window.localStorage.getItem(MyName);
+    return this.fromObject(data);
+  }
+
+  static testLocalStorage() {
+    const a = messages.addAction({ state: 'started', message: 'Testing local storage access', contextName: 'Model' });
     const v = randomUUID();
     window.localStorage.setItem(v, v);
     const success = window.localStorage.getItem(v) === v;
     window.localStorage.removeItem(v);
     if(success) {
-      this.messages.actionSuccess(a, 'Local storage access OK');
+      messages.actionSuccess(a, 'Local storage access OK');
     } else {
-      this.messages.actionError(a, 'Can\'t access local storage');
+      messages.actionError(a, 'Can\'t access local storage');
     }
     return success;
   }
 }
 
-const model = new Model();
+const model = Model.fromLocalStorage();
 export default reactive<Model>(model) as Model;

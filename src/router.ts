@@ -23,15 +23,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/account',
-      name: 'account',
-      component: () => ({}), // Dummy component.
-      beforeEnter: async () => {
-        await model.connection.account();
-        router.replace('/');
-      },
-    },
-    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFoundPage,
