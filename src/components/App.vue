@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import LocalStorageNotice from './LocalStorageNotice.vue';
 import SystemBar from './SystemBar.vue';
 import AppNavDrawer from './AppNavDrawer.vue';
@@ -19,7 +19,7 @@ function undo() {
   null;
 }
 
-const doLocalStorageNotice = false;
+let doLocalStorageNotice = ref(false);
 
 </script>
 
@@ -33,7 +33,9 @@ const doLocalStorageNotice = false;
   >
     <local-storage-notice></local-storage-notice>
   </v-dialog>
-  <RouterView></RouterView>
+  <SystemBar></SystemBar>
+  <RouteView></RouteView>
+  <ActionBar></ActionBar>
   </v-app>
 </template>
 

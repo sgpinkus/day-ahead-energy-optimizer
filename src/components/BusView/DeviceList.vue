@@ -34,7 +34,7 @@ const showObjectList = ref(false);
 
 <style scoped>
   .item-list {
-    overflow-y: scroll;
+    overflow-y: scroll !important;
     font-size: smaller;
     min-height: 64px;
   }

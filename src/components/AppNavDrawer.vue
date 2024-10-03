@@ -1,6 +1,5 @@
 <script setup lang='ts'>
 import { computed, provide, ref, type Ref } from 'vue';
-import { RouterLink } from 'vue-router';
 import UserListItemCard from './UserListItemCard.vue';
 
 const rail = ref(false);

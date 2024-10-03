@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import model from '@/model';
-import { computed, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
 
 const deviceNodes = computed(() => Object.values(model.devices.getDevices())
     .map(v =>  ({ id: v.id, label: v.title || v.id, fixed: false }))
 );
+
+const busNode = { id: 0, label: 'bus', fixed: true };
 
 const nodes = computed(() => new DataSet([{ id: 0, label: 'bus', fixed: true }, ... deviceNodes.value]));
 const edges = computed(() => new DataSet(deviceNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
@@ -23,16 +25,23 @@ watch(nodes, (newComponentNodes) => {
   if(network) network.destroy();
   network = new Network(container.value!, { nodes: newComponentNodes, edges: edges.value as any }, options);
   network.on('click', onClick);
-})
+});
 
 watch(model, () => {
-  if(model.focusedDeviceId) network.selectNodes([model.focusedDeviceId]);
+  try {
+    if(model.focusedDeviceId) network.selectNodes([model.focusedDeviceId]);
+  } catch {
+  }
 });
 
 function onClick(params: any) {
   const clickedNodeId = String(network.getNodeAt(params.pointer.DOM));
   model.focusedDeviceId = clickedNodeId;
 }
+
+onMounted(() => {
+  network = new Network(container.value!, { nodes: [busNode], edges: edges.value as any }, options);
+});
 
 </script>
 <template>
@@ -44,9 +53,5 @@ function onClick(params: any) {
 <style scoped>
   .focused {
     background-color: lightgray;
-  }
-
-  div {
-    border: solid 1px salmon;
   }
 </style>

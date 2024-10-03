@@ -24,7 +24,7 @@ export default defineComponent({
           <h1>{{ resource && 'Resource'}} Not Found</h1>
           <h3 class='path'><i>{{ _pathMatch || resource }}</i></h3>
           <br>
-          <i><a href="#" @click="$router.go(-1)">Go Back</a></i>&nbsp;|&nbsp;
+          <i><a href="#" @click.stop="$router.go(-1)">Go Back</a></i>&nbsp;|&nbsp;
           <i><a href="/">Go Home</a></i>
         </v-col>
       </v-row>
