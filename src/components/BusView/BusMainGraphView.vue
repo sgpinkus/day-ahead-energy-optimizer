@@ -3,19 +3,26 @@ import model from '@/model';
 import router from '@/router';
 import { computed, onMounted, ref, useTemplateRef, watch, type Ref, inject } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
+import { pick } from 'lodash';
+
+const nodeDefaults = {
+  color: 'lightblue',
+  shape: 'circle',
+}
+
 
 const deviceNodes = computed(() => Object.values(model.devices.getDevices())
   .map(v => ({
+    ...nodeDefaults,
     id: v.id,
     label: v.title || v.id,
     title: v.description,
     fixed: false,
-    // borderWidth: 3,
-    shape: 'circle',
+    ...pick(v, ['shape', 'color']),
   }))
 );
 
-const busNode = { id: 0, label: 'bus', fixed: true, shape: 'circle', color: 'lightblue' };
+const busNode = { id: 0, label: 'bus', fixed: true, ...nodeDefaults };
 
 const nodes = computed(() => new DataSet([busNode, ... deviceNodes.value]));
 const edges = computed(() => new DataSet(deviceNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
@@ -60,6 +67,8 @@ function onDoubleClick(params: any) {
 
 onMounted(() => {
   network = new Network(container.value!, { nodes: nodes.value, edges: edges.value as any }, options);
+  network.on('click', onClick);
+  network.on('doubleClick', onDoubleClick);
 });
 
 </script>

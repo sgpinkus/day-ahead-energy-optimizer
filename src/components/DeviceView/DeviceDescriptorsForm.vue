@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { IBaseDevice } from '@/model/devices';
+import type { Device, IBaseDevice } from '@/model/devices';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 import { ref, useTemplateRef, type Ref } from 'vue';
 
-const { device } = defineProps<{ device: IBaseDevice }>();
+const { device } = defineProps<{ device: Device }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
-const myObj = ref(cloneDeep(device));
+const work = ref(device.toObject());
+const initialValue = cloneDeep(work.value);
 const valid = ref(false);
-const styleTypes = ['target', 'pin', 'circle'];
+const shapeTypes = ['ellipse', 'circle', 'database', 'box', 'text'];
 
 const titleMaxLength = 32;
 const titleRules = [
@@ -22,8 +23,11 @@ const descriptionRules = [
 async function change() { // change(changeKey: string)
   form.value!.resetValidation();
   const { valid } = await form.value!.validate();
-  const changes = deepDiffObjects2(myObj.value, device as any);
-  console.log(changes);
+  const changes = deepDiffObjects2(work.value, initialValue);
+  console.log('changes', changes);
+  if(changes) {
+    device.updateDescriptors(changes);
+  }
 }
 
 
@@ -36,28 +40,28 @@ async function change() { // change(changeKey: string)
   >
     <v-label>Title</v-label>
     <v-text-field
-      v-model="device.title"
+      v-model="work.title"
       :counter="titleMaxLength"
       :rules="titleRules"
       @change='change'
     ></v-text-field>
     <v-label>Description / Notes</v-label>
     <v-textarea
-      v-model="device.description"
+      v-model="work.description"
       :counter="descriptionMaxLength"
       :rules="descriptionRules"
       @change='change'
     ></v-textarea>
     <v-label>Shape</v-label>
     <v-select
-      v-model="device.shape"
-      :items="styleTypes"
+      v-model="work.shape"
+      :items="shapeTypes"
       @update:model-value='change'
     ></v-select>
     <v-label>Color</v-label>
     <v-color-picker
-      v-model="device.color"
-      @change='change'
+      v-model="work.color"
+      @update:model-value='change'
       hide-inputs
       hide-canvas
       show-swatches

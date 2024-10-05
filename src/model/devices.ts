@@ -3,6 +3,7 @@ import { handleError, reactive } from 'vue';
 import { DefaultBasis } from './constants';
 import { cloneDeep } from 'lodash';
 import { isJSDocOverloadTag } from 'typescript';
+import type { Id } from 'vis-network/declarations/network/gephiParser';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
@@ -50,6 +51,7 @@ export interface  IBaseDevice {
   description?: string,
   color?: string,
   shape?: string,
+  tags?: Record<string, boolean | number | string>,
   bounds: Bounds,
   cbounds?: CBounds,
   costs: Record<string, Cost>,
@@ -76,69 +78,86 @@ export interface IFixedLoadDevice extends IBaseDevice {
 
 export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice;
 
+export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
+
 // I'm always torn about whether to add behaviours to objects! We'll start by keeping it simple.
 // But already seem like some data protection / validation would be nice such as ensure bounds within hardBounds ...
 
-// export class BaseDevice implements IBaseDevice {
-//   title?: string;
-//   description?: string;
-//   readonly attrs: IAttributes = {};
-//   tags: Record<string, boolean | number | string> = {};
-//   bounds: Bounds;
-//   cbounds?: CBounds;
-//   costs: Record<string, Cost> = {};
 
-//   constructor(
-//     public readonly type: DeviceType,
-//     public readonly basis: number,
-//     public readonly hardBounds: [number, number] = [-1e3, 1e3],
-//   ) {
-//     this.bounds = new RunSpec<[number, number]>(this.basis, this.hardBounds)
-//   }
-// }
 
-// export class FixedDevice extends BaseDevice {
-//   title = 'Fixed Load';
+export abstract class BaseDevice implements IBaseDevice {
+  readonly id: string;
+  abstract type: DeviceType;
+  readonly attrs: IAttributes = {};
+  readonly basis: number = DefaultBasis;
+  readonly hardBounds: [number, number] = [-1e3, 1e3];
+  bounds: Bounds = new RunSpec<[number, number]>(DefaultBasis, [-1,1]);
+  cbounds?: CBounds;
+  costs: Record<string, Cost> = {};
+  title?: string;
+  description?: string;
+  tags: Record<string, boolean | number | string> = {};
+  color?: string;
+  shape?: string;
 
-//   constructor(public readonly basis: number) {
-//     super('fixed', basis);
-//   }
-// }
+  protected constructor(type: DeviceType, data: Partial<IDevice> = {}) {
+    this.id = uuid();
+    Object.assign(this, { ...plainDeviceFactory(type), ...data });
+  }
 
-// export class LoadDevice extends BaseDevice {
-//   title = '';
+  updateDescriptors(o: IDeviceDescriptorUpdate) {
+    Object.assign(this, o);
+  }
 
-//   constructor(public readonly basis: number) {
-//     super('load', basis, [0, 1e3]);
-//   }
-// }
+  toObject(): IDevice {
+    return JSON.parse(JSON.stringify(this));
+  }
+}
 
-// export class SupplyDevice extends BaseDevice {
-//   constructor(public readonly basis: number) {
-//     super('supply', basis, [-1e3, 0]);
-//   }
-// }
+export class FixedLoadDevice extends BaseDevice {
+  type: DeviceType = 'fixed_load';
+  constructor(data?: Partial<IFixedLoadDevice>) {
+    super('fixed_load', data);
 
-// export class StorageDevice extends BaseDevice {
-//   efficiencyFactor: number = 1.0;
-//   cycleCostFactor: number = 0.0;
-//   depthhCostFactor: number = 0.0;
-//   constructor(public readonly basis: number) {
-//     super('storage', basis, [-1e3, 1e3]);
-//   }
-// }
+  }
+}
+
+export class LoadDevice extends BaseDevice {
+  type: DeviceType = 'load';
+    constructor(data?: Partial<ILoadDevice>) {
+    super('load', data);
+  }
+}
+
+export class SupplyDevice extends BaseDevice {
+  type: DeviceType = 'supply';
+  constructor(data?: Partial<ISupplyDevice>) {
+    super('supply', data);
+  }
+}
+
+export class StorageDevice extends BaseDevice {
+  type: DeviceType = 'storage';
+  constructor(data?: Partial<IStorageDevice>) {
+    super('storage', data);
+  }
+}
 
 // export class ThermalDevice extends BaseDevice {
 // ...
 // }
 
-export type ContainerDevice = IDevice & { readonly id: string };
+export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
 
-function deviceFactory(type: DeviceType): IDevice {
+export type ContainerDevice = Device & { readonly id: string };
+
+
+function plainDeviceFactory(type: DeviceType): IDevice {
   const _baseDevice = {
     basis: DefaultBasis,
     attrs: {},
     costs: {},
+    shape: 'circle',
   }
   switch(type) {
     case 'load': return {
@@ -183,19 +202,26 @@ function deviceFactory(type: DeviceType): IDevice {
   }
 }
 
+function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
+  switch(data.type) {
+    case 'load': return new LoadDevice(data);
+    case 'supply': return new SupplyDevice(data);
+    case 'fixed_load': return new FixedLoadDevice(data);
+    case 'storage': return new StorageDevice(data);
+    default: throw Error();
+  }
+}
+
 export class Devices {
   private devices: Record<string, ContainerDevice> = {}
 
-  addDevice(x: IDevice) {
-    const id = uuid();
-    this.devices[id] = {
-      id,
-      ...x
-    }
+  addDevice(device: Device) {
+    this.devices[device.id] = device;
   }
 
   addDeviceType(type: DeviceType) {
-    this.addDevice(deviceFactory(type));
+    const device = deviceFactory({ type });
+    this.addDevice(device);
   }
 
   getDevice(id: string) {
@@ -224,7 +250,11 @@ export class Devices {
 
   static fromObject(data: any = {}) {
     const devices = new this();
-    devices.devices = data;
+    devices.devices = Object.fromEntries(
+      Object.values(data)
+      .map((v: any) => deviceFactory(v))
+      .map((v: Device) => [v.id, v])
+    );
     return devices;
   }
 }
