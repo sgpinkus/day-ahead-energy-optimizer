@@ -4,7 +4,7 @@
 import { reactive } from 'vue';
 import { randomUUID } from '@/utils';
 import messages from './messages';
-import devices from './devices';
+import Devices from './devices';
 import { MyName } from './constants';
 
 const events = new EventTarget();
@@ -14,7 +14,7 @@ class Model {
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
-  devices = devices;
+  devices: Devices;
   rail = false;
   focusedDeviceId: string | null = null;
   editingDeviceId: string | null = null;
@@ -25,10 +25,11 @@ class Model {
    */
   constructor(data: any) {
     data =  data ? JSON.parse(data) : undefined;
-    const { spaces: spacesData } = data || {};
+    const { spaces: spacesData, devices } = data || {};
     console.debug('Model: ' + (spacesData ? `Restoring ${Object.keys(spacesData.spaces).length} spaces from local storage` : 'No data in local storage'));
     // console.debug('Model: ' + (connection?.token ? 'Restoring auth token from local storage' : 'No auth in local storage'));
     this.doneLocalStorageNotice = data?.doneLocalStorageNotice || false;
+    this.devices = Devices.fromObject(devices);
   }
 
   /**
@@ -37,6 +38,7 @@ class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
+    this.devices.reset();
   }
 
   /**
@@ -60,6 +62,7 @@ class Model {
   toObject() {
     return {
       doneLocalStorageNotice: this.doneLocalStorageNotice,
+      devices: this.devices.toObject(),
     };
   }
 

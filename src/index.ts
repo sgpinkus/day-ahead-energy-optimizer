@@ -8,7 +8,6 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import './index.scss';
 
-
 let inShutDown = false;
 
 async function main() {

@@ -1,29 +1,30 @@
 import { createRouter } from '@sgpinkus/my-vue-router';
-import Main from '@/components/BusView/BusView.vue';
-import NotFoundPage from '@/components/NotFoundPage.vue';
+import BusView from '@/components/BusView/BusView.vue';
+import DeviceView from '@/components/DeviceView/DeviceView.vue';
+import NotFoundPath from '@/components/NotFoundPath.vue';
+import NotFoundResource from '@/components/NotFoundResource.vue';
 
 const router = createRouter([
   {
     path: '/',
     name: 'root',
-    component: Main,
+    component: BusView,
   },
   {
-    path: '/logout',
-    name: 'logout',
-    component: () => ({}), // Dummy component.
+    path: '/devices/:id',
+    name: 'devices',
+    component: DeviceView,
   },
   {
     path: '/*pathMatch',
     name: 'not-found',
-    component: NotFoundPage,
-    routeProp: true,
+    component: NotFoundPath,
   },
   {
     path: '/resource-not-found',
     name: 'resource-not-found',
-    component: NotFoundPage,
+    component: NotFoundResource,
   },
-], { installGlobalRef: false });
+], { installGlobalRef: '$my-vue-router', paramsToProps: true });
 
 export default router;

@@ -1,0 +1,14 @@
+dt, dd {
+  font: small;
+  color: gray;
+  display: inline-block;
+}
+
+dt {
+  font-weight: bolder;
+  padding-right: 0.5em;
+}
+
+dt::after {
+  content: ": ";
+}

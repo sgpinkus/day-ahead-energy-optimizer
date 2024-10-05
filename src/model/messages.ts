@@ -2,6 +2,10 @@ import { AxiosError } from 'axios';
 import { randomUUID } from '@/utils';
 import { reactive } from 'vue';
 
+// So typescript doens't complain.
+const setTimeout = window.setTimeout;
+const clearInterval = window.clearInterval;
+
 export interface AlertDescription {
   title?: string,
   message: string,
@@ -30,7 +34,7 @@ function log(action: ActionDescription | AlertDescription) {
   console.log(`${action.contextName ? action.contextName + ': ' : ''}${action.message}`);
 }
 
-class Model {
+class Messages {
   alerts: Alert[] = [];
   actions: Action[] = [];
   successMessage?: string;
@@ -127,4 +131,4 @@ class Model {
   }
 }
 
-export default reactive(new Model());
+export default reactive(new Messages());

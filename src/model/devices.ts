@@ -48,6 +48,8 @@ export interface  IBaseDevice {
   attrs: IAttributes,
   title?: string,
   description?: string,
+  color?: string,
+  shape?: string,
   bounds: Bounds,
   cbounds?: CBounds,
   costs: Record<string, Cost>,
@@ -144,6 +146,7 @@ function deviceFactory(type: DeviceType): IDevice {
       type: 'load',
       title: 'Load',
       description: 'A load device',
+      color: 'blue',
       hardBounds: [0, 1e3],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [0,1]), // Just a bad default.
     }
@@ -152,6 +155,7 @@ function deviceFactory(type: DeviceType): IDevice {
       type: 'supply',
       title: 'Supply',
       description: 'A supply device',
+      color: 'red',
       hardBounds: [-1e3, 0],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [-1,0]),  // Just a bad default.
     }
@@ -168,6 +172,7 @@ function deviceFactory(type: DeviceType): IDevice {
       type: 'storage',
       title: 'Storage',
       description: 'A storage device',
+      color: 'yellow',
       hardBounds: [-1e3, 1e3],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [-1,1]),  // Just a bad default.
       efficiencyFactor: 1.0,
@@ -193,6 +198,10 @@ export class Devices {
     this.addDevice(deviceFactory(type));
   }
 
+  getDevice(id: string) {
+    return this.devices[id];
+  }
+
   getDevices() {
     return {...this.devices};
   }
@@ -204,6 +213,20 @@ export class Devices {
   get length() {
     return Object.keys(this.devices).length;
   }
+
+  reset() {
+    this.devices = {};
+  }
+
+  toObject() {
+    return this.devices;
+  }
+
+  static fromObject(data: any = {}) {
+    const devices = new this();
+    devices.devices = data;
+    return devices;
+  }
 }
 
-export default reactive(new Devices());
+export default Devices;

@@ -1,4 +1,5 @@
 // @import url(@mdi/font/scss/materialdesignicons.scss);
+@use 'vuetify/settings';
 
 @forward '@sgpinkus/mdi-font/scss/materialdesignicons.scss' with (
   $mdi-version: "0",

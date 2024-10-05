@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import model from '@/model';
-import { computed, onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+import router from '@/router';
+import { computed, onMounted, ref, useTemplateRef, watch, type Ref, inject } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
 
 const deviceNodes = computed(() => Object.values(model.devices.getDevices())
-    .map(v =>  ({ id: v.id, label: v.title || v.id, fixed: false }))
+  .map(v => ({
+    id: v.id,
+    label: v.title || v.id,
+    title: v.description,
+    fixed: false,
+    // borderWidth: 3,
+    shape: 'circle',
+  }))
 );
 
-const busNode = { id: 0, label: 'bus', fixed: true };
+const busNode = { id: 0, label: 'bus', fixed: true, shape: 'circle', color: 'lightblue' };
 
-const nodes = computed(() => new DataSet([{ id: 0, label: 'bus', fixed: true }, ... deviceNodes.value]));
+const nodes = computed(() => new DataSet([busNode, ... deviceNodes.value]));
 const edges = computed(() => new DataSet(deviceNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
 const options = {
   autoResize: false,
@@ -17,6 +25,10 @@ const options = {
   width: '100%',
   locale: 'en',
   physics: false,
+  interaction: {
+    dragView: false,
+    zoomView: false,
+  },
 };
 const container: Ref<HTMLElement | null> = useTemplateRef('container');
 let network: Network;
@@ -25,7 +37,9 @@ watch(nodes, (newComponentNodes) => {
   if(network) network.destroy();
   network = new Network(container.value!, { nodes: newComponentNodes, edges: edges.value as any }, options);
   network.on('click', onClick);
-});
+  network.on('doubleClick', onDoubleClick);
+},
+);
 
 watch(model, () => {
   try {
@@ -39,19 +53,29 @@ function onClick(params: any) {
   model.focusedDeviceId = clickedNodeId;
 }
 
+function onDoubleClick(params: any) {
+  const clickedNodeId = String(network.getNodeAt(params.pointer.DOM));
+  router.dispatch({ name: 'devices', params: { id: clickedNodeId } });
+}
+
 onMounted(() => {
-  network = new Network(container.value!, { nodes: [busNode], edges: edges.value as any }, options);
+  network = new Network(container.value!, { nodes: nodes.value, edges: edges.value as any }, options);
 });
 
 </script>
 <template>
-  <v-container style='display: flex; flex-flow: column nowrap; height: 100vh'>
-    <div ref='container' style='height: 100%'></div>
-  </v-container>
+  <div ref='container' class='container'></div>
 </template>
 
 <style scoped>
   .focused {
     background-color: lightgray;
+  }
+
+  .container {
+    height: 100%;
+    border: 0;
+    padding: 0;
+    margin: 0;
   }
 </style>

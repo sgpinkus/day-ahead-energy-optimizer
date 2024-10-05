@@ -4,11 +4,7 @@ import UserListItemCard from './UserListItemCard.vue';
 
 const rail = ref(false);
 
-// provide(() => {
-//   return {
-//     rail: computed(() => rail),
-//   };
-// });
+provide('rail', rail);
 
 const navDrawerProps = computed(() => ({
   permanent: true,
