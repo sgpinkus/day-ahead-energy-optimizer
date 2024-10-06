@@ -65,12 +65,28 @@ export default class EditableBarChart {
         .attr('transform', (d,i) => { return 'translate(' +  this.xAxis(i) + ',0)'; });
     bars.append('rect')
         .attr('class', 'bar-bar')
+        .attr('title', (d) => { return d; })
         .attr('width', this.xAxis.bandwidth())
         .attr('transform', (d) => { return 'translate(0,' + this.yAxis(d) + ')'; })
         .attr('height',  (d) => { return this.height - this.yAxis(d); })
         .call(dg.on('start', (...args) => this.started(...args)))
         .call(dg.on('drag', (...args) => this.dragged(...args)))
-        .call(dg.on('end', (...args) => this.stopped(...args)));
+        .call(dg.on('end', (...args) => this.stopped(...args)))
+        .on('mouseover', function (d, i, n) {
+          console.log('Mouse over', d, i, n);
+          d3.select(n[i]).attr('opacity', '.50');
+          d3.select(`.tool-tip-${i}`)
+            .attr('opacity', 1);
+        })
+        .on('mouseout', function (d, i, n) {
+          d3.select(n[i]).attr('opacity', '1');
+          d3.select(`.tool-tip-${i}`)
+            .attr('opacity', 0);
+        });
+    bars.append('text').text((d) => d)
+        .attr('transform', () => { return 'translate(0,' + this.yAxis(0.5) + ')'; })
+        .attr('class', (d, i) => `tool-tip tool-tip-${i}`)
+        .attr('opacity', '0');
     bars.exit();
   }
 
@@ -80,13 +96,13 @@ export default class EditableBarChart {
   }
 
   started(d: any, i: any, n?: any) {
-    console.log('Drag started', d, i);
+    console.log('Drag started', d, i, n);
     this.selected[0] = this.selected[1] = i;
     d3.select(n[i]).classed('bar-active', true);
   }
 
   dragged(d: any, i: any, n?: any) {
-    console.log('Drag', d, i);
+    console.log('Drag', d, i, n);
     const mouse = d3.mouse(this.g.node()!);
     this.selected[1] = this.xi(mouse[0]);
     const target = d3.selectAll(n.slice.apply(n, this.selection()));
