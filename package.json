@@ -2,7 +2,6 @@
   "name": "tariff-tool",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -16,6 +15,7 @@
     "@sgpinkus/mdi-font": "^7.3.67",
     "@sgpinkus/my-vue-router": "^1.2.0",
     "axios": "^1.7.7",
+    "d3": "^4.13.0",
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "uuid": "^9.0.1",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
+    "@types/d3": "^4.13.15",
     "@types/lodash": "^4.17.9",
     "@types/node": "^20.14.5",
     "@types/uuid": "^10.0.0",

@@ -2,6 +2,7 @@
 import { computed, ref, defineProps, onMounted, inject } from 'vue';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
+import DeviceBoundsView from './DeviceBoundsView.vue';
 import model from '@/model';
 import router from '@/router';
 
@@ -31,28 +32,26 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
   </AppNavDrawer>
   <v-main>
     <v-container fluid class='d-flex align-content-center flex-column h-100 ma-auto'>
-      <DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView>
+      <DeviceBoundsView :device='device'></DeviceBoundsView>
+      <!-- `<DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView> -->
     </v-container>
   </v-main>
 </template>
 
 <style scoped>
-  .v-card { padding: 1em }
-
-  .details-content {
-    max-height: 100%;
-    flex-flow: nowrap;
-    display: flex;
-    flex-direction: column;
-  }
-
   .v-divider {
     opacity: 50%;
   }
 
-  .v-btn {
-    min-width: 1em;
-    padding: 0;
-    margin: 0;
+  .v-container { border: solid 1px green; }
+
+  .bar-bar, .bar, .bar-circle {
+    fill: steelblue;
+  }
+  .bar-active {
+    fill: brown;
+  }
+  .axis--x path {
+    display: none;
   }
 </style>
