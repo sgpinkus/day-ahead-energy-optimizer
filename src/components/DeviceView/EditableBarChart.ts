@@ -23,12 +23,12 @@ let dg;
 export default class EditableBarChart {
   options: Options;
   svg: d3.Selection<SVGSVGElement, null, null, any>;
-  width: number;
-  height: number;
+  width: number = 0;
+  height: number = 0;
   g: d3.Selection<SVGGElement, null, null, any>;
   selected: [number, number] = [-1, -1];
   xAxis: d3.ScaleBand<any> = d3.scaleBand();
-  yAxis: d3.ScaleLinear<number, number, never> = d3.scaleLinear();
+  yAxis: d3.ScaleLinear<number, number> = d3.scaleLinear();
 
   /**
    * Init. We need to explicitly deal with margins ~because axes.
@@ -36,8 +36,6 @@ export default class EditableBarChart {
   constructor(container: SVGSVGElement, options: Partial<Options> = {}) {
     this.options = { ...defaultOptions, ...options };
     this.svg = d3.select(container);
-    this.width = +this.svg.attr('width') - this.options.margin.left - this.options.margin.right;
-    this.height = +this.svg.attr('height') - this.options.margin.top - this.options.margin.bottom;
     this.g = this.svg.append('g')
         .attr('transform', 'translate(' + this.options.margin.left + ',' + this.options.margin.top + ')');
   }
@@ -48,6 +46,7 @@ export default class EditableBarChart {
    */
   draw(data: number[]) {
     this.selected = [-1,-1];
+    this.setWH();
     const range = this.options.range ?? [Math.min(...data), Math.max(...data)];
     this.xAxis = d3.scaleBand<number>().rangeRound([0, this.width]).padding(0.1).domain(Object.keys(data).map(i => +i));
     this.yAxis = d3.scaleLinear().rangeRound([this.height,0]).domain(range);
@@ -75,6 +74,11 @@ export default class EditableBarChart {
     bars.exit();
   }
 
+  setWH() {
+    this.width = this.svg.node()!.width.animVal.value - this.options.margin.left - this.options.margin.right;
+    this.height = this.svg.node()!.height.animVal.value - this.options.margin.top - this.options.margin.bottom;
+  }
+
   started(d: any, i: any, n?: any) {
     console.log('Drag started', d, i);
     this.selected[0] = this.selected[1] = i;
@@ -83,7 +87,7 @@ export default class EditableBarChart {
 
   dragged(d: any, i: any, n?: any) {
     console.log('Drag', d, i);
-    const mouse = d3.mouse(this.g.node());
+    const mouse = d3.mouse(this.g.node()!);
     this.selected[1] = this.xi(mouse[0]);
     const target = d3.selectAll(n.slice.apply(n, this.selection()));
     d3.selectAll(n).classed('bar-active', false);
