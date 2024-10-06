@@ -37,7 +37,7 @@ export default class EditableBarChart {
     this.options = { ...defaultOptions, ...options };
     this.svg = d3.select(container);
     this.g = this.svg.append('g')
-        .attr('transform', 'translate(' + this.options.margin.left + ',' + this.options.margin.top + ')');
+        .attr('transform', `translate(${this.options.margin.left}, ${this.options.margin.top})`);
   }
 
   /**
@@ -52,7 +52,7 @@ export default class EditableBarChart {
     this.yAxis = d3.scaleLinear().rangeRound([this.height,0]).domain(range);
     this.g.append('g')
         .attr('class', 'axis axis--x')
-        .attr('transform', 'translate(0,' + this.height + ')')
+        .attr('transform', `translate(0, ${this.height})`)
         .call(d3.axisBottom(this.xAxis).tickFormat(this.options.xFormatter));
     this.g.selectAll('.axis--x g.tick text')
         .attr('transform', 'rotate(-90) translate(-20,-14)');
@@ -62,13 +62,13 @@ export default class EditableBarChart {
     const dg = d3.drag<SVGRectElement, number>();
     const bars = this.g.selectAll('.bar').data(data).enter()
         .append('g')
-        .attr('transform', (d,i) => { return 'translate(' +  this.xAxis(i) + ',0)'; });
+        .attr('transform', (d,i) => `translate(${this.xAxis(i)},0)`);
     bars.append('rect')
         .attr('class', 'bar-bar')
-        .attr('title', (d) => { return d; })
+        .attr('title', (d) => d)
         .attr('width', this.xAxis.bandwidth())
-        .attr('transform', (d) => { return 'translate(0,' + this.yAxis(d) + ')'; })
-        .attr('height',  (d) => { return this.height - this.yAxis(d); })
+        .attr('transform', (d) => `translate(0, ${this.yAxis(d)})`)
+        .attr('height',  (d) => this.height - this.yAxis(d))
         .call(dg.on('start', (...args) => this.started(...args)))
         .call(dg.on('drag', (...args) => this.dragged(...args)))
         .call(dg.on('end', (...args) => this.stopped(...args)))
@@ -84,7 +84,7 @@ export default class EditableBarChart {
             .attr('opacity', 0);
         });
     bars.append('text').text((d) => d)
-        .attr('transform', () => { return 'translate(0,' + this.yAxis(0.5) + ')'; })
+        .attr('transform', () => `translate(0, ${this.yAxis(0.5)})`)
         .attr('class', (d, i) => `tool-tip tool-tip-${i}`)
         .attr('opacity', '0');
     bars.exit();
@@ -107,7 +107,7 @@ export default class EditableBarChart {
     this.selected[1] = this.xi(mouse[0]);
     const target = d3.selectAll(n.slice.apply(n, this.selection()));
     d3.selectAll(n).classed('bar-active', false);
-    target.attr('transform', 'translate(0,' + mouse[1] + ')')
+    target.attr('transform', `translate(0, ${mouse[1]})`)
         .attr('height', this.height - mouse[1])
         .classed('bar-active', true);
   }
