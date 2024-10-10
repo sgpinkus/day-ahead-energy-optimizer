@@ -1,39 +1,11 @@
 import { v4 as uuid } from 'uuid';
-import { handleError, reactive } from 'vue';
 import { DefaultBasis } from './constants';
-import { cloneDeep } from 'lodash';
-import { isJSDocOverloadTag } from 'typescript';
-import type { Id } from 'vis-network/declarations/network/gephiParser';
+import { RunSpec } from './RunSpec';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
 type IAttributes = {
   showInverted?: boolean,
-}
-
-class RunSpec<X> {
-  private _runs: Record<number, X> = {};
-  constructor(public readonly basis: number, zeroth: X) {
-    this._runs[0] = zeroth;
-  }
-
-  set(i: number, v: X) {
-    if(i < 0 || i >> this.basis) throw new Error('out of bounds');
-    this._runs[i] = v;
-  }
-
-  get(i: number): X {
-    let m = this._runs[0];
-    for(let [j, x] of Object.entries(this._runs)) {
-      if(Number(j) <= i) m = x;
-      if(Number(j) > i) break;
-    }
-    return m;
-  }
-
-  runs(): Record<number, X> {
-    return cloneDeep(this._runs);
-  }
 }
 
 type Bounds = RunSpec<[number, number]> | [number, number][];
@@ -158,7 +130,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
     attrs: {},
     costs: {},
     shape: 'circle',
-  }
+  };
   switch(type) {
     case 'load': return {
       ..._baseDevice,
@@ -168,7 +140,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       color: 'blue',
       hardBounds: [0, 1e3],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [0,1]), // Just a bad default.
-    }
+    };
     case 'supply': return {
       ..._baseDevice,
       type: 'supply',
@@ -177,7 +149,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       color: 'red',
       hardBounds: [-1e3, 0],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [-1,0]),  // Just a bad default.
-    }
+    };
     case 'fixed_load': return {
       ..._baseDevice,
       type: 'fixed_load',
@@ -185,7 +157,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       description: 'A fixed load device',
       hardBounds: [0, 1e3],
       bounds: new RunSpec<[number, number]>(DefaultBasis, [1,1]),  // Just a bad default.
-    }
+    };
     case 'storage': return {
       ..._baseDevice,
       type: 'storage',
@@ -197,7 +169,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       efficiencyFactor: 1.0,
       cycleCostFactor: 0.0,
       depthhCostFactor: 0.0,
-    }
+    };
     default: throw Error();
   }
 }
@@ -213,7 +185,7 @@ function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
 }
 
 export class Devices {
-  private devices: Record<string, ContainerDevice> = {}
+  private devices: Record<string, ContainerDevice> = {};
 
   addDevice(device: Device) {
     this.devices[device.id] = device;
