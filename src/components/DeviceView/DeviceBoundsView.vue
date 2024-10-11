@@ -15,7 +15,7 @@ function _draw() {
   if(!container.value) return;
   draw(
     container.value,
-    device.bounds,
+    device.bounds[0],
     onDataChange,
     {
       // range: [0,1],

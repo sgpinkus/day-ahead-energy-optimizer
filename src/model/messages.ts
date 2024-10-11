@@ -34,7 +34,7 @@ function log(action: ActionDescription | AlertDescription) {
   console.log(`${action.contextName ? action.contextName + ': ' : ''}${action.message}`);
 }
 
-class Messages {
+export class Messages {
   alerts: Alert[] = [];
   actions: Action[] = [];
   successMessage?: string;

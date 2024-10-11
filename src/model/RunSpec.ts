@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash';
-// import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
 type RunRange<X> = [X, [number, number]]
 
@@ -90,7 +89,7 @@ export class RunSpec<X> {
     return Array.from(Array(this.basis)).map((_x, k) => this.get(k));
   }
 
-  toRanges(): [X, [number, number]][] {
+  toRanges(): RunRange<X>[] {
     const entries = Object.entries(this._runs);
     return entries.map(([k, v], i) => {
       return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0])]] : [v, [Number(k), this.basis - 1]];

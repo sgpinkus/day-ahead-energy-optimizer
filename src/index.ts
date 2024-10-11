@@ -39,7 +39,7 @@ function shutdown() {
   if(inShutDown) return;
   inShutDown = true;
   console.log('Main: App shutting down');
-  model.shutdown();
+  model?.shutdown();
 }
 
 

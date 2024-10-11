@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis } from './constants';
 import { RunSpec } from './RunSpec';
+import { pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
@@ -8,11 +9,12 @@ type IAttributes = {
   showInverted?: boolean,
 }
 
-type Bounds = RunSpec<[number, number]> | [number, number][];
-
-type CBounds = RunSpec<[number, number]> | [number, number][];
-
-type Cost = RunSpec<[number, number, number]> | [number, number, number][];
+// RunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
+type Bounds = [RunSpec<number>, RunSpec<number>];
+type CBounds = [RunSpec<number>, RunSpec<number>];
+// Just a single quadratic over all slots for now. Future can run spec this too.
+// type Cost = [RunSpec<number>, RunSpec<number>, RunSpec<number>] // RunSpec<[number, number, number]>
+type Cost = [number, number, number]
 
 export interface  IBaseDevice {
   type: DeviceType,
@@ -52,18 +54,73 @@ export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadD
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
-// I'm always torn about whether to add behaviours to objects! We'll start by keeping it simple.
+// Always torn about whether to add behaviours to objects or use C style OO. Alwasy start with the latter.
 // But already seem like some data protection / validation would be nice such as ensure bounds within hardBounds ...
 
+function plainDeviceFactory(type: DeviceType): IDevice {
+  const _baseDevice = {
+    basis: DefaultBasis,
+    attrs: {},
+    costs: {},
+    shape: 'circle',
+  };
+  switch(type) {
+    case 'load': return {
+      ..._baseDevice,
+      type: 'load',
+      title: 'Load',
+      description: 'A load device',
+      color: 'blue',
+      hardBounds: [0, 1e3],
+      bounds: boundsRunSpecs(0,1), // Just set these to a (bad) default.
+    };
+    case 'supply': return {
+      ..._baseDevice,
+      type: 'supply',
+      title: 'Supply',
+      description: 'A supply device',
+      color: 'red',
+      hardBounds: [-1e3, 0],
+      bounds: boundsRunSpecs(-1, 0),
+    };
+    case 'fixed_load': return {
+      ..._baseDevice,
+      type: 'fixed_load',
+      title: 'Fixed Load',
+      description: 'A fixed load device',
+      hardBounds: [0, 1e3],
+      bounds: boundsRunSpecs(1,1) // A fixed load device is just a device whose lbound == hbound.
+    };
+    case 'storage': return {
+      ..._baseDevice,
+      type: 'storage',
+      title: 'Storage',
+      description: 'A storage device',
+      color: 'yellow',
+      hardBounds: [-1e3, 1e3],
+      bounds: boundsRunSpecs(-1,1),
+      efficiencyFactor: 1.0,
+      cycleCostFactor: 0.0,
+      depthhCostFactor: 0.0,
+    };
+    default: throw Error();
+  }
+}
 
+function boundsRunSpecs(l: number, h: number): [RunSpec<number>, RunSpec<number>] {
+  return [
+    new RunSpec<number>(DefaultBasis, l),
+    new RunSpec<number>(DefaultBasis, h),
+  ];
+}
 
-export abstract class BaseDevice implements IBaseDevice {
+export class BaseDevice implements IBaseDevice {
   readonly id: string;
-  abstract type: DeviceType;
+  readonly type: DeviceType;
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-1e3, 1e3];
-  bounds: Bounds = new RunSpec<[number, number]>(DefaultBasis, [-1,1]);
+  bounds: Bounds = boundsRunSpecs(-1, 1);
   cbounds?: CBounds;
   costs: Record<string, Cost> = {};
   title?: string;
@@ -74,15 +131,22 @@ export abstract class BaseDevice implements IBaseDevice {
 
   protected constructor(type: DeviceType, data: Partial<IDevice> = {}) {
     this.id = uuid();
+    this.type = type;
     Object.assign(this, { ...plainDeviceFactory(type), ...data });
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
-    Object.assign(this, o);
+    Object.assign(this, pick(o, ['title', 'description', 'shape', 'color', 'tags']));
   }
 
   toObject(): IDevice {
     return JSON.parse(JSON.stringify(this));
+  }
+
+  static fromObject(data: any) {
+    const o = new this(data);
+    Object.assign(o, data);
+    return o;
   }
 }
 
@@ -90,7 +154,6 @@ export class FixedLoadDevice extends BaseDevice {
   type: DeviceType = 'fixed_load';
   constructor(data?: Partial<IFixedLoadDevice>) {
     super('fixed_load', data);
-
   }
 }
 
@@ -120,59 +183,7 @@ export class StorageDevice extends BaseDevice {
 // }
 
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
-
 export type ContainerDevice = Device & { readonly id: string };
-
-
-function plainDeviceFactory(type: DeviceType): IDevice {
-  const _baseDevice = {
-    basis: DefaultBasis,
-    attrs: {},
-    costs: {},
-    shape: 'circle',
-  };
-  switch(type) {
-    case 'load': return {
-      ..._baseDevice,
-      type: 'load',
-      title: 'Load',
-      description: 'A load device',
-      color: 'blue',
-      hardBounds: [0, 1e3],
-      bounds: new RunSpec<[number, number]>(DefaultBasis, [0,1]), // Just a bad default.
-    };
-    case 'supply': return {
-      ..._baseDevice,
-      type: 'supply',
-      title: 'Supply',
-      description: 'A supply device',
-      color: 'red',
-      hardBounds: [-1e3, 0],
-      bounds: new RunSpec<[number, number]>(DefaultBasis, [-1,0]),  // Just a bad default.
-    };
-    case 'fixed_load': return {
-      ..._baseDevice,
-      type: 'fixed_load',
-      title: 'Fixed Load',
-      description: 'A fixed load device',
-      hardBounds: [0, 1e3],
-      bounds: new RunSpec<[number, number]>(DefaultBasis, [1,1]),  // Just a bad default.
-    };
-    case 'storage': return {
-      ..._baseDevice,
-      type: 'storage',
-      title: 'Storage',
-      description: 'A storage device',
-      color: 'yellow',
-      hardBounds: [-1e3, 1e3],
-      bounds: new RunSpec<[number, number]>(DefaultBasis, [-1,1]),  // Just a bad default.
-      efficiencyFactor: 1.0,
-      cycleCostFactor: 0.0,
-      depthhCostFactor: 0.0,
-    };
-    default: throw Error();
-  }
-}
 
 function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
   switch(data.type) {
@@ -180,7 +191,7 @@ function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
     case 'supply': return new SupplyDevice(data);
     case 'fixed_load': return new FixedLoadDevice(data);
     case 'storage': return new StorageDevice(data);
-    default: throw Error();
+    default: throw new Error(`Unknown device type [data=${data}]`);
   }
 }
 
@@ -193,6 +204,7 @@ export class Devices {
 
   addDeviceType(type: DeviceType) {
     const device = deviceFactory({ type });
+    console.log('addDeviceType', device);
     this.addDevice(device);
   }
 
@@ -214,20 +226,6 @@ export class Devices {
 
   reset() {
     this.devices = {};
-  }
-
-  toObject() {
-    return this.devices;
-  }
-
-  static fromObject(data: any = {}) {
-    const devices = new this();
-    devices.devices = Object.fromEntries(
-      Object.values(data)
-      .map((v: any) => deviceFactory(v))
-      .map((v: Device) => [v.id, v])
-    );
-    return devices;
   }
 }
 
