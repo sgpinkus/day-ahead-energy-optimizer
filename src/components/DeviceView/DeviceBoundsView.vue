@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, onMounted, useTemplateRef } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
-import { draw } from '@/components/components/RunSpecEditor';
+import { draw, type Options } from '@/components/components/RunSpecEditor';
 import * as d3 from 'd3';
 
 const { device } = defineProps<{
@@ -11,6 +11,11 @@ const { device } = defineProps<{
 }>();
 const containerHigh = useTemplateRef('container-high');
 const containerLow = useTemplateRef('container-low');
+const options: Partial<Options> =     {
+  // range: [0,2],
+  autoPaddingFactor: [0.5, 0.5],
+  xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
+};
 
 function _draw() {
   if(!containerHigh.value) return;
@@ -19,19 +24,13 @@ function _draw() {
     containerLow.value,
     device.bounds[0],
     onDataChange,
-    {
-      range: [0,2],
-      xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
-    }
+    options
   );
   draw(
     containerHigh.value,
     device.bounds[1],
     onDataChange,
-    {
-      range: [0,2],
-      xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
-    }
+    options,
   );
 }
 

@@ -92,7 +92,7 @@ export class RunSpec<X> {
   toRanges(): RunRange<X>[] {
     const entries = Object.entries(this._runs);
     return entries.map(([k, v], i) => {
-      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0])]] : [v, [Number(k), this.basis - 1]];
+      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
     });
   }
 

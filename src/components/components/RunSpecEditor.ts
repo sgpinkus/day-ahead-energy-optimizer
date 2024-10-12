@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import { RunSpec } from '@/model/RunSpec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
-type Options = {
+export type Options = {
   margin: Record<string, any>;
   range: [number | undefined, number | undefined],
   autoPaddingFactor: [number, number],
@@ -27,7 +27,6 @@ type Range = [number, [number, number]];
  */
 export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = () => {}, _options: Partial<Options> = {}) {
 
-
   function vStarted(this: Element, event: DragEvent) {
     console.log('v drag started');
     drawLine(event.y);
@@ -35,7 +34,6 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
 
   function vDragged(this: Element, event: DragEvent, datum: Range) {
     const [v, range] = datum;
-    const i = Number(index.get(this));
     const value = -event.y;
     const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
     console.debug(`
@@ -130,10 +128,11 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   barGroups.exit().remove();
   bars.append('rect')
     .classed('bar', true)
-    .attr('width', ([v, range]) => xScale(range[1])! - xScale(range[0])! - xScale.paddingOuter()*2)
-    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)))
-    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
+    .attr('width', ([v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter()*2)
+    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)) + 1)
+    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
+    .attr('stroke-width', 2)
     .attr('cursor', 'grabbing')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
@@ -165,7 +164,7 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
     .attr('transform', ([v, range]) => `translate(0, ${yScale(v) - yScale(0)})`);
   barTops.append('text')
     .text(([h, range]) => {
-      const w = range[1] - range[0];
+      const w = range[1] - range[0] + 1;
       const f = d3.format(`.${options.precision}f`);
       return `${h}x${w} = ${f(h*w)}`;
     })
