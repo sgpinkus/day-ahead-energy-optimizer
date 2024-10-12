@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Device, IBaseDevice } from '@/model/devices';
+import type { Device } from '@/model/devices';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 import { ref, useTemplateRef, type Ref } from 'vue';
@@ -18,7 +18,7 @@ const titleRules = [
 const descriptionMaxLength = 2**10;
 const descriptionRules = [
   (v: any) => (!v || v && v.length <= descriptionMaxLength) || `description must be less than ${descriptionMaxLength} characters`,
-]
+];
 
 async function change() { // change(changeKey: string)
   form.value!.resetValidation();

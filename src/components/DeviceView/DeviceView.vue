@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, ref, defineProps, onMounted, inject } from 'vue';
+import { ref, defineProps } from 'vue';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
@@ -9,7 +9,7 @@ import router from '@/router';
 type props = {
   id: string;
 }
-const tab = ref('edit');
+const tab = ref('bounds');
 const { id: deviceId } = defineProps<props>();
 const device = model.devices.getDevice(deviceId);
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
@@ -31,9 +31,10 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
       </v-list>
   </AppNavDrawer>
   <v-main>
-    <v-container fluid class='d-flex align-content-center flex-column h-100 ma-auto'>
-      <DeviceBoundsView :device='device'></DeviceBoundsView>
-      <!-- `<DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView> -->
+    <v-container class='container'>
+      <h2>{{ device.title }}</h2>
+      <DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView>
+      <DeviceBoundsView v-if='tab === "bounds"' :device='device'></DeviceBoundsView>
     </v-container>
   </v-main>
 </template>
@@ -43,7 +44,14 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
     opacity: 50%;
   }
 
-  .v-container { border: solid 1px green; }
+  .container {
+    height: 100vh;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 1em;
+    justify-content: stretch;
+  }
 
   .bar-bar, .bar, .bar-circle {
     fill: steelblue;

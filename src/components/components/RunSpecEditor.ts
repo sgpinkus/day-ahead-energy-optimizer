@@ -1,22 +1,25 @@
 import * as d3 from 'd3';
-import type { RunSpec } from '@/model/RunSpec';
+import { RunSpec } from '@/model/RunSpec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
 type Options = {
   margin: Record<string, any>;
-  range?: [number | undefined, number | undefined],
+  range: [number | undefined, number | undefined],
+  autoPaddingFactor: [number, number],
   xFormatter: any,
   precision: number,
 }
 
-type Range = [number, [number, number]];
-
 const defaultOptions: Options = {
   margin: { top: 20, right: 20, bottom: 40, left: 40},
-  range: undefined,
+  range: [undefined, undefined],
+  autoPaddingFactor: [0.15, 0.15],
   xFormatter: null,
   precision: 3,
 };
+
+type Range = [number, [number, number]];
+
 
 /**
  * Draw data and set up graph based on data. data must be an array of numbers.
@@ -24,7 +27,6 @@ const defaultOptions: Options = {
  */
 export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = () => {}, _options: Partial<Options> = {}) {
 
-  console.log(data.toRanges());
 
   function vStarted(this: Element, event: DragEvent) {
     console.log('v drag started');
@@ -34,14 +36,24 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   function vDragged(this: Element, event: DragEvent, datum: Range) {
     const [v, range] = datum;
     const i = Number(index.get(this));
-    console.log('v dragged', selectedIndex, i, scaleBandInvert(xPos)(xPos(i)! + event.x));
-    const [value, domainValue] = yValues(event.y);
+    const value = -event.y;
+    const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
+    console.debug(`
+    data=${datum},
+    yPos(datum)=${yScale(v)}
+    yPos(0)=${yScale(0)}
+    height=${height}
+    event.y=${event.y}
+    newValue=${value}
+    newDomainValue=${domainValue}`);
     drawLine(event.y);
     data.set(range[0], domainValue);
     // Ideally just this setTimeout(_barGroups, 0) but it doesn't work ...
-    d3.select(this).attr('transform', `translate(${xPos(range[0])}, ${height - value})`)
+    d3.select(this)
       .selectAll('.bar')
-        .attr('height', value);
+      .attr('height', Math.abs(value))
+      .attr('transform', () => `scale(1, ${-1 * Math.sign(value)})`)
+      .classed('bar-active', true);
   }
 
   function vStopped() {
@@ -51,12 +63,12 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   }
 
   function hStarted(this: Element, event: DragEvent, [v, range]: Range) {
-    selectedIndex = scaleBandInvert(xPos)(xPos(range[0])! + event.x);
+    selectedIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
     console.log('h drag started at', selectedIndex);
   }
 
   function hStopped(this: Element, event: DragEvent, [v, range]: Range) {
-    const newStartIndex = scaleBandInvert(xPos)(xPos(range[0])! + event.x);
+    const newStartIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
     if(selectedIndex !== undefined && newStartIndex !== undefined) {
       data.move(selectedIndex, newStartIndex);
     }
@@ -65,28 +77,33 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   }
 
   function getRange() {
-    const a = data.toArray();
-    const rangeMin = options.range && options.range[0];
-    const rangeMax = options.range && options.range[1];
-    const [min, max] = [rangeMin ?? Math.min(...a), rangeMax ?? Math.max(...a)];
+    const [min, max] = [Math.min(...data.toArray()), Math.max(...data.toArray())];
     const spread = max - min;
-    const minSpread = rangeMin !== undefined ? 0 : 0.1 * spread;
-    const maxSpread = rangeMax !== undefined ? 0 : 0.5 * spread;
-    return [min - minSpread, max + maxSpread];
+    function _min() {
+      if(options.range && options.range[0] !== undefined) return options.range[0];
+      if(spread) return min - options.autoPaddingFactor[0] * spread;
+      else if(min !== 0) {
+        return (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
+      }
+      return -1;
+    }
+    function _max() {
+      if(options.range && options.range[1] !== undefined) return options.range[1];
+      if(spread) return max + options.autoPaddingFactor[1] * spread;
+      else if(max !== 0) {
+        return (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
+      }
+      return 1;
+    }
+    return [_min(), _max()];
   }
 
-  function yValues(y: number) {
-    const value = height - y;
-    const domainValue = Math.round(yPos.invert(y)*10**options.precision)/10**options.precision;
-    return [value, domainValue];
-  }
-
-  function drawLine(y: number) {
+  function drawLine(eventY: number) {
     lineGroup
       .attr('opacity', 1)
-      .attr('transform', `translate(0, ${y})`)
+      .attr('transform', `translate(0, ${yScale(0) + eventY})`)
       .select('text')
-        .text(d3.format(`.${options.precision}f`)(yPos.invert(y)));
+        .text(d3.format(`.${options.precision}f`)(yScale.invert(yScale(0) + eventY)));
   }
 
   const options: Options = { ...defaultOptions, ..._options };
@@ -94,102 +111,87 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   const svg = d3.select(container);
   const width = svg.node()!.width.animVal.value - options.margin.left - options.margin.right;
   const height = svg.node()!.height.animVal.value - options.margin.top - options.margin.bottom;
-  const xPos = d3.scaleBand<number>().rangeRound([0, width]).padding(0.1).domain(Object.keys(data.toArray()).map(i => +i));
-  const yPos = d3.scaleLinear().rangeRound([height, 0]).domain(getRange());
+  const xScale = d3.scaleBand<number>().rangeRound([0, width]).padding(0.1).domain(Object.keys(data.toArray()).map(i => +i));
+  const yScale = d3.scaleLinear().rangeRound([height, 0]).domain(getRange());
   let selectedIndex: number | undefined = undefined;
   const g = svg.append('g')
       .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
-  g.append('g') // y position in g is proportional to data values.
-      .attr('class', 'axis axis--x')
-      .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xPos).tickFormat(options.xFormatter));
-  g.selectAll('.axis--x g.tick text')
-      .attr('transform', 'rotate(-90) translate(-20,-14)');
-  g.append('g')
-      .attr('class', 'axis axis--y')
-      .call(d3.axisLeft(yPos).ticks(10, ''));
   const dragV = d3.drag<SVGGElement, [number, [number, number]]>();
   const dragH = d3.drag<SVGRectElement, [number, [number, number]]>();
-  _barGroups();
-
-  function _barGroups() {
-    const barGroups = g.selectAll('.bar').data(data.toRanges(), (d) => JSON.stringify(d));
-    barGroups.join(
-      // @ts-ignore
-      (enter) => {
-        const barGroup = enter.append('g')
-          .attr('transform', ([v, range]) => `translate(${xPos(range[0])}, ${yPos(v)})`)
-          .each(function(d, i) { index.set(this, i); })
-          .attr('class', function() { return `bar-group-${index.get(this)}`; })
-          .call(dragV.on('start', vStarted))
-          .call(dragV.on('drag', vDragged))
-          .call(dragV.on('end', vStopped));
-        barGroup.append('rect')
-          .classed('bar', true)
-          .attr('width', ([v, range]) => xPos(range[1])! - xPos(range[0])! - xPos.paddingOuter()*2)
-          .attr('stroke', 'yellow')
-          .attr('cursor', 'grabbing')
-          .attr('height', ([v, range]) => height - yPos(v))
-          .on('mouseover', function () {
-            d3.select(this).attr('opacity', '.50');
-            d3.select(this.parentElement).select('.tool-tip')
-              .attr('opacity', 1);
-          })
-          .on('mouseout', function() {
-            d3.select(this).attr('opacity', '1');
-            d3.select(this.parentElement).select('.tool-tip')
-              .attr('opacity', 0);
-          });
-        barGroup.append('rect')
-          .classed('bar', true)
-          .attr('height', ([v, range]) => height - yPos(v) - 2)
-          .attr('transform', 'translate(1,1)')
-          .attr('width', xPos.step()*0.8)
-          .attr('stroke', 'red')
-          .attr('fill', 'red')
-          .attr('cursor', 'grabbing')
-          .call(dragH.on('start', hStarted))
-          .call(dragH.on('end', hStopped))
-          .on('mouseover', function () {
-            d3.select(this).attr('opacity', '.50');
-          })
-          .on('mouseout', function() {
-            d3.select(this).attr('opacity', '1');
-          });
-        barGroup.append('text')
-          .text(([h, range]) => {
-            const w = range[1] - range[0];
-            const f = d3.format(`.${options.precision}f`);
-            return `${h}x${w} = ${f(h*w)}`;
-          })
-          .attr('class', 'tool-tip')
-          .attr('fill', 'black')
-          .attr('stroke', 'black')
-          .attr('opacity', '0');
-        barGroup.append('polygon')
-          .attr('points', '0,0 20,0 10,10 0,0')
-          .attr('transform', ([v, range]) => `translate(${(xPos(range[1])! - xPos(range[0])!)/2 - 10}, 0)`)
-          .attr('height', 20)
-          .attr('width', 20)
-          .attr('fill', 'red')
-          .attr('stroke', 'red')
-          .attr('cursor', 'crosshairs')
-          .attr('opacity', 0)
-          .on('mouseover', function () {
-            d3.select(this).attr('opacity', '1');
-          })
-          .on('mouseout', function() {
-            d3.select(this).attr('opacity', '0');
-          })
-          .on('mousedown', function(e: Event) {
-            console.log(e, index.get(this));
-            data.split(index.get(this)!);
-            e.stopPropagation();
-            changed();
-          });
+  const barGroups = g.selectAll('.bar-group').data(data.toRanges()).enter().append('g')
+    .attr('transform', ([v, range]) => `translate(${xScale(range[0])}, ${yScale(0)})`);
+  const bars = barGroups
+    .append('g')
+      .each(function(d, i) { index.set(this, i); })
+      .attr('class', function() { return `bar-${index.get(this)}`; })
+      .call(dragV.on('start', vStarted))
+      .call(dragV.on('drag', vDragged))
+      .call(dragV.on('end', vStopped));
+  barGroups.exit().remove();
+  bars.append('rect')
+    .classed('bar', true)
+    .attr('width', ([v, range]) => xScale(range[1])! - xScale(range[0])! - xScale.paddingOuter()*2)
+    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)))
+    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
+    .attr('stroke', 'yellow')
+    .attr('cursor', 'grabbing')
+    .on('mouseover', function () {
+      d3.select(this).attr('opacity', '.50');
+      d3.select(this.parentElement).select('.tool-tip')
+        .attr('opacity', 1);
+    })
+    .on('mouseout', function() {
+      d3.select(this).attr('opacity', '1');
+      d3.select(this.parentElement).select('.tool-tip')
+        .attr('opacity', 0);
     });
-  }
-
+  bars.append('rect')
+    .classed('bar', true)
+    .attr('width', xScale.step()*0.8)
+    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)) - 1)
+    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
+    .attr('stroke', 'red')
+    .attr('fill', 'red')
+    .attr('cursor', 'grabbing')
+    .call(dragH.on('start', hStarted))
+    .call(dragH.on('end', hStopped))
+    .on('mouseover', function () {
+      d3.select(this).attr('opacity', '.50');
+    })
+    .on('mouseout', function() {
+      d3.select(this).attr('opacity', '1');
+    });
+  const barTops = bars.append('g')
+    .attr('transform', ([v, range]) => `translate(0, ${yScale(v) - yScale(0)})`);
+  barTops.append('text')
+    .text(([h, range]) => {
+      const w = range[1] - range[0];
+      const f = d3.format(`.${options.precision}f`);
+      return `${h}x${w} = ${f(h*w)}`;
+    })
+    .attr('class', 'tool-tip')
+    .attr('fill', 'black')
+    .attr('stroke', 'black')
+    .attr('opacity', '0');
+  barTops.append('polygon')
+    .attr('points', '0,0 30,0 15,15 0,0')
+    .attr('transform', ([v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 15}, -7.5)`)
+    .attr('fill', 'red')
+    .attr('stroke', 'red')
+    .attr('cursor', 'crosshair')
+    .attr('opacity', 0)
+    .on('mouseover', function () {
+      d3.select(this).attr('opacity', '1');
+    })
+    .on('mouseout', function() {
+      d3.select(this).attr('opacity', '0');
+    })
+    .on('mousedown', function(e: Event) {
+      console.log(e, index.get(this));
+      data.split(index.get(this)!);
+      e.stopPropagation();
+      changed();
+    });
   const lineGroup = g.append('g')
     .attr('opacity', 0);
   lineGroup.append('line')
@@ -205,6 +207,22 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
     .attr('x', 0)
     .attr('y', 0)
     .attr('fill', 'black');
+  // xy axes.
+  g.append('g')
+      .attr('class', 'axis axis--x')
+      .attr('transform', `translate(0, ${height})`)
+      .call(d3.axisBottom(xScale).tickFormat(options.xFormatter));
+  g.selectAll('.axis--x g.tick text')
+      .attr('transform', 'rotate(-90) translate(-20,-14)');
+  g.append('g')
+      .attr('class', 'axis axis--y')
+      .call(d3.axisLeft(yScale).ticks(10, ''));
+  g.append('line')
+    .attr('stroke', 'black')
+    .attr('x1', 0)
+    .attr('x2', width)
+    .attr('y1', yScale(0))
+    .attr('y2', yScale(0));
 }
 
 function scaleBandInvert(scale: any) {

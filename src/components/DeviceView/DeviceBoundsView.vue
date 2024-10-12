@@ -9,23 +9,35 @@ const { device } = defineProps<{
   width?: number | string,
   height?: number | string,
 }>();
-const container = useTemplateRef('container');
+const containerHigh = useTemplateRef('container-high');
+const containerLow = useTemplateRef('container-low');
 
 function _draw() {
-  if(!container.value) return;
+  if(!containerHigh.value) return;
+  if(!containerLow.value) return;
   draw(
-    container.value,
+    containerLow.value,
     device.bounds[0],
     onDataChange,
     {
-      // range: [0,1],
+      range: [0,2],
+      xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
+    }
+  );
+  draw(
+    containerHigh.value,
+    device.bounds[1],
+    onDataChange,
+    {
+      range: [0,2],
       xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
     }
   );
 }
 
 function onDataChange() {
-  d3.select(container.value).selectAll('*').remove();
+  d3.select(containerHigh.value).selectAll('*').remove();
+  d3.select(containerLow.value).selectAll('*').remove();
   _draw();
 }
 
@@ -35,8 +47,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <svg
-    ref='container'
-    viewBox="0 0 960 480"
-    preserveAspectRatio="xMidYMid meet">></svg>
+  <div>
+    <h3>Upper bounds</h3>
+    <svg
+      ref='container-high'
+      viewBox="0 0 1280 480"
+      preserveAspectRatio="xMidYMid meet">
+    </svg>
+  </div>
+  <div>
+    <h3>Lower bounds</h3>
+    <svg
+      ref='container-low'
+      viewBox="0 0 1280 480"
+      preserveAspectRatio="xMidYMid meet">
+    </svg>
+  </div>
 </template>
+
+<style scoped>
+  /** TODO: get this to stretch! */
+  div {
+    min-width: 400px;
+    /* max-width: 960px; */
+    width: 960px;
+    min-height: 100px;
+    flex: 1;
+  }
+
+  hr {
+    padding: 1em;
+    visibility: hidden;
+  }
+</style>
