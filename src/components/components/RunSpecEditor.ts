@@ -25,7 +25,7 @@ type Range = [number, [number, number]];
  * Draw data and set up graph based on data. data must be an array of numbers.
  * If range use that for y-axis range.
  */
-export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = () => {}, _options: Partial<Options> = {}) {
+export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}, _options: Partial<Options> = {}) {
 
   function vStarted(this: Element, event: DragEvent) {
     drawLine(event.y);

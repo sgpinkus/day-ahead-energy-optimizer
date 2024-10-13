@@ -10,10 +10,10 @@ type IAttributes = {
 }
 
 // RunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
-type Bounds = [RunSpec<number>, RunSpec<number>];
-type CBounds = [RunSpec<number>, RunSpec<number>];
+type Bounds = [RunSpec, RunSpec];
+type CBounds = [RunSpec, RunSpec];
 // Just a single quadratic over all slots for now. Future can run spec this too.
-// type Cost = [RunSpec<number>, RunSpec<number>, RunSpec<number>] // RunSpec<[number, number, number]>
+// type Cost = [RunSpec, RunSpec, RunSpec] // RunSpec<[number, number, number]>
 type Cost = [number, number, number]
 
 export interface  IBaseDevice {
@@ -107,10 +107,10 @@ function plainDeviceFactory(type: DeviceType): IDevice {
   }
 }
 
-function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec<number>, RunSpec<number>] {
+function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec, RunSpec] {
   return [
-    new RunSpec<number>(DefaultBasis, l, hb),
-    new RunSpec<number>(DefaultBasis, h, hb),
+    new RunSpec(DefaultBasis, l, hb),
+    new RunSpec(DefaultBasis, h, hb),
   ];
 }
 

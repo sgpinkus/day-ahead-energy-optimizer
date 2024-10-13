@@ -1,69 +1,28 @@
 <script setup lang="ts">
-import { defineProps, onMounted, useTemplateRef, computed } from 'vue';
-import type { IBaseDevice } from '@/model/devices';
-import { draw, type Options } from '@/components/components/RunSpecEditor';
+import { defineProps } from 'vue';
 import * as d3 from 'd3';
+import type { IBaseDevice } from '@/model/devices';
+import { RunSpec } from '@/model/RunSpec';
+import RunSpecView from './RunSpecView.vue';
 
-const { device, width = 1280, height = 480 } = defineProps<{
+
+const { device, type } = defineProps<{
   device: IBaseDevice,
   type: 'bounds' | 'cbounds'
-  width?: number | string,
-  height?: number | string,
 }>();
-const containerHigh = useTemplateRef('container-high');
-const containerLow = useTemplateRef('container-low');
-const options: Partial<Options> =     {
-  // range: [0, undefined],
-  autoPaddingFactor: [0.5, 0.5],
-  xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
-};
-const viewBox = computed(() => `0 0 ${width} ${height}`);
 
+// const hBounds = device[type]?[1] ? device[type]?[1] : new RunSpec;
 
-function _draw() {
-  if(!containerHigh.value) return;
-  if(!containerLow.value) return;
-  draw(
-    containerLow.value,
-    device.bounds[0],
-    onDataChange,
-    options
-  );
-  draw(
-    containerHigh.value,
-    device.bounds[1],
-    onDataChange,
-    options,
-  );
-}
-
-function onDataChange() {
-  d3.select(containerHigh.value).selectAll('*').remove();
-  d3.select(containerLow.value).selectAll('*').remove();
-  _draw();
-}
-
-onMounted(() => {
-  _draw();
-});
 </script>
 
 <template>
   <div>
     <h3>Upper bounds</h3>
-    <svg
-      ref='container-high'
-      :viewBox=viewBox
-      preserveAspectRatio="xMidYMid meet">
-    </svg>
+    <RunSpecView :runSpec='device.bounds[1]'></RunSpecView>
   </div>
   <div>
     <h3>Lower bounds</h3>
-    <svg
-      ref='container-low'
-      :viewBox=viewBox
-      preserveAspectRatio="xMidYMid meet">
-    </svg>
+    <RunSpecView :runSpec='device.bounds[0]'></RunSpecView>
   </div>
 </template>
 
