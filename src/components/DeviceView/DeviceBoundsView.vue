@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { defineProps, onMounted, useTemplateRef } from 'vue';
+import { defineProps, onMounted, useTemplateRef, computed } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
 import { draw, type Options } from '@/components/components/RunSpecEditor';
 import * as d3 from 'd3';
 
-const { device } = defineProps<{
+const { device, width = 1280, height = 480 } = defineProps<{
   device: IBaseDevice,
+  type: 'bounds' | 'cbounds'
   width?: number | string,
   height?: number | string,
 }>();
@@ -16,6 +17,8 @@ const options: Partial<Options> =     {
   autoPaddingFactor: [0.5, 0.5],
   xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
 };
+const viewBox = computed(() => `0 0 ${width} ${height}`);
+
 
 function _draw() {
   if(!containerHigh.value) return;
@@ -50,7 +53,7 @@ onMounted(() => {
     <h3>Upper bounds</h3>
     <svg
       ref='container-high'
-      viewBox="0 0 1280 480"
+      :viewBox=viewBox
       preserveAspectRatio="xMidYMid meet">
     </svg>
   </div>
@@ -58,7 +61,7 @@ onMounted(() => {
     <h3>Lower bounds</h3>
     <svg
       ref='container-low'
-      viewBox="0 0 1280 480"
+      :viewBox=viewBox
       preserveAspectRatio="xMidYMid meet">
     </svg>
   </div>
