@@ -27,5 +27,21 @@ module.exports = {
     'jsx-quotes': ['error', 'prefer-single'],
     'vue/multi-word-component-names': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    'no-unused-vars': [
+      'warn',
+      { vars: 'all', args: 'none', argsIgnorePattern: '^_|this', ignoreRestSiblings: false },
+    ],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        'args': 'all',
+        'argsIgnorePattern': '^_',
+        'caughtErrors': 'all',
+        'caughtErrorsIgnorePattern': '^_',
+        'destructuredArrayIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'ignoreRestSiblings': true
+      }
+    ]
   }
 };
