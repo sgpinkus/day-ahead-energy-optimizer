@@ -6,7 +6,7 @@ import { RunSpec } from '@/model/RunSpec';
 
 const emit = defineEmits(['data-changed']);
 
-const { runSpec, width = 1280, height = 480 } = defineProps<{
+const { runSpec, width = 960, height = 360 } = defineProps<{
   runSpec: RunSpec,
   width?: number | string,
   height?: number | string,
@@ -45,7 +45,8 @@ onMounted(() => {
     <svg
       ref='container'
       :viewBox=viewBox
-      preserveAspectRatio="xMidYMid meet">
+      preserveAspectRatio="xMidYMid meet"
+    >
     </svg>
   </div>
 </template>

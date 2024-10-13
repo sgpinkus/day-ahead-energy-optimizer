@@ -7,10 +7,17 @@ export class RunSpec {
   private _runs: Record<number, number> = {};
   constructor(
     public readonly basis: number,
-    zerothValue: number,
+    zerothValue?: number,
     public readonly hardBounds?: [number, number],
   ) {
-    this._runs[0] = zerothValue;
+    this._runs[0] = zerothValue ?? this._figureZero();
+  }
+
+  _figureZero() {
+    if(this.hardBounds) {
+      return Math.abs(this.hardBounds[1]) > Math.abs(this.hardBounds[0]) ? this.hardBounds[0] : this.hardBounds[1];
+    }
+    return 0;
   }
 
   get length() {

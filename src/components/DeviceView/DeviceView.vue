@@ -3,6 +3,7 @@ import { ref, defineProps } from 'vue';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
+import DeviceCBoundsView from './DeviceCBoundsView.vue';
 import model from '@/model';
 import router from '@/router';
 
@@ -35,6 +36,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
       <h2>{{ device.title }}</h2>
       <DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView>
       <DeviceBoundsView v-if='tab === "bounds"' :device='device'></DeviceBoundsView>
+      <DeviceCBoundsView v-if='tab === "cbounds"' :device='device'></DeviceCBoundsView>
     </v-container>
   </v-main>
 </template>
@@ -45,7 +47,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
   }
 
   .container {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;

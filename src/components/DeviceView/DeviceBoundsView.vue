@@ -1,39 +1,35 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-import * as d3 from 'd3';
+import { computed, defineProps } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';
 import RunSpecView from './RunSpecView.vue';
 
 
-const { device, type } = defineProps<{
+const { device } = defineProps<{
   device: IBaseDevice,
-  type: 'bounds' | 'cbounds'
 }>();
 
-// const hBounds = device[type]?[1] ? device[type]?[1] : new RunSpec;
+// Just edit directly instead of a copy..
+const hBounds = device.bounds[1];
+const lBounds = device.bounds[0];
 
 </script>
 
 <template>
-  <div>
+  <v-card>
     <h3>Upper bounds</h3>
-    <RunSpecView :runSpec='device.bounds[1]'></RunSpecView>
-  </div>
-  <div>
+    <RunSpecView :runSpec='hBounds'></RunSpecView>
+  </v-card>
+  <v-card>
     <h3>Lower bounds</h3>
-    <RunSpecView :runSpec='device.bounds[0]'></RunSpecView>
-  </div>
+    <RunSpecView :runSpec='lBounds'></RunSpecView>
+  </v-card>
+  <v-spacer></v-spacer>
 </template>
 
 <style scoped>
-  /** TODO: get this to stretch! */
-  div {
-    min-width: 400px;
-    /* max-width: 960px; */
-    width: 960px;
-    min-height: 100px;
-    flex: 1;
+  .v-card {
+    margin: 1em;
   }
 
   hr {

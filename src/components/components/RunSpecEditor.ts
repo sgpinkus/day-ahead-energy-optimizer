@@ -142,7 +142,7 @@ export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}
     .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) + 1)
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
-    .attr('stroke-width', 4)
+    .attr('stroke-width', 3)
     .attr('cursor', 'grabbing')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
