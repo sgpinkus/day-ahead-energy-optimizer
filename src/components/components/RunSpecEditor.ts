@@ -28,12 +28,11 @@ type Range = [number, [number, number]];
 export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = () => {}, _options: Partial<Options> = {}) {
 
   function vStarted(this: Element, event: DragEvent) {
-    console.log('v drag started');
     drawLine(event.y);
   }
 
   function vDragged(this: Element, event: DragEvent, datum: Range) {
-    const [v, range] = datum;
+    const [v] = datum;
     const value = -event.y;
     const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
     console.debug(`
@@ -45,7 +44,6 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
     newValue=${value}
     newDomainValue=${domainValue}`);
     drawLine(event.y);
-    data.set(range[0], domainValue);
     // Ideally just this setTimeout(_barGroups, 0) but it doesn't work ...
     d3.select(this)
       .selectAll('.bar')
@@ -54,46 +52,58 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
       .classed('bar-active', true);
   }
 
-  function vStopped() {
-    console.log('v drag stopped');
+  function vStopped(this: Element, event: DragEvent, datum: Range) {
+    const [_v, range] = datum;
+    const value = -event.y;
+    const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
     lineGroup.attr('opacity', 0);
+    try {
+      data.set(range[0], domainValue);
+    } catch(e: any) {
+      console.error(e?.message);
+    }
     changed();
   }
 
-  function hStarted(this: Element, event: DragEvent, [v, range]: Range) {
+  function hStarted(this: Element, event: DragEvent, [_v, range]: Range) {
     selectedIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
     console.log('h drag started at', selectedIndex);
   }
 
-  function hStopped(this: Element, event: DragEvent, [v, range]: Range) {
+  function hStopped(this: Element, event: DragEvent, [_v, range]: Range) {
     const newStartIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
     if(selectedIndex !== undefined && newStartIndex !== undefined) {
       data.move(selectedIndex, newStartIndex);
     }
-    console.log('h drag stopped', selectedIndex, newStartIndex);
     changed();
   }
 
   function getRange() {
     const [min, max] = [Math.min(...data.toArray()), Math.max(...data.toArray())];
     const spread = max - min;
-    function _min() {
-      if(options.range && options.range[0] !== undefined) return options.range[0];
-      if(spread) return min - options.autoPaddingFactor[0] * spread;
-      else if(min !== 0) {
-        return (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
+    function getMin() {
+      let v = -1;
+      if(options.range && options.range[0] !== undefined) {
+        v = options.range[0];
+      } else if(spread) {
+        v = min - options.autoPaddingFactor[0] * spread;
+      } else if(min !== 0) {
+        v = (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
       }
-      return -1;
+      return Math.max(v, data.hardBounds ? data.hardBounds[0] : Number.NEGATIVE_INFINITY);
     }
-    function _max() {
-      if(options.range && options.range[1] !== undefined) return options.range[1];
-      if(spread) return max + options.autoPaddingFactor[1] * spread;
-      else if(max !== 0) {
-        return (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
+    function getMax() {
+      let v = 1;
+      if(options.range && options.range[1] !== undefined) {
+        v = options.range[1];
+      } else if(spread) {
+        v = max + options.autoPaddingFactor[1] * spread;
+      } else if(max !== 0) {
+        v = (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
       }
-      return 1;
+      return Math.min(v, data.hardBounds ? data.hardBounds[1] : Number.POSITIVE_INFINITY);
     }
-    return [_min(), _max()];
+    return [getMin(), getMax()];
   }
 
   function drawLine(eventY: number) {
@@ -117,10 +127,10 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   const dragV = d3.drag<SVGGElement, [number, [number, number]]>();
   const dragH = d3.drag<SVGRectElement, [number, [number, number]]>();
   const barGroups = g.selectAll('.bar-group').data(data.toRanges()).enter().append('g')
-    .attr('transform', ([v, range]) => `translate(${xScale(range[0])}, ${yScale(0)})`);
+    .attr('transform', ([_v, range]) => `translate(${xScale(range[0])}, ${yScale(0)})`);
   const bars = barGroups
     .append('g')
-      .each(function(d, i) { index.set(this, i); })
+      .each(function(_d, i) { index.set(this, i); })
       .attr('class', function() { return `bar-${index.get(this)}`; })
       .call(dragV.on('start', vStarted))
       .call(dragV.on('drag', vDragged))
@@ -128,11 +138,11 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   barGroups.exit().remove();
   bars.append('rect')
     .classed('bar', true)
-    .attr('width', ([v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter()*2)
-    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)) + 1)
-    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
+    .attr('width', ([_v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter()*2)
+    .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) + 1)
+    .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 4)
     .attr('cursor', 'grabbing')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
@@ -147,8 +157,8 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
   bars.append('rect')
     .classed('bar', true)
     .attr('width', xScale.step()*0.8)
-    .attr('height',  ([v, range]) => Math.abs(yScale(0) - yScale(v)) - 1)
-    .attr('transform', ([v, range]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
+    .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) - 1)
+    .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
     .attr('stroke', 'red')
     .attr('fill', 'red')
     .attr('cursor', 'grabbing')
@@ -161,7 +171,7 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
       d3.select(this).attr('opacity', '1');
     });
   const barTops = bars.append('g')
-    .attr('transform', ([v, range]) => `translate(0, ${yScale(v) - yScale(0)})`);
+    .attr('transform', ([v]) => `translate(0, ${yScale(v) - yScale(0)})`);
   barTops.append('text')
     .text(([h, range]) => {
       const w = range[1] - range[0] + 1;
@@ -174,7 +184,7 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
     .attr('opacity', '0');
   barTops.append('polygon')
     .attr('points', '0,0 30,0 15,15 0,0')
-    .attr('transform', ([v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 15}, -7.5)`)
+    .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 15}, -7.5)`)
     .attr('fill', 'red')
     .attr('stroke', 'red')
     .attr('cursor', 'crosshair')
@@ -186,7 +196,6 @@ export function draw(container: SVGSVGElement, data: RunSpec<number>, changed = 
       d3.select(this).attr('opacity', '0');
     })
     .on('mousedown', function(e: Event) {
-      console.log(e, index.get(this));
       data.split(index.get(this)!);
       e.stopPropagation();
       changed();

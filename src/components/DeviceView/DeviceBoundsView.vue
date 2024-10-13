@@ -12,7 +12,7 @@ const { device } = defineProps<{
 const containerHigh = useTemplateRef('container-high');
 const containerLow = useTemplateRef('container-low');
 const options: Partial<Options> =     {
-  // range: [0,2],
+  // range: [0, undefined],
   autoPaddingFactor: [0.5, 0.5],
   xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
 };

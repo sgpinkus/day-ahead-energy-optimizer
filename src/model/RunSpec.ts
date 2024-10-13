@@ -2,11 +2,15 @@ import { cloneDeep } from 'lodash';
 
 type RunRange<X> = [X, [number, number]]
 
-export class RunSpec<X> {
-  /** Using an object over a Map as entries() is implicitly sorted */
+export class RunSpec<X extends number> {
+  /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
   private _runs: Record<number, X> = {};
-  constructor(public readonly basis: number, zeroth: X) {
-    this._runs[0] = zeroth;
+  constructor(
+    public readonly basis: number,
+    zerothValue: X,
+    public readonly hardBounds?: [number, number],
+  ) {
+    this._runs[0] = zerothValue;
   }
 
   get length() {
@@ -18,7 +22,8 @@ export class RunSpec<X> {
   }
 
   set(i: number, v: X) {
-    this.assertBounds(i);
+    this.assertIndexBounds(i);
+    this.assertValueBounds(v);
     this._runs[i] = v;
   }
 
@@ -50,7 +55,7 @@ export class RunSpec<X> {
   getRun(i: number) {
     let start = 0;
     let index = -1;
-    for(const [k, x] of Object.entries(this._runs)) {
+    for(const [k] of Object.entries(this._runs)) {
       if(Number(k) <= i) start = Number(k);
       if(Number(k) > i) break;
       index += 1;
@@ -71,7 +76,7 @@ export class RunSpec<X> {
    * Just delete every run in between current start and newstart including old start.
    */
   move(i: number, newStart: number) {
-    this.assertBounds(i);
+    this.assertIndexBounds(i);
     if(i === 0) throw new Error('cant move run 0');
     const runStart = this.getRun(i)[1];
     const v = this.get(runStart);
@@ -96,7 +101,11 @@ export class RunSpec<X> {
     });
   }
 
-  assertBounds(i: number) {
-    if(i < 0 || i >> this.basis) throw new Error('out of bounds');
+  assertIndexBounds(i: number) {
+    if(i < 0 || i >> this.basis) throw new RangeError('index out of bounds');
+  }
+
+  assertValueBounds(v: X) {
+    if(this.hardBounds && (v < this.hardBounds[0] || v > this.hardBounds[1])) throw new RangeError('value out of bounds');
   }
 }

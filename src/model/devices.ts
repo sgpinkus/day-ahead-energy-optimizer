@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { DefaultBasis } from './constants';
+import { DefaultBasis, BigNumber } from './constants';
 import { RunSpec } from './RunSpec';
 import { pick } from 'lodash';
 
@@ -71,8 +71,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       title: 'Load',
       description: 'A load device',
       color: 'blue',
-      hardBounds: [0, 1e3],
-      bounds: boundsRunSpecs(0,1), // Just set these to a (bad) default.
+      hardBounds: [0, BigNumber],
+      bounds: boundsRunSpecs(0,1, [0, BigNumber]), // Just set these to a (bad) default.
     };
     case 'supply': return {
       ..._baseDevice,
@@ -80,16 +80,16 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       title: 'Supply',
       description: 'A supply device',
       color: 'red',
-      hardBounds: [-1e3, 0],
-      bounds: boundsRunSpecs(-1, 0),
+      hardBounds: [-BigNumber, 0],
+      bounds: boundsRunSpecs(-1, 0, [-BigNumber, 0]),
     };
     case 'fixed_load': return {
       ..._baseDevice,
       type: 'fixed_load',
       title: 'Fixed Load',
       description: 'A fixed load device',
-      hardBounds: [0, 1e3],
-      bounds: boundsRunSpecs(1,1) // A fixed load device is just a device whose lbound == hbound.
+      hardBounds: [0, BigNumber],
+      bounds: boundsRunSpecs(1,1, [0, BigNumber]) // A fixed load device is just a device whose lbound == hbound.
     };
     case 'storage': return {
       ..._baseDevice,
@@ -97,8 +97,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       title: 'Storage',
       description: 'A storage device',
       color: 'yellow',
-      hardBounds: [-1e3, 1e3],
-      bounds: boundsRunSpecs(-1,1),
+      hardBounds: [-BigNumber, BigNumber],
+      bounds: boundsRunSpecs(-1,1, [-BigNumber, BigNumber]),
       efficiencyFactor: 1.0,
       cycleCostFactor: 0.0,
       depthhCostFactor: 0.0,
@@ -107,10 +107,10 @@ function plainDeviceFactory(type: DeviceType): IDevice {
   }
 }
 
-function boundsRunSpecs(l: number, h: number): [RunSpec<number>, RunSpec<number>] {
+function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec<number>, RunSpec<number>] {
   return [
-    new RunSpec<number>(DefaultBasis, l),
-    new RunSpec<number>(DefaultBasis, h),
+    new RunSpec<number>(DefaultBasis, l, hb),
+    new RunSpec<number>(DefaultBasis, h, hb),
   ];
 }
 
@@ -119,7 +119,7 @@ export class BaseDevice implements IBaseDevice {
   readonly type: DeviceType;
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
-  readonly hardBounds: [number, number] = [-1e3, 1e3];
+  readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsRunSpecs(-1, 1);
   cbounds?: CBounds;
   costs: Record<string, Cost> = {};
