@@ -60,72 +60,6 @@ export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadD
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
-// Always torn about whether to add behaviours to objects or use C style OO. Alwasy start with the latter.
-// But already seem like some data protection / validation would be nice such as ensure bounds within hardBounds ...
-
-function plainDeviceFactory(type: DeviceType): IDevice {
-  const _baseDevice = {
-    basis: DefaultBasis,
-    attrs: {},
-    costs: {},
-    shape: 'circle',
-  };
-  const stuff: Record<DeviceType, IDevice> = {
-    load: {
-      ..._baseDevice,
-      type: 'load',
-      title: 'Load',
-      description: 'A load device',
-      color: 'blue',
-      hardBounds: [0, BigNumber],
-      bounds: boundsRunSpecs(0,1, [0, BigNumber]), // Just set these to a (bad) default.
-      cbounds: [undefined, undefined],
-    },
-    supply: {
-      ..._baseDevice,
-      type: 'supply',
-      title: 'Supply',
-      description: 'A supply device',
-      color: 'red',
-      hardBounds: [-BigNumber, 0],
-      bounds: boundsRunSpecs(-1, 0, [-BigNumber, 0]),
-      cbounds: [undefined, undefined],
-      attrs: {
-        showInverted: true,
-      }
-    },
-    fixed_load: {
-      ..._baseDevice,
-      type: 'fixed_load',
-      title: 'Fixed Load',
-      description: 'A fixed load device',
-      hardBounds: [0, BigNumber],
-      bounds: boundsRunSpecs(1,1, [0, BigNumber],), // A fixed load device is just a device whose lbound == hbound.
-      cbounds: [undefined, undefined],
-    },
-    storage: {
-      ..._baseDevice,
-      type: 'storage',
-      title: 'Storage',
-      description: 'A storage device',
-      color: 'yellow',
-      hardBounds: [-BigNumber, BigNumber],
-      bounds: boundsRunSpecs(-1,1, [-BigNumber, BigNumber]),
-      cbounds: [undefined, undefined],
-      efficiencyFactor: 1.0,
-      cycleCostFactor: 0.0,
-      depthCostFactor: 0.0,
-      attrs: {
-        hideBounds: true,
-        hideCBounds: true,
-        hideCosts: true,
-        hasParameters: true,
-      }
-    }
-  };
-  return stuff[type];
-}
-
 function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec, RunSpec] {
   return [
     new RunSpec(DefaultBasis, l, hb),
@@ -171,33 +105,82 @@ export abstract class BaseDevice implements IBaseDevice {
 
 export class FixedLoadDevice extends BaseDevice {
   type: DeviceType = 'fixed_load';
+  basis = DefaultBasis;
+  costs = {};
+  shape = 'circle';
+  title = 'Fixed Load';
+  description = 'A fixed load device';
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsRunSpecs(1,1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
+  cbounds: CBounds = [undefined, undefined];
+
   constructor(data?: Partial<IFixedLoadDevice>) {
     super();
-    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
+    Object.assign(this, data);
   }
 }
 
 export class LoadDevice extends BaseDevice {
   type: DeviceType = 'load';
-    constructor(data?: Partial<ILoadDevice>) {
+  basis = DefaultBasis;
+  costs = {};
+  shape = 'circle';
+  title = 'Load';
+  description = 'A load device';
+  color = 'blue';
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsRunSpecs(0,1, [0, BigNumber]);
+  cbounds: CBounds = [undefined, undefined];
+
+  constructor(data?: Partial<ILoadDevice>) {
     super();
-    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
+    Object.assign(this, data);
   }
 }
 
 export class SupplyDevice extends BaseDevice {
   type: DeviceType = 'supply';
+  basis = DefaultBasis;
+  costs = {};
+  shape = 'circle';
+  title = 'Supply';
+  description = 'A supply device';
+  color = 'red';
+  hardBounds: [number, number] = [-BigNumber, 0];
+  bounds = boundsRunSpecs(-1, 0, [-BigNumber, 0]);
+  cbounds: CBounds = [undefined, undefined];
+  attrs = {
+    showInverted: true,
+  };
   constructor(data?: Partial<ISupplyDevice>) {
     super();
-    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
+    Object.assign(this, data);
   }
 }
 
 export class StorageDevice extends BaseDevice {
   type: DeviceType = 'storage';
+  basis = DefaultBasis;
+  costs = {};
+  shape = 'circle';
+  title = 'Storage';
+  description = 'A storage device';
+  color = 'yellow';
+  hardBounds: [number, number] = [-BigNumber, BigNumber];
+  bounds = boundsRunSpecs(-1,1, [-BigNumber, BigNumber]);
+  cbounds: CBounds = [undefined, undefined];
+  efficiencyFactor = 1.0;
+  cycleCostFactor = 0.0;
+  depthCostFactor = 0.0;
+  attrs = {
+    hideBounds: true,
+    hideCBounds: true,
+    hideCosts: true,
+    hasParameters: true,
+  };
   constructor(data?: Partial<IStorageDevice>) {
     super();
-    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
+    Object.assign(this, data);
   }
 }
 
