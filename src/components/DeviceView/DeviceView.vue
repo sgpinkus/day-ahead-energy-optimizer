@@ -4,13 +4,15 @@ import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
 import DeviceCBoundsView from './DeviceCBoundsView.vue';
+import DeviceCostsView from './DeviceCostsView.vue';
+import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
 import router from '@/router';
 
 type props = {
   id: string;
 }
-const tab = ref('edit');
+const tab = ref('descriptors');
 const { id: deviceId } = defineProps<props>();
 const device = model.devices.getDevice(deviceId);
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
@@ -25,18 +27,21 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
     <v-divider></v-divider>
       <v-list class='flex-shrink-0'>
         <v-list-subheader>Device Components</v-list-subheader>
-        <v-list-item prepend-icon='mdi-text-box-edit' @click='tab = "edit"'>Descriptors</v-list-item>
-        <v-list-item prepend-icon='mdi-minus-box' @click='tab = "bounds"'>Bounds</v-list-item>
-        <v-list-item prepend-icon='mdi-equal-box' @click='tab = "cbounds"'>CBounds</v-list-item>
-        <v-list-item prepend-icon='mdi-function' @click='tab = "costs"'>Costs</v-list-item>
+        <v-list-item prepend-icon='mdi-text-box-edit' @click='tab = "descriptors"'>Descriptors</v-list-item>
+        <v-list-item v-if='!device.attrs.hideBounds' prepend-icon='mdi-minus-box' @click='tab = "bounds"'>Bounds</v-list-item>
+        <v-list-item v-if='!device.attrs.hideCBounds' prepend-icon='mdi-equal-box' @click='tab = "cbounds"'>CBounds</v-list-item>
+        <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Costs</v-list-item>
+        <v-list-item v-if='device.attrs.hasParameters' prepend-icon='mdi-function' @click='tab = "costs"'>Parameters</v-list-item>
       </v-list>
   </AppNavDrawer>
   <v-main>
     <v-container class='container'>
       <h2>{{ device.title }}</h2>
-      <DeviceDescriptorsView v-if='tab === "edit"' :device='device'></DeviceDescriptorsView>
-      <DeviceBoundsView v-if='tab === "bounds"' :device='device'></DeviceBoundsView>
-      <DeviceCBoundsView v-if='tab === "cbounds"' :device='device'></DeviceCBoundsView>
+      <DeviceDescriptorsView v-if='tab === "descriptors"' :device='device'></DeviceDescriptorsView>
+      <DeviceBoundsView v-if='tab === "bounds" && !device.attrs.hideBounds' :device='device'></DeviceBoundsView>
+      <DeviceCBoundsView v-if='tab === "cbounds" && !device.attrs.hideCBounds' :device='device'></DeviceCBoundsView>
+      <DeviceCostsView v-if='tab === "costs" && !device.attrs.hideCosts' :device='device'></DeviceCostsView>
+      <DeviceParametersView v-if='tab === "costs" && device.attrs.hasParameters' :device='device'></DeviceParametersView>
     </v-container>
   </v-main>
 </template>

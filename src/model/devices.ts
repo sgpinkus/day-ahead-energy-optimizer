@@ -5,8 +5,14 @@ import { pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
+// This is just a scrappt adhoc collection of meta data for things -
+// mostly hints to render the given device type in generic device views.
 type IAttributes = {
   showInverted?: boolean,
+  hasParameters?: boolean,
+  hideBounds?: boolean,
+  hideCBounds?: boolean,
+  hideCosts?: boolean,
 }
 
 // RunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
@@ -84,6 +90,9 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       hardBounds: [-BigNumber, 0],
       bounds: boundsRunSpecs(-1, 0, [-BigNumber, 0]),
       cbounds: [undefined, undefined],
+      attrs: {
+        showInverted: true,
+      }
     };
     case 'fixed_load': return {
       ..._baseDevice,
@@ -106,6 +115,12 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       efficiencyFactor: 1.0,
       cycleCostFactor: 0.0,
       depthhCostFactor: 0.0,
+      attrs: {
+        hideBounds: true,
+        hideCBounds: true,
+        hideCosts: true,
+        hasParameters: true,
+      }
     };
     default: throw Error();
   }
