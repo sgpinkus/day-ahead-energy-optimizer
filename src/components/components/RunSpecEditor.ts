@@ -32,17 +32,17 @@ export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}
   }
 
   function vDragged(this: Element, event: DragEvent, datum: Range) {
-    const [v] = datum;
+    // const [v] = datum;
     const value = -event.y;
-    const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
-    console.debug(`
-    data=${datum},
-    yPos(datum)=${yScale(v)}
-    yPos(0)=${yScale(0)}
-    height=${height}
-    event.y=${event.y}
-    newValue=${value}
-    newDomainValue=${domainValue}`);
+    // const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
+    // console.debug(`
+    // data=${datum},
+    // yPos(datum)=${yScale(v)}
+    // yPos(0)=${yScale(0)}
+    // height=${height}
+    // event.y=${event.y}
+    // newValue=${value}
+    // newDomainValue=${domainValue}`);
     drawLine(event.y);
     // Ideally just this setTimeout(_barGroups, 0) but it doesn't work ...
     d3.select(this)
@@ -74,8 +74,8 @@ export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}
     const newStartIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
     if(selectedIndex !== undefined && newStartIndex !== undefined) {
       data.move(selectedIndex, newStartIndex);
+      changed();
     }
-    changed();
   }
 
   function getRange() {
@@ -142,7 +142,7 @@ export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}
     .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) + 1)
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
-    .attr('stroke-width', 3)
+    .attr('stroke-width', 4)
     .attr('cursor', 'grabbing')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');

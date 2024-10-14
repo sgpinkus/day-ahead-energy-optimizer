@@ -4,13 +4,13 @@ type RunRange = [number, [number, number]]
 
 export class RunSpec {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
-  private _runs: Record<number, number> = {};
+  runs: Record<number, number> = {};
   constructor(
     public readonly basis: number,
     zerothValue?: number,
     public readonly hardBounds?: [number, number],
   ) {
-    this._runs[0] = zerothValue ?? this._figureZero();
+    this.runs[0] = zerothValue ?? this._figureZero();
   }
 
   _figureZero() {
@@ -21,7 +21,7 @@ export class RunSpec {
   }
 
   get length() {
-    return Object.keys(this._runs).length;
+    return Object.keys(this.runs).length;
   }
 
   get ranges() {
@@ -31,16 +31,16 @@ export class RunSpec {
   set(i: number, v: number) {
     this.assertIndexBounds(i);
     this.assertValueBounds(v);
-    this._runs[i] = v;
+    this.runs[i] = v;
   }
 
   unset(i: number) {
-    delete this._runs[i];
+    delete this.runs[i];
   }
 
   unsetRange(s: number, e: number) {
     const [min, max] = [Math.min(s, e), Math.max(s, e)];
-    for(const i of Object.keys(this._runs).map(i => Number(i))) {
+    for(const i of Object.keys(this.runs).map(i => Number(i))) {
       if(min <= i && max >= i) {
         this.unset(i);
       }
@@ -48,8 +48,8 @@ export class RunSpec {
   }
 
   get(i: number): number {
-    let v = this._runs[0];
-    for(const [k, x] of Object.entries(this._runs)) {
+    let v = this.runs[0];
+    for(const [k, x] of Object.entries(this.runs)) {
       if(Number(k) <= i) v = x;
       if(Number(k) > i) break;
     }
@@ -62,7 +62,7 @@ export class RunSpec {
   getRun(i: number) {
     let start = 0;
     let index = -1;
-    for(const [k] of Object.entries(this._runs)) {
+    for(const [k] of Object.entries(this.runs)) {
       if(Number(k) <= i) start = Number(k);
       if(Number(k) > i) break;
       index += 1;
@@ -72,7 +72,7 @@ export class RunSpec {
 
   split(i: number) {
     // eslint-disable-next-line prefer-const
-    let [a, b] = Object.keys(this._runs).map(i => +i).slice(i, i+2);
+    let [a, b] = Object.keys(this.runs).map(i => +i).slice(i, i+2);
     b = b || this.basis - 1;
     if (a === undefined || b - a <= 1) return;
     this.set(Math.floor(a + (b-a)/2), this.get(a));
@@ -93,8 +93,8 @@ export class RunSpec {
     this.set(newStart, v);
   }
 
-  runs(): Record<number, number> {
-    return cloneDeep(this._runs);
+  toRecord(): Record<number, number> {
+    return cloneDeep(this.runs);
   }
 
   toArray() {
@@ -102,7 +102,7 @@ export class RunSpec {
   }
 
   toRanges(): RunRange[] {
-    const entries = Object.entries(this._runs);
+    const entries = Object.entries(this.runs);
     return entries.map(([k, v], i) => {
       return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
     });

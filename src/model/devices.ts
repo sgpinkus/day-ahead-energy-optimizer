@@ -11,7 +11,7 @@ type IAttributes = {
 
 // RunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
 type Bounds = [RunSpec, RunSpec];
-type CBounds = [RunSpec, RunSpec];
+type CBounds = [RunSpec | undefined, RunSpec | undefined];
 // Just a single quadratic over all slots for now. Future can run spec this too.
 // type Cost = [RunSpec, RunSpec, RunSpec] // RunSpec<[number, number, number]>
 type Cost = [number, number, number]
@@ -27,7 +27,7 @@ export interface  IBaseDevice {
   shape?: string,
   tags?: Record<string, boolean | number | string>,
   bounds: Bounds,
-  cbounds?: CBounds,
+  cbounds: CBounds,
   costs: Record<string, Cost>,
 }
 
@@ -73,6 +73,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       color: 'blue',
       hardBounds: [0, BigNumber],
       bounds: boundsRunSpecs(0,1, [0, BigNumber]), // Just set these to a (bad) default.
+      cbounds: [undefined, undefined],
     };
     case 'supply': return {
       ..._baseDevice,
@@ -82,6 +83,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       color: 'red',
       hardBounds: [-BigNumber, 0],
       bounds: boundsRunSpecs(-1, 0, [-BigNumber, 0]),
+      cbounds: [undefined, undefined],
     };
     case 'fixed_load': return {
       ..._baseDevice,
@@ -89,7 +91,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       title: 'Fixed Load',
       description: 'A fixed load device',
       hardBounds: [0, BigNumber],
-      bounds: boundsRunSpecs(1,1, [0, BigNumber]) // A fixed load device is just a device whose lbound == hbound.
+      bounds: boundsRunSpecs(1,1, [0, BigNumber],), // A fixed load device is just a device whose lbound == hbound.
+      cbounds: [undefined, undefined],
     };
     case 'storage': return {
       ..._baseDevice,
@@ -99,6 +102,7 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       color: 'yellow',
       hardBounds: [-BigNumber, BigNumber],
       bounds: boundsRunSpecs(-1,1, [-BigNumber, BigNumber]),
+      cbounds: [undefined, undefined],
       efficiencyFactor: 1.0,
       cycleCostFactor: 0.0,
       depthhCostFactor: 0.0,
@@ -121,7 +125,7 @@ export class BaseDevice implements IBaseDevice {
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsRunSpecs(-1, 1);
-  cbounds?: CBounds;
+  cbounds: CBounds = [undefined, undefined];
   costs: Record<string, Cost> = {};
   title?: string;
   description?: string;

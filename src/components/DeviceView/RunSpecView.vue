@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onMounted, useTemplateRef, computed, defineEmits } from 'vue';
+import { defineProps, onMounted, useTemplateRef, computed, defineEmits, watch } from 'vue';
 import { draw, type Options } from '@/components/components/RunSpecEditor';
 import * as d3 from 'd3';
 import { RunSpec } from '@/model/RunSpec';
@@ -18,6 +18,8 @@ const options: Partial<Options> =     {
   xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
 };
 const viewBox = computed(() => `0 0 ${width} ${height}`);
+
+watch(()=> runSpec, () => _draw());
 
 function _draw() {
   if(!container.value) return;

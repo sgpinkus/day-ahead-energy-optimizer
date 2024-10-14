@@ -10,7 +10,7 @@ import router from '@/router';
 type props = {
   id: string;
 }
-const tab = ref('bounds');
+const tab = ref('edit');
 const { id: deviceId } = defineProps<props>();
 const device = model.devices.getDevice(deviceId);
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });

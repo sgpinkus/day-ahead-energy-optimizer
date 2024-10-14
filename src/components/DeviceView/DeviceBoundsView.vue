@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
-import { RunSpec } from '@/model/RunSpec';
 import RunSpecView from './RunSpecView.vue';
 
 
@@ -10,8 +9,8 @@ const { device } = defineProps<{
 }>();
 
 // Just edit directly instead of a copy..
-const hBounds = device.bounds[1];
 const lBounds = device.bounds[0];
+const hBounds = device.bounds[1];
 
 </script>
 
