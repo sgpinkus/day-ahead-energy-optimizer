@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps, onMounted, ref } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
-import { RunSpec } from '@/model/RunSpec';
+import { NumberRunSpec } from '@/model/RunSpec';
 import RunSpecView from './RunSpecView.vue';
 import { cloneDeep } from 'lodash';
 
@@ -10,20 +10,20 @@ const { device } = defineProps<{
   device: IBaseDevice,
 }>();
 
-const lBounds = ref(device.cbounds[0] ? device.cbounds[0].copy() : new RunSpec(device.basis, undefined, device.hardBounds));
-const hBounds = ref(device.cbounds[1] ? device.cbounds[1].copy() : new RunSpec(device.basis, undefined, device.hardBounds));
+const lBounds = ref(device.cbounds[0] ? device.cbounds[0].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
+const hBounds = ref(device.cbounds[1] ? device.cbounds[1].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
 
 const isUnSetLBounds = computed(() => !device.cbounds[0]);
 const isUnSetHBounds = computed(() => !device.cbounds[1]);
 
 function unSetCBoundsLow() {
   device.cbounds[0] = undefined; // eslint-disable-line vue/no-mutating-props
-  lBounds.value = new RunSpec(device.basis, undefined, device.hardBounds);
+  lBounds.value = new NumberRunSpec(device.basis, undefined, device.hardBounds);
 }
 
 function unSetCBoundsHigh() {
   device.cbounds[1] = undefined; // eslint-disable-line vue/no-mutating-props
-  hBounds.value = new RunSpec(device.basis, undefined, device.hardBounds);
+  hBounds.value = new NumberRunSpec(device.basis, undefined, device.hardBounds);
 }
 
 /**

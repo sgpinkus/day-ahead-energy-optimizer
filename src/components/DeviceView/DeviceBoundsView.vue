@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { defineProps } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
 import RunSpecView from './RunSpecView.vue';
 

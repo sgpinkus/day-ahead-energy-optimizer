@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { RunSpec } from '@/model/RunSpec';
+import { NumberRunSpec } from '@/model/RunSpec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
 export type Options = {
@@ -25,13 +25,13 @@ type Range = [number, [number, number]];
  * Draw data and set up graph based on data. data must be an array of numbers.
  * If range use that for y-axis range.
  */
-export function draw(container: SVGSVGElement, data: RunSpec, changed = () => {}, _options: Partial<Options> = {}) {
+export function draw(container: SVGSVGElement, data: NumberRunSpec, changed = () => {}, _options: Partial<Options> = {}) {
 
   function vStarted(this: Element, event: DragEvent) {
     drawLine(event.y);
   }
 
-  function vDragged(this: Element, event: DragEvent, datum: Range) {
+  function vDragged(this: Element, event: DragEvent) { // , datum: Range) {
     // const [v] = datum;
     const value = -event.y;
     // const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));

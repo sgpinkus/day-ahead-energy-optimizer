@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef, computed, watch } from 'vue';
-import { draw, type Options } from '@/components/components/RunSpecEditor';
+import { draw, type Options } from '@/components/components/NumberRunSpecEditor';
 import * as d3 from 'd3';
-import { RunSpec } from '@/model/RunSpec';
+import { NumberRunSpec } from '@/model/RunSpec';
 
 const emit = defineEmits(['data-changed']);
 
 const { runSpec, width = 960, height = 360 } = defineProps<{
-  runSpec: RunSpec,
+  runSpec: NumberRunSpec,
   width?: number | string,
   height?: number | string,
 }>();

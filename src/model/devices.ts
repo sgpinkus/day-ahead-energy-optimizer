@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
-import { RunSpec } from './RunSpec';
+import { NumberRunSpec } from './RunSpec';
 import { pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
@@ -15,11 +15,11 @@ type IAttributes = {
   hideCosts?: boolean,
 }
 
-// RunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
-type Bounds = [RunSpec, RunSpec];
-type CBounds = [RunSpec | undefined, RunSpec | undefined];
+// NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
+type Bounds = [NumberRunSpec, NumberRunSpec];
+type CBounds = [NumberRunSpec | undefined, NumberRunSpec | undefined];
 // Just a single quadratic over all slots for now. Future can run spec this too.
-// type Cost = [RunSpec, RunSpec, RunSpec] // RunSpec<[number, number, number]>
+// type Cost = [NumberRunSpec, NumberRunSpec, NumberRunSpec] // NumberRunSpec<[number, number, number]>
 type Cost = [number, number, number]
 
 export interface  IBaseDevice {
@@ -60,10 +60,10 @@ export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadD
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
-function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec, RunSpec] {
+function boundsNumberRunSpecs(l: number, h: number, hb?: [number, number]): [NumberRunSpec, NumberRunSpec] {
   return [
-    new RunSpec(DefaultBasis, l, hb),
-    new RunSpec(DefaultBasis, h, hb),
+    new NumberRunSpec(DefaultBasis, l, hb),
+    new NumberRunSpec(DefaultBasis, h, hb),
   ];
 }
 
@@ -73,7 +73,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds: Bounds = boundsRunSpecs(-1, 1);
+  bounds: Bounds = boundsNumberRunSpecs(-1, 1);
   cbounds: CBounds = [undefined, undefined];
   costs: Record<string, Cost> = {};
   title?: string;
@@ -111,7 +111,7 @@ export class FixedLoadDevice extends BaseDevice {
   title = 'Fixed Load';
   description = 'A fixed load device';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsRunSpecs(1,1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
+  bounds = boundsNumberRunSpecs(1,1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<IFixedLoadDevice>) {
@@ -129,7 +129,7 @@ export class LoadDevice extends BaseDevice {
   description = 'A load device';
   color = 'blue';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsRunSpecs(0,1, [0, BigNumber]);
+  bounds = boundsNumberRunSpecs(0,1, [0, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<ILoadDevice>) {
@@ -147,9 +147,9 @@ export class SupplyDevice extends BaseDevice {
   description = 'A supply device';
   color = 'red';
   hardBounds: [number, number] = [-BigNumber, 0];
-  bounds = boundsRunSpecs(-1, 0, [-BigNumber, 0]);
+  bounds = boundsNumberRunSpecs(-1, 0, [-BigNumber, 0]);
   cbounds: CBounds = [undefined, undefined];
-  attrs = {
+  attrs: IAttributes = {
     showInverted: true,
   };
   constructor(data?: Partial<ISupplyDevice>) {
@@ -167,7 +167,7 @@ export class StorageDevice extends BaseDevice {
   description = 'A storage device';
   color = 'yellow';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds = boundsRunSpecs(-1,1, [-BigNumber, BigNumber]);
+  bounds = boundsNumberRunSpecs(-1,1, [-BigNumber, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
   efficiencyFactor = 1.0;
   cycleCostFactor = 0.0;
@@ -175,7 +175,7 @@ export class StorageDevice extends BaseDevice {
   deepDepthRatio = 0.2; // How deep does depth damage potentially kick in.
   reserveRequirement = 0.5;
   capacity = 1; // kwh.
-  attrs = {
+  attrs: IAttributes = {
     hideBounds: true,
     hideCBounds: true,
     hideCosts: true,

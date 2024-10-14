@@ -1,23 +1,15 @@
 import { cloneDeep } from 'lodash';
 
-type RunRange = [number, [number, number]]
+type RunRange<X> = [X, [number, number]]
 
-export class RunSpec {
+export class RunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
-  runs: Record<number, number> = {};
+  runs: Record<number, X> = {};
   constructor(
     public readonly basis: number,
-    zerothValue?: number,
-    public readonly hardBounds?: [number, number],
+    zerothValue: X,
   ) {
-    this.runs[0] = zerothValue ?? this._figureZero();
-  }
-
-  _figureZero() {
-    if(this.hardBounds) {
-      return Math.abs(this.hardBounds[1]) > Math.abs(this.hardBounds[0]) ? this.hardBounds[0] : this.hardBounds[1];
-    }
-    return 0;
+    this.runs[0] = zerothValue;
   }
 
   get length() {
@@ -28,9 +20,8 @@ export class RunSpec {
     return this.toRanges();
   }
 
-  set(i: number, v: number) {
+  set(i: number, v: X) {
     this.assertIndexBounds(i);
-    this.assertValueBounds(v);
     this.runs[i] = v;
   }
 
@@ -47,7 +38,7 @@ export class RunSpec {
     }
   }
 
-  get(i: number): number {
+  get(i: number): X {
     let v = this.runs[0];
     for(const [k, x] of Object.entries(this.runs)) {
       if(Number(k) <= i) v = x;
@@ -93,7 +84,7 @@ export class RunSpec {
     this.set(newStart, v);
   }
 
-  toRecord(): Record<number, number> {
+  toRecord(): Record<number, X> {
     return cloneDeep(this.runs);
   }
 
@@ -101,7 +92,7 @@ export class RunSpec {
     return Array.from(Array(this.basis)).map((_x, k) => this.get(k));
   }
 
-  toRanges(): RunRange[] {
+  toRanges(): RunRange<X>[] {
     const entries = Object.entries(this.runs);
     return entries.map(([k, v], i) => {
       return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
@@ -116,13 +107,34 @@ export class RunSpec {
     if(i < 0 || i >> this.basis) throw new RangeError('index out of bounds');
   }
 
+  static copyFrom<X>(x: RunSpec<X>) {
+    const y = new this(1, 1);
+    Object.assign(this, cloneDeep(x));
+    return y;
+  }
+}
+
+export class NumberRunSpec extends RunSpec<number> {
+  constructor(
+    public readonly basis: number,
+    zerothValue?: number,
+    public readonly hardBounds?: [number, number],
+  ) {
+    super(basis, zerothValue ?? NumberRunSpec._figureZero(hardBounds));
+  }
+
+  set(i: number, v: number) {
+    this.assertIndexBounds(i);
+    this.assertValueBounds(v);
+    this.runs[i] = v;
+  }
+
   assertValueBounds(v: number) {
     if(this.hardBounds && (v < this.hardBounds[0] || v > this.hardBounds[1])) throw new RangeError('value out of bounds');
   }
 
-  static copyFrom(x: RunSpec) {
-    const y = new this(1, 1);
-    Object.assign(this, cloneDeep(x));
-    return y;
+  static _figureZero(hardBounds?: [number, number]) {
+    if(hardBounds) return Math.abs(hardBounds[1]) > Math.abs(hardBounds[0]) ? hardBounds[0] : hardBounds[1];
+    return 0;
   }
 }

@@ -1,11 +1,11 @@
 /**
- * The issue is, we can have a class encode its module from replacer/reviver but there is not way to load it synchronously.
- * So until figure that out, this.
+ * The issue is, we can have a class encode its module for replacer/reviver but there is no way to load it synchronously
+ * which is required by JSON.parse. So until figure that out, this hack:
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars  */
+/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars   */
 
-import { RunSpec } from './RunSpec';
+import { RunSpec, NumberRunSpec } from './RunSpec';
 import {
   Devices,
   BaseDevice,
