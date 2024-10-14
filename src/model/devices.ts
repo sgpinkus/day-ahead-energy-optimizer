@@ -49,7 +49,7 @@ export interface IStorageDevice extends IBaseDevice {
   type: 'storage',
   efficiencyFactor: number,
   cycleCostFactor: number,
-  depthhCostFactor: number,
+  depthCostFactor: number,
 }
 
 export interface IFixedLoadDevice extends IBaseDevice {
@@ -70,8 +70,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
     costs: {},
     shape: 'circle',
   };
-  switch(type) {
-    case 'load': return {
+  const stuff: Record<DeviceType, IDevice> = {
+    load: {
       ..._baseDevice,
       type: 'load',
       title: 'Load',
@@ -80,8 +80,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       hardBounds: [0, BigNumber],
       bounds: boundsRunSpecs(0,1, [0, BigNumber]), // Just set these to a (bad) default.
       cbounds: [undefined, undefined],
-    };
-    case 'supply': return {
+    },
+    supply: {
       ..._baseDevice,
       type: 'supply',
       title: 'Supply',
@@ -93,8 +93,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       attrs: {
         showInverted: true,
       }
-    };
-    case 'fixed_load': return {
+    },
+    fixed_load: {
       ..._baseDevice,
       type: 'fixed_load',
       title: 'Fixed Load',
@@ -102,8 +102,8 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       hardBounds: [0, BigNumber],
       bounds: boundsRunSpecs(1,1, [0, BigNumber],), // A fixed load device is just a device whose lbound == hbound.
       cbounds: [undefined, undefined],
-    };
-    case 'storage': return {
+    },
+    storage: {
       ..._baseDevice,
       type: 'storage',
       title: 'Storage',
@@ -114,16 +114,16 @@ function plainDeviceFactory(type: DeviceType): IDevice {
       cbounds: [undefined, undefined],
       efficiencyFactor: 1.0,
       cycleCostFactor: 0.0,
-      depthhCostFactor: 0.0,
+      depthCostFactor: 0.0,
       attrs: {
         hideBounds: true,
         hideCBounds: true,
         hideCosts: true,
         hasParameters: true,
       }
-    };
-    default: throw Error();
-  }
+    }
+  };
+  return stuff[type];
 }
 
 function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec, RunSpec] {
@@ -133,9 +133,9 @@ function boundsRunSpecs(l: number, h: number, hb?: [number, number]): [RunSpec, 
   ];
 }
 
-export class BaseDevice implements IBaseDevice {
+export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
-  readonly type: DeviceType;
+  abstract readonly type: DeviceType;
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
@@ -148,10 +148,8 @@ export class BaseDevice implements IBaseDevice {
   color?: string;
   shape?: string;
 
-  protected constructor(type: DeviceType, data: Partial<IDevice> = {}) {
+  protected constructor() {
     this.id = uuid();
-    this.type = type;
-    Object.assign(this, { ...plainDeviceFactory(type), ...data });
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
@@ -163,6 +161,8 @@ export class BaseDevice implements IBaseDevice {
   }
 
   static fromObject(data: any) {
+    // @ts-expect-error 2511 "Cannot create an instance of an abstract class" yeah, so by definition "this" refers to
+    // a subclass! So shutup!
     const o = new this(data);
     Object.assign(o, data);
     return o;
@@ -172,28 +172,32 @@ export class BaseDevice implements IBaseDevice {
 export class FixedLoadDevice extends BaseDevice {
   type: DeviceType = 'fixed_load';
   constructor(data?: Partial<IFixedLoadDevice>) {
-    super('fixed_load', data);
+    super();
+    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
   }
 }
 
 export class LoadDevice extends BaseDevice {
   type: DeviceType = 'load';
     constructor(data?: Partial<ILoadDevice>) {
-    super('load', data);
+    super();
+    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
   }
 }
 
 export class SupplyDevice extends BaseDevice {
   type: DeviceType = 'supply';
   constructor(data?: Partial<ISupplyDevice>) {
-    super('supply', data);
+    super();
+    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
   }
 }
 
 export class StorageDevice extends BaseDevice {
   type: DeviceType = 'storage';
   constructor(data?: Partial<IStorageDevice>) {
-    super('storage', data);
+    super();
+    Object.assign(this, { ...plainDeviceFactory(this.type), ...data });
   }
 }
 
