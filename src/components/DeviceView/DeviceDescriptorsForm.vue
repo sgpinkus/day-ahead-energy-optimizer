@@ -38,33 +38,41 @@ async function change() { // change(changeKey: string)
     ref="form"
     v-model='valid'
   >
-    <v-label>Title</v-label>
-    <v-text-field
-      v-model="work.title"
-      :counter="titleMaxLength"
-      :rules="titleRules"
-      @change='change'
-    ></v-text-field>
-    <v-label>Description / Notes</v-label>
-    <v-textarea
-      v-model="work.description"
-      :counter="descriptionMaxLength"
-      :rules="descriptionRules"
-      @change='change'
-    ></v-textarea>
-    <v-label>Shape</v-label>
-    <v-select
-      v-model="work.shape"
-      :items="shapeTypes"
-      @update:model-value='change'
-    ></v-select>
-    <v-label>Color</v-label>
-    <v-color-picker
-      v-model="work.color"
-      @update:model-value='change'
-      hide-inputs
-      hide-canvas
-      show-swatches
-    ></v-color-picker>
+    <v-card>
+      <v-label>Title</v-label>
+      <v-text-field
+        v-model="work.title"
+        :counter="titleMaxLength"
+        :rules="titleRules"
+        @change='change'
+      ></v-text-field>
+      <v-label>Description / Notes</v-label>
+      <v-textarea
+        v-model="work.description"
+        :counter="descriptionMaxLength"
+        :rules="descriptionRules"
+        @change='change'
+      ></v-textarea>
+      <v-label>Shape</v-label>
+      <v-select
+        v-model="work.shape"
+        :items="shapeTypes"
+        @update:model-value='change'
+      ></v-select>
+      <v-label>Color</v-label>
+      <v-color-picker
+        v-model="work.color"
+        @update:model-value='change'
+        hide-inputs
+        hide-canvas
+        show-swatches
+      ></v-color-picker>
+    </v-card>
   </v-form>
 </template>
+
+<style scoped>
+.v-card {
+  padding: 1em;
+}
+</style>

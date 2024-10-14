@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onMounted, useTemplateRef, computed, defineEmits, watch } from 'vue';
+import { onMounted, useTemplateRef, computed, watch } from 'vue';
 import { draw, type Options } from '@/components/components/RunSpecEditor';
 import * as d3 from 'd3';
 import { RunSpec } from '@/model/RunSpec';

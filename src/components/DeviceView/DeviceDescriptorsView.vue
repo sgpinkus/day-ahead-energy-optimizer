@@ -41,24 +41,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container>
     <v-sheet><div ref='container' class='container'></div></v-sheet>
     <v-sheet>
       <DeviceDescriptorsForm :device='device'></DeviceDescriptorsForm>
     </v-sheet>
-  </v-container>
 </template>
 
 <style scoped lang='scss'>
-@use '@/index.scss';
-
 .v-sheet {
   max-width: 960px;
-  margin: auto;
 }
-
-.container {
-  min-height: 100px;
-}
-
 </style>

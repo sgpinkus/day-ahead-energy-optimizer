@@ -172,6 +172,9 @@ export class StorageDevice extends BaseDevice {
   efficiencyFactor = 1.0;
   cycleCostFactor = 0.0;
   depthCostFactor = 0.0;
+  deepDepthRatio = 0.2; // How deep does depth damage potentially kick in.
+  reserveRequirement = 0.5;
+  capacity = 1; // kwh.
   attrs = {
     hideBounds: true,
     hideCBounds: true,
