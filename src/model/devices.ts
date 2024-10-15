@@ -18,14 +18,14 @@ type IAttributes = {
 // NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
 type Bounds = [NumberRunSpec, NumberRunSpec];
 type CBounds = [NumberRunSpec | undefined, NumberRunSpec | undefined];
-// Coujld rep costs like [NumberRunSpec, NumberRunSpec, NumberRunSpec] or NumberRunSpec<[number, number, number]>. Chose latter.
+// Could rep costs like [NumberRunSpec, NumberRunSpec, NumberRunSpec] or NumberRunSpec<[number, number, number]>. Chose latter.
 type Cost = RunSpec<[number, number, number]>
-type CostType = 'per_time' | 'cummulative' | 'demand';
-type CostContainer = {
+// Future, might be convenience to allow 0-N of each type but this is easier to impl for now.
+type CostType = 'flow' | 'cummulative_flow' | 'peak_flow';
+type Costs = Record<CostType, {
   cost: Cost,
-  type: CostType,
   boundToBounds: boolean,
-}
+}>;
 
 export interface  IBaseDevice {
   type: DeviceType,
@@ -39,7 +39,7 @@ export interface  IBaseDevice {
   tags?: Record<string, boolean | number | string>,
   bounds: Bounds,
   cbounds: CBounds,
-  costs: CostContainer[],
+  costs: Costs,
 }
 
 export interface ILoadDevice extends IBaseDevice {
@@ -80,7 +80,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsNumberRunSpecs(-1, 1);
   cbounds: CBounds = [undefined, undefined];
-  costs: CostContainer[] = [];
+  costs: Costs[] = [];
   title?: string;
   description?: string;
   tags: Record<string, boolean | number | string> = {};
