@@ -1,8 +1,25 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, mapValues } from 'lodash';
 
 type RunRange<X> = [X, [number, number]]
 
-export class RunSpec<X> {
+export interface IRunSpec<X> {
+  readonly basis: number;
+  get length(): number;
+  get ranges(): RunRange<X>[];
+  set(i: number, v: X): void;
+  unset(i: number): void;
+  unsetRange(s: number, e: number): void;
+  get(i: number): X;
+  getRun(i: number): [number, number];
+  split(i: number): void;
+  move(i: number, newStart: number): void;
+  toRecord(): Record<number, X>;
+  toArray(): X[];
+  toRanges(): RunRange<X>[];
+  copy(): IRunSpec<X>;
+}
+
+export class RunSpec<X> implements IRunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
   runs: Record<number, X> = {};
   constructor(
@@ -50,7 +67,7 @@ export class RunSpec<X> {
   /**
    * Get the start position of run for i and its index in the collection of runs.
    */
-  getRun(i: number) {
+  getRun(i: number): [number, number] {
     let start = 0;
     let index = -1;
     for(const [k] of Object.entries(this.runs)) {
@@ -88,7 +105,7 @@ export class RunSpec<X> {
     return cloneDeep(this.runs);
   }
 
-  toArray() {
+  toArray(): X[] {
     return Array.from(Array(this.basis)).map((_x, k) => this.get(k));
   }
 
@@ -99,11 +116,11 @@ export class RunSpec<X> {
     });
   }
 
-  copy() {
+  copy(): RunSpec<X> {
     return cloneDeep(this);
   }
 
-  assertIndexBounds(i: number) {
+  protected assertIndexBounds(i: number) {
     if(i < 0 || i >> this.basis) throw new RangeError('index out of bounds');
   }
 
@@ -136,5 +153,80 @@ export class NumberRunSpec extends RunSpec<number> {
   static _figureZero(hardBounds?: [number, number]) {
     if(hardBounds) return Math.abs(hardBounds[1]) > Math.abs(hardBounds[0]) ? hardBounds[0] : hardBounds[1];
     return 0;
+  }
+}
+
+// TODO: Make this an optional parameter to PolyRunSpecNumberView.
+function polyToNumber(p: number[], x = 1): number {
+  return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
+}
+
+// TODO: Make this an optional parameter to PolyRunSpecNumberView.
+function numberToPoly(x: number, order: number) {
+  return Array.from(Array(order)).map(() => x*0);
+}
+
+
+export class PolyRunSpecNumberView implements IRunSpec<number> {
+
+  constructor(public readonly runSpec: RunSpec<number[]>, public x = 1) {
+  }
+
+  get basis(): number {
+    return this.runSpec.basis;
+  }
+
+  get length(): number {
+    return this.runSpec.length;
+  }
+
+  get ranges() {
+    return this.toRanges();
+  }
+
+  set(i: number, v: number) {
+    this.runSpec.set(i, numberToPoly(v, this.length));
+  }
+
+  unset(i: number) {
+    this.runSpec.unset(i);
+  }
+
+  unsetRange(s: number, e: number) {
+    this.runSpec.unsetRange(s, e);
+  }
+
+  get(i: number) {
+    return polyToNumber(this.runSpec.get(i), this.x);
+  }
+
+  getRun(i: number): [number, number] {
+    return this.runSpec.getRun(i);
+  }
+
+  split(i: number) {
+    return this.runSpec.split(i);
+  }
+
+  move(i: number, newStart: number) {
+    return this.runSpec.move(i, newStart);
+  }
+
+  toRecord(): Record<number, number> {
+    return mapValues(this.runSpec.toRecord(), (v) => polyToNumber(v, this.x));
+  }
+
+  toArray() {
+    return this.runSpec.toArray().map((v) => polyToNumber(v, this.x));
+  }
+
+  toRanges(): RunRange<number>[] {
+    return this.runSpec.toRanges().map(([v, range]) => ([polyToNumber(v, this.x), range]));
+  }
+
+  copy(): IRunSpec<number> {
+    const newRunSpec = new RunSpec<number>(this.basis, 0);
+    newRunSpec.runs = this.toRecord();
+    return newRunSpec;
   }
 }
