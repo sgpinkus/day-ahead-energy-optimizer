@@ -4,6 +4,7 @@ type RunRange<X> = [X, [number, number]]
 
 export interface IRunSpec<X> {
   readonly basis: number;
+  readonly hardBounds?: [X, X]; // Shouldn't really exist on type but meh.
   get length(): number;
   get ranges(): RunRange<X>[];
   set(i: number, v: X): void;
@@ -25,6 +26,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   constructor(
     public readonly basis: number,
     zerothValue: X,
+    public readonly hardBounds?: [X, X],
   ) {
     this.runs[0] = zerothValue;
   }
@@ -150,6 +152,10 @@ export class NumberRunSpec extends RunSpec<number> {
     if(this.hardBounds && (v < this.hardBounds[0] || v > this.hardBounds[1])) throw new RangeError('value out of bounds');
   }
 
+  copy(): NumberRunSpec {
+    return cloneDeep(this);
+  }
+
   static _figureZero(hardBounds?: [number, number]) {
     if(hardBounds) return Math.abs(hardBounds[1]) > Math.abs(hardBounds[0]) ? hardBounds[0] : hardBounds[1];
     return 0;
@@ -169,7 +175,7 @@ function numberToPoly(x: number, order: number) {
 
 export class PolyRunSpecNumberView implements IRunSpec<number> {
 
-  constructor(public readonly runSpec: RunSpec<number[]>, public x = 1) {
+  constructor(public readonly runSpec: IRunSpec<number[]>, public x = 1) {
   }
 
   get basis(): number {

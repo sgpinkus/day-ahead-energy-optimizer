@@ -22,10 +22,10 @@ type CBounds = [NumberRunSpec | undefined, NumberRunSpec | undefined];
 type Cost = RunSpec<[number, number, number]>
 // Future, might be convenience to allow 0-N of each type but this is easier to impl for now.
 type CostType = 'flow' | 'cummulative_flow' | 'peak_flow';
-type Costs = Record<CostType, {
+type Costs = Partial<Record<CostType, {
   cost: Cost,
   boundToBounds: boolean,
-}>;
+}>>;
 
 export interface  IBaseDevice {
   type: DeviceType,
@@ -80,7 +80,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsNumberRunSpecs(-1, 1);
   cbounds: CBounds = [undefined, undefined];
-  costs: Costs[] = [];
+  costs: Costs = {};
   title?: string;
   description?: string;
   tags: Record<string, boolean | number | string> = {};
@@ -111,7 +111,7 @@ export abstract class BaseDevice implements IBaseDevice {
 export class FixedLoadDevice extends BaseDevice {
   type: DeviceType = 'fixed_load';
   basis = DefaultBasis;
-  costs = [];
+  costs = {};
   shape = 'circle';
   title = 'Fixed Load';
   description = 'A fixed load device';
@@ -128,7 +128,7 @@ export class FixedLoadDevice extends BaseDevice {
 export class LoadDevice extends BaseDevice {
   type: DeviceType = 'load';
   basis = DefaultBasis;
-  costs = [];
+  costs = {};
   shape = 'circle';
   title = 'Load';
   description = 'A load device';
@@ -146,7 +146,7 @@ export class LoadDevice extends BaseDevice {
 export class SupplyDevice extends BaseDevice {
   type: DeviceType = 'supply';
   basis = DefaultBasis;
-  costs = [];
+  costs = {};
   shape = 'circle';
   title = 'Supply';
   description = 'A supply device';
@@ -166,7 +166,7 @@ export class SupplyDevice extends BaseDevice {
 export class StorageDevice extends BaseDevice {
   type: DeviceType = 'storage';
   basis = DefaultBasis;
-  costs = [];
+  costs = {};
   shape = 'circle';
   title = 'Storage';
   description = 'A storage device';

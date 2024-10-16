@@ -2,12 +2,12 @@
 import { onMounted, useTemplateRef, computed, watch } from 'vue';
 import { draw, type Options } from '@/components/components/NumberRunSpecEditor';
 import * as d3 from 'd3';
-import { NumberRunSpec } from '@/model/RunSpec';
+import type { IRunSpec } from '@/model/RunSpec';
 
 const emit = defineEmits(['data-changed']);
 
 const { runSpec, width = 960, height = 360 } = defineProps<{
-  runSpec: NumberRunSpec,
+  runSpec: IRunSpec<number>,
   width?: number | string,
   height?: number | string,
 }>();

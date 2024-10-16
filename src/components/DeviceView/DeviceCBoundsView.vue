@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, onMounted, ref } from 'vue';
+import { computed, defineProps, onMounted, ref, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
 import { NumberRunSpec } from '@/model/RunSpec';
 import RunSpecView from './RunSpecView.vue';
@@ -10,8 +10,8 @@ const { device } = defineProps<{
   device: IBaseDevice,
 }>();
 
-const lBounds = ref(device.cbounds[0] ? device.cbounds[0].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
-const hBounds = ref(device.cbounds[1] ? device.cbounds[1].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
+const lBounds: Ref<NumberRunSpec> = ref(device.cbounds[0] ? device.cbounds[0].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
+const hBounds: Ref<NumberRunSpec> = ref(device.cbounds[1] ? device.cbounds[1].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
 
 const isUnSetLBounds = computed(() => !device.cbounds[0]);
 const isUnSetHBounds = computed(() => !device.cbounds[1]);
@@ -56,7 +56,8 @@ onMounted(() => {
         :style='{ textDecoration: isUnSetHBounds ? "line-through" : "initial" }'
       >
         UNSET BOUNDS
-      </v-btn>    </v-card-actions>
+      </v-btn>
+    </v-card-actions>
   </v-card>
   <v-card>
     <h3>Lower cummulative bounds</h3>
