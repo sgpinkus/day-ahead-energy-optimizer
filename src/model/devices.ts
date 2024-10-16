@@ -1,3 +1,4 @@
+// -ve flow is consumption / flow out, +ve is supply / flow in.
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
 import { NumberRunSpec, RunSpec } from './RunSpec';
@@ -115,8 +116,8 @@ export class FixedLoadDevice extends BaseDevice {
   shape = 'circle';
   title = 'Fixed Load';
   description = 'A fixed load device';
-  hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpecs(1,1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
+  hardBounds: [number, number] = [-BigNumber, 0 ];
+  bounds = boundsNumberRunSpecs(-1,-1, [-BigNumber, 0],); // A fixed load device is just a device whose lbound == hbound.
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<IFixedLoadDevice>) {
@@ -133,8 +134,8 @@ export class LoadDevice extends BaseDevice {
   title = 'Load';
   description = 'A load device';
   color = 'blue';
-  hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpecs(0,1, [0, BigNumber]);
+  hardBounds: [number, number] = [-BigNumber, 0];
+  bounds = boundsNumberRunSpecs(-1,0, [-BigNumber, 0]);
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<ILoadDevice>) {
@@ -151,8 +152,8 @@ export class SupplyDevice extends BaseDevice {
   title = 'Supply';
   description = 'A supply device';
   color = 'red';
-  hardBounds: [number, number] = [-BigNumber, 0];
-  bounds = boundsNumberRunSpecs(-1, 0, [-BigNumber, 0]);
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsNumberRunSpecs(0, 1, [0, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
   attrs: IAttributes = {
     showInverted: true,
@@ -172,7 +173,7 @@ export class StorageDevice extends BaseDevice {
   description = 'A storage device';
   color = 'yellow';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds = boundsNumberRunSpecs(-1,1, [-BigNumber, BigNumber]);
+  bounds = boundsNumberRunSpecs(-1, 1, [-BigNumber, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
   efficiencyFactor = 1.0;
   cycleCostFactor = 0.0;
