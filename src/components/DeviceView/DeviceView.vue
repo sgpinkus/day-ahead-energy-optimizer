@@ -4,7 +4,7 @@ import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
 import DeviceCBoundsView from './DeviceCBoundsView.vue';
-import DeviceCostsView from './DeviceCostsView.vue';
+import DeviceFlowCostsView from './DeviceFlowCostsView.vue';
 import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
 import router from '@/router';
@@ -51,7 +51,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
       <DeviceDescriptorsView v-if='tab === "descriptors"' :device='device'></DeviceDescriptorsView>
       <DeviceBoundsView v-if='tab === "bounds" && !device.attrs.hideBounds' :device='device'></DeviceBoundsView>
       <DeviceCBoundsView v-if='tab === "cbounds" && !device.attrs.hideCBounds' :device='device'></DeviceCBoundsView>
-      <DeviceCostsView v-if='tab === "costs" && !device.attrs.hideCosts' :device='device'></DeviceCostsView>
+      <DeviceFlowCostsView v-if='tab === "costs" && !device.attrs.hideCosts' :device='device'></DeviceFlowCostsView>
       <DeviceParametersView v-if='tab === "costs" && device.attrs.hasParameters' :device='device'></DeviceParametersView>
     </v-container>
   </v-main>

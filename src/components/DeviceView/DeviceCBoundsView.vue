@@ -5,7 +5,6 @@ import { NumberRunSpec } from '@/model/RunSpec';
 import RunSpecView from './RunSpecView.vue';
 import { cloneDeep } from 'lodash';
 
-
 const { device } = defineProps<{
   device: IBaseDevice,
 }>();
