@@ -10,7 +10,9 @@ const { device } = defineProps<{
   device: IBaseDevice,
 }>();
 
+// @ts-expect-error The value is definitely a NumberRunSpec!
 const lBounds: Ref<NumberRunSpec> = ref(device.cbounds[0] ? device.cbounds[0].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
+// @ts-expect-error The value is definitely a NumberRunSpec!
 const hBounds: Ref<NumberRunSpec> = ref(device.cbounds[1] ? device.cbounds[1].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
 
 const isUnSetLBounds = computed(() => !device.cbounds[0]);
