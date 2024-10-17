@@ -1,4 +1,10 @@
-// -ve flow is consumption / flow out, +ve is supply / flow in.
+/**
+ * Note: The fundamental constraint of the bus flow optimization problem is that sum of device flow is zero. So normally
+ * flow in (supply) would be +ve valued and flow out (demand) -ve or vice versa. But this tool is just a model, model
+ * parameter builder. We don't need to adhere to that until we actually run optimization and it's more intuitive to rep
+ * load flow and supply flow as +ve values. When model in built into something optimizable we need to say "hey these
+ * bounds/cost belong to a load/supply so need to be inverted ...
+ */
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
 import { NumberRunSpec, RunSpec } from './RunSpec';
@@ -9,7 +15,7 @@ export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 // This is just a scrappt adhoc collection of meta data for things -
 // mostly hints to render the given device type in generic device views.
 type IAttributes = {
-  showInverted?: boolean,
+  isLoad?: boolean, // Assuming optimization model reps loads as -ve flow, this is useful for require conversion..
   hasParameters?: boolean,
   hideBounds?: boolean,
   hideCBounds?: boolean,
@@ -116,8 +122,8 @@ export class FixedLoadDevice extends BaseDevice {
   shape = 'circle';
   title = 'Fixed Load';
   description = 'A fixed load device';
-  hardBounds: [number, number] = [-BigNumber, 0 ];
-  bounds = boundsNumberRunSpecs(-1,-1, [-BigNumber, 0],); // A fixed load device is just a device whose lbound == hbound.
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsNumberRunSpecs(1, 1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<IFixedLoadDevice>) {
@@ -134,8 +140,8 @@ export class LoadDevice extends BaseDevice {
   title = 'Load';
   description = 'A load device';
   color = 'blue';
-  hardBounds: [number, number] = [-BigNumber, 0];
-  bounds = boundsNumberRunSpecs(-1,0, [-BigNumber, 0]);
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsNumberRunSpecs(0, 1, [0, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<ILoadDevice>) {
@@ -156,7 +162,7 @@ export class SupplyDevice extends BaseDevice {
   bounds = boundsNumberRunSpecs(0, 1, [0, BigNumber]);
   cbounds: CBounds = [undefined, undefined];
   attrs: IAttributes = {
-    showInverted: true,
+    isLoad: true,
   };
   constructor(data?: Partial<ISupplyDevice>) {
     super();
