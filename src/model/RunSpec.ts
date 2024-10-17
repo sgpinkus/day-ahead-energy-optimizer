@@ -162,20 +162,22 @@ export class NumberRunSpec extends RunSpec<number> {
   }
 }
 
-// TODO: Make this an optional parameter to PolyRunSpecNumberView.
-function polyToNumber(p: number[], x = 1): number {
-  return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
-}
+/**
+ * Proxy exposing IRunSpec<number> given a IRunSpec<number[]>.
+ */
+export class NumberRunSpecProxy<X> implements IRunSpec<number> {
 
-// TODO: Make this an optional parameter to PolyRunSpecNumberView.
-function numberToPoly(x: number, order: number) {
-  return Array.from(Array(order)).map(() => x*0);
-}
+  constructor(
+    public readonly runSpec: IRunSpec<X>,
+    public readonly xToNumber: (x: X) => number,
+    public readonly numberToX: (y: number) => X,
+  ) {
+  }
 
-
-export class PolyRunSpecNumberView implements IRunSpec<number> {
-
-  constructor(public readonly runSpec: IRunSpec<number[]>, public x = 1) {
+  get hardBounds(): [number, number] | undefined {
+    if(this.runSpec.hardBounds) {
+      return [this.xToNumber(this.runSpec.hardBounds[0]), this.xToNumber(this.runSpec.hardBounds[1])].sort() as [number, number];
+    }
   }
 
   get basis(): number {
@@ -191,7 +193,7 @@ export class PolyRunSpecNumberView implements IRunSpec<number> {
   }
 
   set(i: number, v: number) {
-    this.runSpec.set(i, numberToPoly(v, this.length));
+    this.runSpec.set(i, this.numberToX(v));
   }
 
   unset(i: number) {
@@ -203,7 +205,7 @@ export class PolyRunSpecNumberView implements IRunSpec<number> {
   }
 
   get(i: number) {
-    return polyToNumber(this.runSpec.get(i), this.x);
+    return this.xToNumber(this.runSpec.get(i));
   }
 
   getRun(i: number): [number, number] {
@@ -219,20 +221,45 @@ export class PolyRunSpecNumberView implements IRunSpec<number> {
   }
 
   toRecord(): Record<number, number> {
-    return mapValues(this.runSpec.toRecord(), (v) => polyToNumber(v, this.x));
+    return mapValues(this.runSpec.toRecord(), (v) => this.xToNumber(v));
   }
 
   toArray() {
-    return this.runSpec.toArray().map((v) => polyToNumber(v, this.x));
+    return this.runSpec.toArray().map((v) => this.xToNumber(v));
   }
 
   toRanges(): RunRange<number>[] {
-    return this.runSpec.toRanges().map(([v, range]) => ([polyToNumber(v, this.x), range]));
+    return this.runSpec.toRanges().map(([v, range]) => ([this.xToNumber(v), range]));
   }
 
   copy(): IRunSpec<number> {
     const newRunSpec = new RunSpec<number>(this.basis, 0);
     newRunSpec.runs = this.toRecord();
     return newRunSpec;
+  }
+}
+
+/**
+ * Proxy exposing IRunSpec<number> given a IRunSpec<number[]>.
+ */
+export class PolyRunSpecNumberView extends NumberRunSpecProxy<number[]> {
+  polyToNumber(p: number[], x = 1): number {
+    return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
+  }
+
+  numberToPoly(x: number, order: number) {
+    return Array.from(Array(order)).map(() => x*0);
+  }
+
+  constructor(
+    public readonly runSpec: IRunSpec<number[]>
+  ) {
+    super(runSpec, (x: number[]) => this.polyToNumber(x), (y: number) => this.numberToPoly(y, this.length));
+  }
+}
+
+export class NumberRunSpecInverter extends NumberRunSpecProxy<number> {
+  constructor(runSpec: IRunSpec<number>) {
+    super(runSpec, (x: number) => -1*x, (x: number) => -1*x);
   }
 }
