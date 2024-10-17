@@ -142,14 +142,17 @@ export class NumberRunSpec extends RunSpec<number> {
     super(basis, zerothValue ?? NumberRunSpec._figureZero(hardBounds));
   }
 
-  set(i: number, v: number) {
+  set(i: number, v: number, coerce = true) {
     this.assertIndexBounds(i);
-    this.assertValueBounds(v);
+    if(this.hardBounds && (v < this.hardBounds[0])) {
+      if(!coerce) throw new RangeError('value out of bounds');
+      v = this.hardBounds[0];
+    }
+    if(this.hardBounds && v > this.hardBounds[1]) {
+      if(!coerce) throw new RangeError('value out of bounds');
+      v = this.hardBounds[1];
+    }
     this.runs[i] = v;
-  }
-
-  assertValueBounds(v: number) {
-    if(this.hardBounds && (v < this.hardBounds[0] || v > this.hardBounds[1])) throw new RangeError('value out of bounds');
   }
 
   copy(): NumberRunSpec {
