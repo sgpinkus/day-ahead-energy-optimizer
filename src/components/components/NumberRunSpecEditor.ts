@@ -8,6 +8,8 @@ export type Options = {
   autoPaddingFactor: [number, number],
   xFormatter: any,
   precision: number,
+  hEditable: boolean,
+  vEditable: boolean,
 }
 
 const defaultOptions: Options = {
@@ -16,6 +18,8 @@ const defaultOptions: Options = {
   autoPaddingFactor: [0.15, 0.15],
   xFormatter: null,
   precision: 3,
+  hEditable: true,
+  vEditable: true,
 };
 
 type Range = [number, [number, number]];
@@ -131,11 +135,13 @@ export function draw(container: SVGSVGElement, data: IRunSpec<number>, changed =
   const bars = barGroups
     .append('g')
       .each(function(_d, i) { index.set(this, i); })
-      .attr('class', function() { return `bar-${index.get(this)}`; })
-      .call(dragV.on('start', vStarted))
+      .attr('class', function() { return `bar-${index.get(this)}`; });
+  barGroups.exit().remove();
+  if (options.vEditable) {
+      barGroups.call(dragV.on('start', vStarted))
       .call(dragV.on('drag', vDragged))
       .call(dragV.on('end', vStopped));
-  barGroups.exit().remove();
+  }
   bars.append('rect')
     .classed('bar', true)
     .attr('width', ([_v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter()*2)
@@ -143,7 +149,6 @@ export function draw(container: SVGSVGElement, data: IRunSpec<number>, changed =
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
     .attr('stroke-width', 4)
-    .attr('cursor', 'grabbing')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
       d3.select(this.parentElement).select('.tool-tip')
@@ -154,22 +159,27 @@ export function draw(container: SVGSVGElement, data: IRunSpec<number>, changed =
       d3.select(this.parentElement).select('.tool-tip')
         .attr('opacity', 0);
     });
-  bars.append('rect')
+  if (options.vEditable) {
+    bars.attr('cursor', 'grabbing');
+  }
+  const hBarRect = bars.append('rect')
     .classed('bar', true)
     .attr('width', xScale.step()*0.8)
     .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) - 1)
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
     .attr('stroke', 'red')
     .attr('fill', 'red')
-    .attr('cursor', 'grabbing')
-    .call(dragH.on('start', hStarted))
-    .call(dragH.on('end', hStopped))
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
     })
     .on('mouseout', function() {
       d3.select(this).attr('opacity', '1');
     });
+  if (options.hEditable) {
+    hBarRect.attr('cursor', 'grabbing')
+    .call(dragH.on('start', hStarted))
+    .call(dragH.on('end', hStopped));
+  }
   const barTops = bars.append('g')
     .attr('transform', ([v]) => `translate(0, ${yScale(v) - yScale(0)})`);
   barTops.append('text')
@@ -182,24 +192,26 @@ export function draw(container: SVGSVGElement, data: IRunSpec<number>, changed =
     .attr('fill', 'black')
     .attr('stroke', 'black')
     .attr('opacity', '0');
-  barTops.append('polygon')
-    .attr('points', '0,0 30,0 15,15 0,0')
-    .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 15}, -7.5)`)
-    .attr('fill', 'red')
-    .attr('stroke', 'red')
-    .attr('cursor', 'crosshair')
-    .attr('opacity', 0)
-    .on('mouseover', function () {
-      d3.select(this).attr('opacity', '1');
-    })
-    .on('mouseout', function() {
-      d3.select(this).attr('opacity', '0');
-    })
-    .on('mousedown', function(e: Event) {
-      data.split(index.get(this)!);
-      e.stopPropagation();
-      changed();
-    });
+  if(options.hEditable) {
+    barTops.append('polygon')
+      .attr('points', '0,0 30,0 15,15 0,0')
+      .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 7.5}, -7.5)`)
+      .attr('fill', 'red')
+      .attr('stroke', 'red')
+      .attr('cursor', 'crosshair')
+      .attr('opacity', 0)
+      .on('mouseover', function () {
+        d3.select(this).attr('opacity', '1');
+      })
+      .on('mouseout', function() {
+        d3.select(this).attr('opacity', '0');
+      })
+      .on('mousedown', function(e: Event) {
+        data.split(index.get(this)!);
+        e.stopPropagation();
+        changed();
+      });
+  }
   const lineGroup = g.append('g')
     .attr('opacity', 0);
   lineGroup.append('line')
