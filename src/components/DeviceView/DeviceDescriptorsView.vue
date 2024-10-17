@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { IBaseDevice, ContainerDevice } from '@/model/devices';
-import { DataSet, Network } from 'vis-network/standalone';
+import type { ContainerDevice } from '@/model/devices';
+import { Network } from 'vis-network/standalone';
 import DeviceDescriptorsForm from './DeviceDescriptorsForm.vue';
 import { computed, onMounted, useTemplateRef, watch, type Ref } from 'vue';
 

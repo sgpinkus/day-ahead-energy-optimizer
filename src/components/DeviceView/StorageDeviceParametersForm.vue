@@ -20,8 +20,7 @@ async function change() { // change(changeKey: string)
   form.value!.resetValidation();
   const { valid } = await form.value!.validate();
   const changes = deepDiffObjects2(work.value, initialValue);
-  console.log('changes', changes);
-  if(changes) {
+  if(valid && changes) {
     Object.assign(device, cloneDeep(work.value));
   }
 }

@@ -138,7 +138,7 @@ export function draw(container: SVGSVGElement, data: IRunSpec<number>, changed =
       .attr('class', function() { return `bar-${index.get(this)}`; });
   barGroups.exit().remove();
   if (options.vEditable) {
-      barGroups.call(dragV.on('start', vStarted))
+    bars.call(dragV.on('start', vStarted))
       .call(dragV.on('drag', vDragged))
       .call(dragV.on('end', vStopped));
   }
