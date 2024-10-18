@@ -8,6 +8,11 @@ module.exports = {
     'eslint:recommended',
     '@vue/eslint-config-typescript/recommended'
   ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+    }
+  },
   'env': {
     browser: true,
     node: true,
