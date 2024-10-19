@@ -19,13 +19,12 @@ watch(device.bounds, () => {
   immediate: true
 });
 
-
 </script>
 
 <template>
   <v-card>
     <h3>Bounds</h3>
-    <RunSpecTableView :device=device></RunSpecTableView>
+    <RunSpecTableView :runSpec=device.bounds></RunSpecTableView>
   </v-card>
   <v-card>
     <h3>Upper bounds</h3>
@@ -41,10 +40,5 @@ watch(device.bounds, () => {
   .v-card {
     margin: 1em;
 
-  }
-
-  hr {
-    padding: 1em;
-    visibility: hidden;
   }
 </style>

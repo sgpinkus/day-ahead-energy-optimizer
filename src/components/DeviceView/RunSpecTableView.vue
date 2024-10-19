@@ -1,13 +1,13 @@
 <script setup lang="tsx">
 import { computed, defineComponent, defineProps } from 'vue';
-import type { IBaseDevice } from '@/model/devices';
+import type { IBoundedNumberRunSpec } from '@/model/RunSpec';
 
-const { device } = defineProps<{
-  device: IBaseDevice,
+const { runSpec } = defineProps<{
+  runSpec: IBoundedNumberRunSpec<[number, number]>,
 }>();
 
 // Just edit directly instead of a copy..
-const ranges = computed(() =>  device.bounds.toRanges());
+const ranges = computed(() =>  runSpec.toRanges());
 
 const tableItems = computed(() => {
   return ranges.value.map(([v, range]) => ({ start: range[0], end: range[1], low: v[0], high: v[1] }));
@@ -18,19 +18,19 @@ const tableKeys = computed(() => {
 });
 
 function unsetIndex(i: number) {
-  device.bounds.unsetIndex(i);
+  runSpec.unsetIndex(i);
 }
 
 function splitIndex(i: number) {
-  device.bounds.split(i);
+  runSpec.split(i);
 }
 
 function move(i: number, newStart: any) {
-  device.bounds.move(i, newStart);
+  runSpec.move(i, newStart);
 }
 
 function set(i: number, v: [number, number]) {
-  device.bounds.set(i, v);
+  runSpec.set(i, v);
 }
 
 const MyNumberTextField = defineComponent({
@@ -60,7 +60,7 @@ const MyNumberTextField = defineComponent({
           {{ h }}
           <!-- <v-btn flat size="small" @click='() => sortTable(h)'><v-icon>mdi-sort</v-icon></v-btn> -->
           </th>
-          <th>&nbsp;</th>
+          <th style='text-align: right'><slot name="globals"></slot></th>
         </tr>
       </thead>
       <tbody>
@@ -68,7 +68,7 @@ const MyNumberTextField = defineComponent({
           <td>
             <MyNumberTextField
               min=1
-              :max='device.basis-1'
+              :max='runSpec.length-1'
               step=1
               :disabled='i === 0'
               :hide-spin-buttons='i ===0'
@@ -85,8 +85,8 @@ const MyNumberTextField = defineComponent({
           </td>
           <td>
             <MyNumberTextField
-              :min=device.hardBounds[0]
-              :max=device.hardBounds[1]
+              :min=runSpec.hardBounds![0]
+              :max=runSpec.hardBounds![1]
               step=0.01
               :model-value='row.low'
               @update:modelValue='(newValue: number) => set(row.start, [newValue, row.high])'
@@ -95,8 +95,8 @@ const MyNumberTextField = defineComponent({
           </td>
           <td>
             <MyNumberTextField
-              :min=device.hardBounds[0]
-              :max=device.hardBounds[1]
+              :min=runSpec.hardBounds![0]
+              :max=runSpec.hardBounds![1]
               step=0.01
               :model-value='row.high'
               @update:modelValue='(newValue: number) => set(row.start, [row.low, newValue])'

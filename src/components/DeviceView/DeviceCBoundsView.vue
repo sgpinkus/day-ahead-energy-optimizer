@@ -1,88 +1,74 @@
 <script setup lang="ts">
-import { computed, defineProps, onMounted, ref, type Ref } from 'vue';
+import { defineProps, ref, watch, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
-import { NumberRunSpec } from '@/model/RunSpec';
-import RunSpecView from './RunSpecGraphView.vue';
-import { cloneDeep } from 'lodash';
+import { BoundsRunSpec, NumberRunSpecAdaptor } from '@/model/RunSpec';
+import RunSpecGraphView from './RunSpecGraphView.vue';
+import RunSpecTableView from './RunSpecTableView.vue';
 
 const { device } = defineProps<{
   device: IBaseDevice,
 }>();
 
-// @ts-expect-error The value is definitely a NumberRunSpec!
-const lBounds: Ref<NumberRunSpec> = ref(device.cbounds[0] ? device.cbounds[0].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
-// @ts-expect-error The value is definitely a NumberRunSpec!
-const hBounds: Ref<NumberRunSpec> = ref(device.cbounds[1] ? device.cbounds[1].copy() : new NumberRunSpec(device.basis, undefined, device.hardBounds));
+// Computed doesn't work.
+const numberRunSpecLow: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
+const numberRunSpecHigh: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
 
-const isUnSetLBounds = computed(() => !device.cbounds[0]);
-const isUnSetHBounds = computed(() => !device.cbounds[1]);
-
-function unSetCBoundsLow() {
-  device.cbounds[0] = undefined; // eslint-disable-line vue/no-mutating-props
-  lBounds.value = new NumberRunSpec(device.basis, undefined, device.hardBounds);
+function unSetCBounds() {
+  device.cbounds = undefined; // eslint-disable-line vue/no-mutating-props
+  numberRunSpecLow.value = null;
+  numberRunSpecHigh.value = null;
 }
 
-function unSetCBoundsHigh() {
-  device.cbounds[1] = undefined; // eslint-disable-line vue/no-mutating-props
-  hBounds.value = new NumberRunSpec(device.basis, undefined, device.hardBounds);
+function setCBounds() {
+    device.cbounds = new BoundsRunSpec(device.basis, [0, 0] as [number, number], device.hardBounds); // eslint-disable-line vue/no-mutating-props
+    numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[0], (y, i) => [y, device.cbounds!.get(i)[1]] as [number, number]);
+    numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[1], (y, i) => [device.cbounds!.get(i)[0], y] as [number, number]);
 }
 
-/**
- * Update the model value from copy. Not using watchEffect because setting the copy initially or on reset triggers
- * the watchEffect.
- */
-function lBoundsDataChanged() {
-  device.cbounds[0] = lBounds.value.copy(); // eslint-disable-line vue/no-mutating-props
-}
-
-function hBoundsDataChanged() {
-  device.cbounds[1] = hBounds.value.copy(); // eslint-disable-line vue/no-mutating-props
-}
-
-onMounted(() => {
-  console.log(cloneDeep(device.cbounds));
+// This should fire when ever device.cbounds is mutated but doesn't
+watch(ref(device.cbounds), () => {
+  if(device.cbounds) {
+    numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[0], (y, i) => [y, device.cbounds!.get(i)[1]] as [number, number]);
+    numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[1], (y, i) => [device.cbounds!.get(i)[0], y] as [number, number]);
+  } else {
+    numberRunSpecLow.value = null;
+    numberRunSpecHigh.value = null;
+  }
+}, {
+  immediate: true
 });
-
 
 </script>
 
 <template>
-  <v-card>
-    <h3>Upper cummulative bounds</h3>
-    <RunSpecView :runSpec='hBounds' @data-changed='hBoundsDataChanged'></RunSpecView>
-    <v-card-actions class="d-flex justify-end align-baseline" style="gap: 1rem">
-      <v-btn
-        :disabled='isUnSetHBounds'
-        @click='unSetCBoundsHigh'
-        :style='{ textDecoration: isUnSetHBounds ? "line-through" : "initial" }'
-      >
-        UNSET BOUNDS
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-  <v-card>
-    <h3>Lower cummulative bounds</h3>
-    <RunSpecView :runSpec='lBounds' @data-changed='lBoundsDataChanged'></RunSpecView>
-    <v-card-actions class="d-flex justify-end align-baseline" style="gap: 1rem">
-      <v-btn
-        :disabled='isUnSetLBounds'
-        @click='unSetCBoundsLow'
-        :style='{ textDecoration: isUnSetLBounds ? "line-through" : "initial" }'
-      >
-        UNSET BOUNDS
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-  <v-spacer></v-spacer>
+  <template v-if='device.cbounds'>
+    <v-card>
+      <h3>Bounds</h3>
+      <RunSpecTableView :run-spec=device.cbounds>
+        <template v-slot:globals>
+          <v-btn flat size="small" @click='unSetCBounds' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
+        </template>
+      </RunSpecTableView>
+    </v-card>
+    <v-card>
+      <h3>Upper bounds</h3>
+      <RunSpecGraphView v-if='numberRunSpecHigh' :run-spec='numberRunSpecHigh' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+    </v-card>
+    <v-card>
+      <h3>Lower bounds</h3>
+      <RunSpecGraphView v-if='numberRunSpecLow' :run-spec='numberRunSpecLow' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+    </v-card>
+  </template>
+  <template v-else>
+    <v-card class='ma-auto'>
+      <v-btn @click='setCBounds'>Set Cummulative Bounds</v-btn>
+    </v-card>
+  </template>
 </template>
 
 <style scoped>
   .v-card {
     margin: 1em;
-  }
 
-  hr {
-    padding: 1em;
-    visibility: hidden;
   }
 </style>

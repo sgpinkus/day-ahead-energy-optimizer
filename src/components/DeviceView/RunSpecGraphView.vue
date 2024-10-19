@@ -12,6 +12,8 @@ const { runSpec, width = 1280, height = 360, options = {} } = defineProps<{
   height?: number | string,
   options?: Partial<Options>
 }>();
+
+
 const container = useTemplateRef('container');
 const _options: Partial<Options> = {
   autoPaddingFactor: [0.5, 0.5],
@@ -20,7 +22,11 @@ const _options: Partial<Options> = {
 };
 const viewBox = computed(() => `0 0 ${width} ${height}`);
 
+// This doesn't react.
 watch(()=> runSpec, () => _draw());
+// This is makes this component react to changes properly - no idea why. Maybe props are shallow by def?
+const ranges = computed(() =>  runSpec.toRanges());
+watch(ranges, () => _draw());
 
 function _draw() {
   if(!container.value) return;

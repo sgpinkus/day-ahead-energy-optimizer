@@ -8,6 +8,7 @@ export interface IRunSpec<X> {
   get ranges(): RunRange<X>[];
   set(i: number, v: X): void;
   unset(i: number): void;
+  unsetIndex(i: number): void;
   unsetRange(s: number, e: number): void;
   get(i: number): X;
   getRun(i: number): [number, number];
@@ -136,7 +137,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 }
 
-export interface IBoundedNumberRunSpec extends IRunSpec<number> {
+export interface IBoundedNumberRunSpec<X> extends IRunSpec<X> {
   readonly hardBounds?: [number, number];
 }
 
@@ -145,7 +146,7 @@ export interface IBoundedNumberRunSpec extends IRunSpec<number> {
  * Adds hardBounds and specific behaviour to set(). hardBounds are just one type of value validator you might want and
  * only really applicable where X = number.
  */
-export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunSpec {
+export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunSpec<number> {
   constructor(
     public readonly basis: number,
     zerothValue?: number,
@@ -177,7 +178,7 @@ export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunS
   }
 }
 
-export class BoundsRunSpec extends RunSpec<[number, number]> {
+export class BoundsRunSpec extends RunSpec<[number, number]> implements IBoundedNumberRunSpec<[number, number]> {
   constructor(basis: number, zerothValue: [number, number] = [0,0], public readonly hardBounds?: [number, number]) {
     super(basis, zerothValue);
   }
@@ -201,7 +202,7 @@ export class BoundsRunSpec extends RunSpec<[number, number]> {
 /**
  * Proxy exposing IRunSpec<number> given a IRunSpec<number[]> or some other thing.
  */
-export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
+export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
 
   constructor(
     public readonly runSpec: IRunSpec<X>,
@@ -229,6 +230,10 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
 
   unset(i: number) {
     this.runSpec.unset(i);
+  }
+
+  unsetIndex(i: number): void {
+    this.runSpec.unsetIndex(i);
   }
 
   unsetRange(s: number, e: number) {
@@ -273,7 +278,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
 /**
  * Proxy exposing IRunSpec<number> given a IRunSpec<number[]>.
  */
-export class PolynomialRunSpecNumberViewAdaptor extends NumberRunSpecAdaptor<number[]> {
+export class PolyToNumberRunSpecAdaptor extends NumberRunSpecAdaptor<number[]> {
   polyToNumber(p: number[], x = 1): number {
     return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
   }
