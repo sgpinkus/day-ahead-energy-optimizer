@@ -4,7 +4,6 @@ type RunRange<X> = [X, [number, number]]
 
 export interface IRunSpec<X> {
   readonly basis: number;
-  readonly hardBounds?: [X, X]; // Shouldn't really exist on type but meh.
   get length(): number;
   get ranges(): RunRange<X>[];
   set(i: number, v: X): void;
@@ -26,7 +25,6 @@ export class RunSpec<X> implements IRunSpec<X> {
   constructor(
     public readonly basis: number,
     zerothValue: X,
-    public readonly hardBounds?: [X, X],
   ) {
     this.runs[0] = zerothValue;
   }
@@ -48,6 +46,11 @@ export class RunSpec<X> implements IRunSpec<X> {
     delete this.runs[i];
   }
 
+  unsetIndex(i: number) {
+    const start = this.toRanges()[i];
+    if(start) delete this.runs[start[1][0]];
+  }
+
   unsetRange(s: number, e: number) {
     const [min, max] = [Math.min(s, e), Math.max(s, e)];
     for(const i of Object.keys(this.runs).map(i => Number(i))) {
@@ -67,7 +70,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 
   /**
-   * Get the start position of run for i and its index in the collection of runs.
+   * Get the start position of run for position i and its index in the collection of runs.
    */
   getRun(i: number): [number, number] {
     let start = 0;
@@ -133,7 +136,16 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 }
 
-export class NumberRunSpec extends RunSpec<number> {
+export interface IBoundedNumberRunSpec extends IRunSpec<number> {
+  readonly hardBounds?: [number, number];
+}
+
+
+/**
+ * Adds hardBounds and specific behaviour to set(). hardBounds are just one type of value validator you might want and
+ * only really applicable where X = number.
+ */
+export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunSpec {
   constructor(
     public readonly basis: number,
     zerothValue?: number,
@@ -165,22 +177,37 @@ export class NumberRunSpec extends RunSpec<number> {
   }
 }
 
+export class BoundsRunSpec extends RunSpec<[number, number]> {
+  constructor(basis: number, zerothValue: [number, number] = [0,0], public readonly hardBounds?: [number, number]) {
+    super(basis, zerothValue);
+  }
+  set(i: number, v: [number, number], coerce = true) {
+    if(this.hardBounds) {
+      if(v.some((_v) => (_v < this.hardBounds![0] || _v > this.hardBounds![1]))) {
+        if(!coerce) throw new RangeError('value out of bounds');
+        v = v.map(_v => Math.max(Math.min(_v, this.hardBounds![1]), this.hardBounds![0])) as [number, number];
+      }
+    }
+    if(v[0] > v[1] || v[1] < v[0]) {
+      if(!coerce) throw new RangeError('value out of bounds');
+      v[0] = Math.min(...v);
+      v[1] = Math.max(...v);
+    }
+    super.set(i, v);
+  }
+}
+
 /**
- * Proxy exposing IRunSpec<number> given a IRunSpec<number[]>.
+ * Proxy exposing IRunSpec<number> given a IRunSpec<number[]> or some other thing.
  */
-export class NumberRunSpecProxy<X> implements IRunSpec<number> {
+export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
 
   constructor(
     public readonly runSpec: IRunSpec<X>,
     public readonly xToNumber: (x: X) => number,
     public readonly numberToX: (y: number) => X,
+    public readonly hardBounds?: [number, number],
   ) {
-  }
-
-  get hardBounds(): [number, number] | undefined {
-    if(this.runSpec.hardBounds) {
-      return [this.xToNumber(this.runSpec.hardBounds[0]), this.xToNumber(this.runSpec.hardBounds[1])].sort() as [number, number];
-    }
   }
 
   get basis(): number {
@@ -245,7 +272,7 @@ export class NumberRunSpecProxy<X> implements IRunSpec<number> {
 /**
  * Proxy exposing IRunSpec<number> given a IRunSpec<number[]>.
  */
-export class PolyRunSpecNumberView extends NumberRunSpecProxy<number[]> {
+export class PolynomialRunSpecNumberViewAdaptor extends NumberRunSpecAdaptor<number[]> {
   polyToNumber(p: number[], x = 1): number {
     return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
   }
@@ -261,8 +288,9 @@ export class PolyRunSpecNumberView extends NumberRunSpecProxy<number[]> {
   }
 }
 
-export class NumberRunSpecInverter extends NumberRunSpecProxy<number> {
+export class NumberRunSpecInverter extends NumberRunSpecAdaptor<number> {
   constructor(runSpec: IRunSpec<number>) {
     super(runSpec, (x: number) => -1*x, (x: number) => -1*x);
   }
 }
+

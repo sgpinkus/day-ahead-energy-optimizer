@@ -1,34 +1,46 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, ref, watch, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
-import RunSpecView from './RunSpecView.vue';
-
+import { NumberRunSpecAdaptor } from '@/model/RunSpec';
+import RunSpecTableView from './RunSpecTableView.vue';
+import RunSpecGraphView from './RunSpecGraphView.vue';
 
 const { device } = defineProps<{
   device: IBaseDevice,
 }>();
 
-// Just edit directly instead of a copy..
-const lBounds = device.bounds[0];
-const hBounds = device.bounds[1];
+// Computed doesn't work.
+const numberRunSpecLow: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
+const numberRunSpecHigh: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
+watch(device.bounds, () => {
+  numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[0], (y) => [y, 0] as [number, number]);
+  numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[1], (y) => [0, y] as [number, number]);
+}, {
+  immediate: true
+});
+
 
 </script>
 
 <template>
   <v-card>
+    <h3>Bounds</h3>
+    <RunSpecTableView :device=device></RunSpecTableView>
+  </v-card>
+  <v-card>
     <h3>Upper bounds</h3>
-    <RunSpecView :runSpec='hBounds'></RunSpecView>
+    <RunSpecGraphView :run-spec='numberRunSpecHigh!' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
   </v-card>
   <v-card>
     <h3>Lower bounds</h3>
-    <RunSpecView :runSpec='lBounds'></RunSpecView>
+    <RunSpecGraphView :run-spec='numberRunSpecLow!' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
   </v-card>
-  <v-spacer></v-spacer>
 </template>
 
 <style scoped>
   .v-card {
     margin: 1em;
+
   }
 
   hr {

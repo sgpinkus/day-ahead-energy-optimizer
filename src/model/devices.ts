@@ -7,7 +7,7 @@
  */
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
-import { NumberRunSpec, RunSpec } from './RunSpec';
+import { NumberRunSpec, RunSpec, BoundsRunSpec } from './RunSpec';
 import { pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
@@ -23,7 +23,7 @@ type IAttributes = {
 }
 
 // NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
-type Bounds = [NumberRunSpec, NumberRunSpec];
+type Bounds = BoundsRunSpec;
 type CBounds = [NumberRunSpec | undefined, NumberRunSpec | undefined];
 // Could rep costs like [NumberRunSpec, NumberRunSpec, NumberRunSpec] or NumberRunSpec<[number, number, number]>. Chose latter.
 type Cost = RunSpec<[number, number, number]>
@@ -72,12 +72,17 @@ export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadD
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
-function boundsNumberRunSpecs(l: number, h: number, hb?: [number, number]): [NumberRunSpec, NumberRunSpec] {
-  return [
-    new NumberRunSpec(DefaultBasis, l, hb),
-    new NumberRunSpec(DefaultBasis, h, hb),
-  ];
+// function boundsNumberRunSpecs(l: number, h: number, hb?: [number, number]): [NumberRunSpec, NumberRunSpec] {
+//   return [
+//     new NumberRunSpec(DefaultBasis, l, hb),
+//     new NumberRunSpec(DefaultBasis, h, hb),
+//   ];
+// }
+
+function boundsNumberRunSpec(l: number, h: number): BoundsRunSpec {
+  return new BoundsRunSpec(DefaultBasis, [l, h] as [number, number]);
 }
+
 
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
@@ -85,7 +90,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds: Bounds = boundsNumberRunSpecs(-1, 1);
+  bounds: Bounds = boundsNumberRunSpec(-1, 1);
   cbounds: CBounds = [undefined, undefined];
   costs: Costs = {};
   title?: string;
@@ -123,7 +128,7 @@ export class FixedLoadDevice extends BaseDevice {
   title = 'Fixed Load';
   description = 'A fixed load device';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpecs(1, 1, [0, BigNumber],); // A fixed load device is just a device whose lbound == hbound.
+  bounds = boundsNumberRunSpec(1, 1); // A fixed load device is just a device whose lbound == hbound.
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<IFixedLoadDevice>) {
@@ -141,7 +146,7 @@ export class LoadDevice extends BaseDevice {
   description = 'A load device';
   color = 'blue';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpecs(0, 1, [0, BigNumber]);
+  bounds = boundsNumberRunSpec(0, 1);
   cbounds: CBounds = [undefined, undefined];
 
   constructor(data?: Partial<ILoadDevice>) {
@@ -159,7 +164,7 @@ export class SupplyDevice extends BaseDevice {
   description = 'A supply device';
   color = 'red';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpecs(0, 1, [0, BigNumber]);
+  bounds = boundsNumberRunSpec(0, 1);
   cbounds: CBounds = [undefined, undefined];
   attrs: IAttributes = {
     isLoad: true,
@@ -179,7 +184,7 @@ export class StorageDevice extends BaseDevice {
   description = 'A storage device';
   color = 'yellow';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds = boundsNumberRunSpecs(-1, 1, [-BigNumber, BigNumber]);
+  bounds = boundsNumberRunSpec(-1, 1);
   cbounds: CBounds = [undefined, undefined];
   efficiencyFactor = 1.0;
   cycleCostFactor = 0.0;

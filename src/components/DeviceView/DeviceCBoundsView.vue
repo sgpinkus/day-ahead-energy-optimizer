@@ -2,7 +2,7 @@
 import { computed, defineProps, onMounted, ref, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/devices';
 import { NumberRunSpec } from '@/model/RunSpec';
-import RunSpecView from './RunSpecView.vue';
+import RunSpecView from './RunSpecGraphView.vue';
 import { cloneDeep } from 'lodash';
 
 const { device } = defineProps<{

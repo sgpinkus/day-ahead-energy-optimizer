@@ -64,9 +64,10 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
 
   .container {
     min-height: 100vh;
+    max-width: 960px;
     display: flex;
     flex-flow: column nowrap;
-    align-items: center;
+    align-items: stretch;
     padding: 1em;
     justify-content: stretch;
   }

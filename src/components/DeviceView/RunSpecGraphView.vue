@@ -6,16 +6,17 @@ import type { IRunSpec } from '@/model/RunSpec';
 
 const emit = defineEmits(['data-changed']);
 
-const { runSpec, width = 960, height = 360 } = defineProps<{
+const { runSpec, width = 1280, height = 360, options = {} } = defineProps<{
   runSpec: IRunSpec<number>,
   width?: number | string,
   height?: number | string,
+  options?: Partial<Options>
 }>();
 const container = useTemplateRef('container');
-const options: Partial<Options> =     {
-  // range: [0, undefined],
+const _options: Partial<Options> = {
   autoPaddingFactor: [0.5, 0.5],
   xFormatter: (n: number) => d3.format('02d')(Math.floor(n/2)) + ':' + d3.format('02d')((n % 2)*30),
+  ...options,
 };
 const viewBox = computed(() => `0 0 ${width} ${height}`);
 
@@ -28,7 +29,7 @@ function _draw() {
     container.value,
     runSpec,
     onDataChange,
-    options
+    _options
   );
 }
 
@@ -56,9 +57,7 @@ onMounted(() => {
 <style scoped>
   /** TODO: get this to stretch! */
   div {
-    min-width: 400px;
-    /* max-width: 960px; */
-    width: 960px;
+    min-width: 480px;
     min-height: 100px;
     flex: 1;
   }

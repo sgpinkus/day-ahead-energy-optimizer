@@ -2,8 +2,8 @@
 import { computed, defineProps, onMounted, ref, useTemplateRef, type Ref } from 'vue';
 import * as d3 from 'd3';
 import type { IBaseDevice } from '@/model/devices';
-import { RunSpec, PolyRunSpecNumberView, type IRunSpec } from '@/model/RunSpec';
-import RunSpecView from './RunSpecView.vue';
+import { RunSpec, PolynomialRunSpecNumberViewAdaptor, type IRunSpec } from '@/model/RunSpec';
+import RunSpecView from './RunSpecGraphView.vue';
 import { draw } from '@/components/components/Plot';
 
 const { device, width = 960, height = 360 } = defineProps<{
@@ -17,7 +17,7 @@ const plot = useTemplateRef('plot');
 type Triple = [number, number, number];
 
 const costSpec: Ref<IRunSpec<Triple>> = ref(device.costs['flow'] ? device.costs['flow'].cost.copy() : new RunSpec<Triple>(device.basis, [0,0,0]));
-const costSpecView: Ref<IRunSpec<number>> = ref(new PolyRunSpecNumberView(costSpec.value));
+const costSpecView: Ref<IRunSpec<number>> = ref(new PolynomialRunSpecNumberViewAdaptor(costSpec.value));
 
 const isUnset = computed(() => !device.costs['flow']);
 const viewBox = computed(() => `0 0 ${width} ${height}`);
