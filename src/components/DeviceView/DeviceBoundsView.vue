@@ -13,8 +13,8 @@ const { device } = defineProps<{
 const numberRunSpecLow: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
 const numberRunSpecHigh: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
 watch(device.bounds, () => {
-  numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[0], (y) => [y, 0] as [number, number]);
-  numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[1], (y) => [0, y] as [number, number]);
+  numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[0], (y, i) => [y, device.bounds.get(i)[1]] as [number, number]);
+  numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[1], (y, i) => [device.bounds.get(i)[0], y] as [number, number]);
 }, {
   immediate: true
 });

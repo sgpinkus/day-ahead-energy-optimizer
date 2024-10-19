@@ -126,7 +126,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 
   protected assertIndexBounds(i: number) {
-    if(i < 0 || i >> this.basis) throw new RangeError('index out of bounds');
+    if(i < 0 || i > this.basis) throw new RangeError('index out of bounds');
   }
 
   static copyFrom<X>(x: RunSpec<X>) {
@@ -188,7 +188,8 @@ export class BoundsRunSpec extends RunSpec<[number, number]> {
         v = v.map(_v => Math.max(Math.min(_v, this.hardBounds![1]), this.hardBounds![0])) as [number, number];
       }
     }
-    if(v[0] > v[1] || v[1] < v[0]) {
+    if(v[1] < v[0]) {
+      // This results in asymmetric behaviour when only one of L, H is changed, but good enough.
       if(!coerce) throw new RangeError('value out of bounds');
       v[0] = Math.min(...v);
       v[1] = Math.max(...v);
@@ -205,7 +206,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
   constructor(
     public readonly runSpec: IRunSpec<X>,
     public readonly xToNumber: (x: X) => number,
-    public readonly numberToX: (y: number) => X,
+    public readonly numberToX: (y: number, i: number) => X,
     public readonly hardBounds?: [number, number],
   ) {
   }
@@ -223,7 +224,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec {
   }
 
   set(i: number, v: number) {
-    this.runSpec.set(i, this.numberToX(v));
+    this.runSpec.set(i, this.numberToX(v, i));
   }
 
   unset(i: number) {

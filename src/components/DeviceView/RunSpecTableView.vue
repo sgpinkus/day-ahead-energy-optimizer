@@ -68,7 +68,7 @@ const MyNumberTextField = defineComponent({
           <td>
             <MyNumberTextField
               min=1
-              :max=device.basis
+              :max='device.basis-1'
               step=1
               :disabled='i === 0'
               :hide-spin-buttons='i ===0'
