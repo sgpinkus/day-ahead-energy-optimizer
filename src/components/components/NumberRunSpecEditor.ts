@@ -185,8 +185,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec, chan
   barTops.append('text')
     .text(([h, range]) => {
       const w = range[1] - range[0] + 1;
-      const f = d3.format(`.${options.precision}f`);
-      return `${h}x${w} = ${f(h*w)}`;
+      return `${h}x${w}`;
     })
     .attr('class', 'tool-tip')
     .attr('fill', 'black')
