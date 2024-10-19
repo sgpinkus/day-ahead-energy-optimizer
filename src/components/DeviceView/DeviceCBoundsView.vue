@@ -38,13 +38,18 @@ watch(ref(device.cbounds), () => {
   immediate: true
 });
 
+const tableValueSpec = [
+  { label: 'low', min: device.hardBounds[0], max: device.hardBounds[1], step: 0.01 },
+  { label: 'high', min: device.hardBounds[0], max: device.hardBounds[1], step: 0.01 },
+];
+
 </script>
 
 <template>
   <template v-if='device.cbounds'>
     <v-card>
       <h3>Bounds</h3>
-      <RunSpecTableView :run-spec=device.cbounds>
+      <RunSpecTableView :run-spec=device.cbounds :value-spec='tableValueSpec'>
         <template v-slot:globals>
           <v-btn flat size="small" @click='unSetCBounds' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
         </template>

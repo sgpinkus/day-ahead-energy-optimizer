@@ -1,20 +1,29 @@
 <script setup lang="tsx">
+/**
+ * Takes a RunSpec whose value is a number[] and renders it as an editable table
+ * with value editor specified by ValueSpec prop.
+ */
 import { computed, defineComponent, defineProps } from 'vue';
-import type { IBoundedNumberRunSpec } from '@/model/RunSpec';
+import type { IRunSpec } from '@/model/RunSpec';
 
-const { runSpec } = defineProps<{
-  runSpec: IBoundedNumberRunSpec<[number, number]>,
+type ValueSpec = {
+  label: string,
+  min?: number,
+  max?: number,
+  step?: number,
+}
+
+const { runSpec, valueSpec } = defineProps<{
+  runSpec: IRunSpec<number[]>,
+  valueSpec: ValueSpec[],
+
 }>();
 
 // Just edit directly instead of a copy..
-const ranges = computed(() =>  runSpec.toRanges());
-
-const tableItems = computed(() => {
-  return ranges.value.map(([v, range]) => ({ start: range[0], end: range[1], low: v[0], high: v[1] }));
-});
+const ranges = computed(() =>  runSpec.toRanges().map(v => ({ value: v[0], range: v[1] })));
 
 const tableKeys = computed(() => {
-  return Object.keys(tableItems.value[0]);
+  return ['start', 'end', ...valueSpec.map(v => v.label)];
 });
 
 function unsetIndex(i: number) {
@@ -29,8 +38,10 @@ function move(i: number, newStart: any) {
   runSpec.move(i, newStart);
 }
 
-function set(i: number, v: [number, number]) {
-  runSpec.set(i, v);
+function setNumber(i: number, oldValue: number[], j: number, v: number) {
+  const newValue = [...oldValue];
+  newValue[j] = v;
+  runSpec.set(i, newValue);
 }
 
 const MyNumberTextField = defineComponent({
@@ -64,7 +75,7 @@ const MyNumberTextField = defineComponent({
         </tr>
       </thead>
       <tbody>
-        <tr v-for='(row, i) in tableItems' :key='i'>
+        <tr v-for='(row, i) in ranges' :key='i'>
           <td>
             <MyNumberTextField
               min=1
@@ -72,42 +83,34 @@ const MyNumberTextField = defineComponent({
               step=1
               :disabled='i === 0'
               :hide-spin-buttons='i ===0'
-              :model-value='row.start'
-              @update:modelValue='(newValue: number) => move(row.start, newValue)'
+              :model-value='row.range[0]'
+              @update:modelValue='(newValue: number) => move(row.range[0], newValue)'
             >
             </MyNumberTextField>
           </td>
           <td>
             <MyNumberTextField
               disabled
-              :model-value='row.end'
+              :model-value='row.range[1]'
             ></MyNumberTextField>
           </td>
-          <td>
-            <MyNumberTextField
-              :min=runSpec.hardBounds![0]
-              :max=runSpec.hardBounds![1]
-              step=0.01
-              :model-value='row.low'
-              @update:modelValue='(newValue: number) => set(row.start, [newValue, row.high])'
-            >
-            </MyNumberTextField>
-          </td>
-          <td>
-            <MyNumberTextField
-              :min=runSpec.hardBounds![0]
-              :max=runSpec.hardBounds![1]
-              step=0.01
-              :model-value='row.high'
-              @update:modelValue='(newValue: number) => set(row.start, [row.low, newValue])'
-            >
-            </MyNumberTextField>
-          </td>
+          <template v-for='(spec, i) in valueSpec' :key=i>
+            <td>
+              <MyNumberTextField
+                  :min='spec.min ?? null'
+                  :max='spec.max ?? null'
+                  :step='spec.step ?? null'
+                  :model-value='row.value[i]'
+                  @update:modelValue='(newValue: number) => setNumber(row.range[0], row.value, i, newValue)'
+                >
+              </MyNumberTextField>
+            </td>
+          </template>
           <td style='text-align: right'>
             <v-btn title='delete' v-if='i' flat size="small" @click='() => unsetIndex(i)'>
               <v-icon>mdi-delete-circle</v-icon>
             </v-btn>
-            <v-btn title='split' v-if='row.end > row.start + 1' flat size="small" @click='() => splitIndex(i)'>
+            <v-btn title='split' v-if='row.range[1] > row.range[0] + 1' flat size="small" @click='() => splitIndex(i)'>
               <v-icon>mdi-table-split-cell</v-icon>
             </v-btn>
           </td>

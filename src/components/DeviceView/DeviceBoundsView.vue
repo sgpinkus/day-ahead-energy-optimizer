@@ -19,12 +19,17 @@ watch(device.bounds, () => {
   immediate: true
 });
 
+const tableValueSpec = [
+  { label: 'low', min: device.hardBounds[0], max: device.hardBounds[1], step: 0.01 },
+  { label: 'high', min: device.hardBounds[0], max: device.hardBounds[1], step: 0.01 },
+];
+
 </script>
 
 <template>
   <v-card>
     <h3>Bounds</h3>
-    <RunSpecTableView :runSpec=device.bounds></RunSpecTableView>
+    <RunSpecTableView :runSpec=device.bounds :value-spec='tableValueSpec'></RunSpecTableView>
   </v-card>
   <v-card>
     <h3>Upper bounds</h3>
