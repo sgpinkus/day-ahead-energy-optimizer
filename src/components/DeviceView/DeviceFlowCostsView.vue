@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, nextTick, onMounted, ref, shallowRef, toRaw, useTemplateRef, watch, type ComputedRef, type Ref } from 'vue';
+import { computed, defineProps, nextTick, ref, useTemplateRef, watch, type ComputedRef, type Ref } from 'vue';
 import * as d3 from 'd3';
 import type { IBaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';

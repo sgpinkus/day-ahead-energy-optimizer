@@ -29,7 +29,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
         <v-list-subheader>Device Components</v-list-subheader>
         <v-list-item prepend-icon='mdi-text-box-edit' @click='tab = "descriptors"'>Descriptors</v-list-item>
         <v-list-item v-if='!device.attrs.hideBounds' prepend-icon='mdi-minus-box' @click='tab = "bounds"'>Flow Bounds</v-list-item>
-        <v-list-item v-if='!device.attrs.hideCBounds' prepend-icon='mdi-equal-box' @click='tab = "cbounds"'>Cummulative Flow Bounds</v-list-item>
+        <v-list-item v-if='!device.attrs.hideCBounds' prepend-icon='mdi-equal-box' @click='tab = "cbounds"'>Cumulative Flow Bounds</v-list-item>
         <v-list-item v-if='device.attrs.hasParameters' prepend-icon='mdi-function' @click='tab = "costs"'>Parameters</v-list-item>
         <v-list-group value="Costs">
           <template v-slot:activator="{ props }">
@@ -40,7 +40,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
             ></v-list-item>
           </template>
           <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Flow Cost</v-list-item>
-          <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Cummulative Flow Cost</v-list-item>
+          <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Cumulative Flow Cost</v-list-item>
           <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Peak Flow Cost</v-list-item>
         </v-list-group>
       </v-list>

@@ -66,7 +66,7 @@ const tableValueSpec = [
   </template>
   <template v-else>
     <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Cummulative Bounds</v-btn>
+      <v-btn @click='set'>Set Cumulative Bounds</v-btn>
     </v-card>
   </template>
 </template>

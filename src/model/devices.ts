@@ -28,10 +28,10 @@ type CBounds = BoundsRunSpec | undefined;
 // type CostType = keyof Costs;
 type Costs = {
   flow?: RunSpec<[number, number, number]>
-  cummulative_flow?: RunSpec<[number, number, number]>,
+  cumulative_flow?: RunSpec<[number, number, number]>,
   peak_flow?: [number, number, number],
   flow_bounds_linked?: RunSpec<[number, number, number]>,
-  cummulative_flow_bounds_linked?: RunSpec<[number, number, number]>,
+  cumulative_flow_bounds_linked?: RunSpec<[number, number, number]>,
 };
 
 export interface  IBaseDevice {
