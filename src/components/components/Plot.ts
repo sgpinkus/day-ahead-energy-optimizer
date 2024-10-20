@@ -18,18 +18,18 @@ function getRange(data: number[]) {
 
 export function draw(
   container: SVGSVGElement,
-  data: number[],
+  data: Record<string | number, number>,
   _options: Partial<Options> = {}
 ) {
-  const domain = Object.keys(data).map(i => +i);
+  const domain: number[] = Object.keys(data).map(v => +v);
   const options: Options = { ...defaultOptions, ..._options };
   const svg = d3.select(container);
   const g = svg.append('g')
       .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
   const width = svg.node()!.width.animVal.value - options.margin.left - options.margin.right;
   const height = svg.node()!.height.animVal.value - options.margin.top - options.margin.bottom;
-  const x = d3.scaleBand<number>().rangeRound([0, width]).padding(0.1).domain(domain);
-  const y = d3.scaleLinear().rangeRound([height, 0]).domain(getRange(data));
+  const x = d3.scaleLinear().range([0, width]).domain(d3.extent(domain) as number[]);
+  const y = d3.scaleLinear().rangeRound([height, 0]).domain(getRange(Object.values(data)));
   g.append('g')
       .attr('class', 'axis axis--x')
       .attr('transform', `translate(0, ${height})`)

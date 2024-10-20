@@ -29,10 +29,6 @@ function _draw() {
   draw(plot.value, data.value);
 }
 
-onMounted(() => {
-  _draw();
-});
-
 const viewBox = '0 0 1280 480';
 
 const tableValueSpec = [
@@ -46,19 +42,21 @@ const selectedRow: Ref<number | null> = ref(null);
 const selectedRange = computed(() => ranges.value && ranges.value.length && selectedRow.value !== null && ranges.value[selectedRow.value] || null);
 const domainBounds: ComputedRef<number[]> = computed(() => {
   if(device.bounds) {
-    const values = device.bounds.toRanges().map(([_v, ranges]) => ranges).flat();
+    const values = device.bounds.toRanges().map(([v]) => v).flat();
     return [Math.min(...values), Math.max(...values)];
   }
   return device.hardBounds;
 });
 const domain = computed(() => linspace(...(domainBounds.value as [number, number])));
-const data: Ref<number[] | null> = ref(domain.value.map(() => 0));
+const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries(domain.value.map((v) => [v, 0])));
 
 watch(selectedRange, () => {
   const params = selectedRange.value ? selectedRange.value[0] : undefined;
   console.debug('selectedRange changed. New params', cloneDeep(params));
   const f: (...a: any[]) => number = params ? fx(params) : () => 0;
-  data.value = domain.value.map(v => f(v));
+  data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
+}, {
+  immediate: true
 });
 
 watch(ranges, (_n, o) => {
@@ -72,10 +70,10 @@ watch(data, () => {
 function linspace(a: number, b: number, n = 50) {
   // If a === b we get a repeated n times.
   if(!n) return [];
-  const delta = (b - a)/n;
+  const delta = (b - a);
   const domain = [];
   for(let i = 0; i < n; i++) {
-    domain.push(a + i*delta);
+    domain.push(a + (i/n)*delta);
   }
   return domain;
 }

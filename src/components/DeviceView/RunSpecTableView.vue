@@ -3,7 +3,7 @@
  * Takes a RunSpec whose value is a number[] and renders it as an editable table
  * with value editor specified by ValueSpec prop.
  */
-import { computed, defineComponent, defineProps, ref, type Ref } from 'vue';
+import { computed, defineComponent, defineProps, onMounted, ref, setDevtoolsHook, type Ref } from 'vue';
 import type { IRunSpec } from '@/model/RunSpec';
 
 type ValueSpec = {
@@ -13,10 +13,11 @@ type ValueSpec = {
   step?: number,
 }
 
-const { runSpec, valueSpec, focusable = false } = defineProps<{
+const { runSpec, valueSpec, focusable = false, initialRowSelected = true } = defineProps<{
   runSpec: IRunSpec<number[]>,
   valueSpec: ValueSpec[],
   focusable?: boolean,
+  initialRowSelected?: boolean,
 }>();
 
 const emit = defineEmits(['rowSelected']);
@@ -70,11 +71,18 @@ function setFocused(i: number | null) {
   emit('rowSelected', i);
 }
 
+onMounted(() => {
+  if(focusable && initialRowSelected) {
+    setFocused(0);
+  }
+});
+
 </script>
 
 <template>
+    <!-- @keyup.escape='setFocused(null)' -->
     <v-table
-      @keyup.escape='setFocused(null)'
+
     >
       <thead>
         <tr>
