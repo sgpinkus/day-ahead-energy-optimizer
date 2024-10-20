@@ -13,13 +13,13 @@ const { device } = defineProps<{
 const numberRunSpecLow: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
 const numberRunSpecHigh: Ref<NumberRunSpecAdaptor<[number, number]> | null> = ref(null);
 
-function unSetCBounds() {
+function unSet() {
   device.cbounds = undefined; // eslint-disable-line vue/no-mutating-props
   numberRunSpecLow.value = null;
   numberRunSpecHigh.value = null;
 }
 
-function setCBounds() {
+function set() {
     device.cbounds = new BoundsRunSpec(device.basis, [0, 0] as [number, number], device.hardBounds); // eslint-disable-line vue/no-mutating-props
     numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[0], (y, i) => [y, device.cbounds!.get(i)[1]] as [number, number]);
     numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.cbounds, (x) => x[1], (y, i) => [device.cbounds!.get(i)[0], y] as [number, number]);
@@ -51,7 +51,7 @@ const tableValueSpec = [
       <h3>Bounds</h3>
       <RunSpecTableView :run-spec=device.cbounds :value-spec='tableValueSpec'>
         <template v-slot:globals>
-          <v-btn flat size="small" @click='unSetCBounds' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn flat size="small" @click='unSet' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
         </template>
       </RunSpecTableView>
     </v-card>
@@ -66,7 +66,7 @@ const tableValueSpec = [
   </template>
   <template v-else>
     <v-card class='ma-auto'>
-      <v-btn @click='setCBounds'>Set Cummulative Bounds</v-btn>
+      <v-btn @click='set'>Set Cummulative Bounds</v-btn>
     </v-card>
   </template>
 </template>

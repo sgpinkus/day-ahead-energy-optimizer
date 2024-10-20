@@ -3,7 +3,7 @@
  * Takes a RunSpec whose value is a number[] and renders it as an editable table
  * with value editor specified by ValueSpec prop.
  */
-import { computed, defineComponent, defineProps } from 'vue';
+import { computed, defineComponent, defineProps, ref, type Ref } from 'vue';
 import type { IRunSpec } from '@/model/RunSpec';
 
 type ValueSpec = {
@@ -13,11 +13,13 @@ type ValueSpec = {
   step?: number,
 }
 
-const { runSpec, valueSpec } = defineProps<{
+const { runSpec, valueSpec, focusable = false } = defineProps<{
   runSpec: IRunSpec<number[]>,
   valueSpec: ValueSpec[],
-
+  focusable?: boolean,
 }>();
+
+const emit = defineEmits(['rowSelected']);
 
 // Just edit directly instead of a copy..
 const ranges = computed(() =>  runSpec.toRanges().map(v => ({ value: v[0], range: v[1] })));
@@ -25,6 +27,8 @@ const ranges = computed(() =>  runSpec.toRanges().map(v => ({ value: v[0], range
 const tableKeys = computed(() => {
   return ['start', 'end', ...valueSpec.map(v => v.label)];
 });
+
+const focusedRow: Ref<number | null> = ref(null);
 
 function unsetIndex(i: number) {
   runSpec.unsetIndex(i);
@@ -40,7 +44,7 @@ function move(i: number, newStart: any) {
 
 function setNumber(i: number, oldValue: number[], j: number, v: number) {
   const newValue = [...oldValue];
-  newValue[j] = v;
+  newValue[j] = Number(v);
   runSpec.set(i, newValue);
 }
 
@@ -60,22 +64,28 @@ const MyNumberTextField = defineComponent({
   },
 });
 
+function setFocused(i: number | null) {
+  if(!focusable) return;
+  focusedRow.value = i;
+  emit('rowSelected', i);
+}
+
 </script>
 
 <template>
     <v-table
+      @keyup.escape='setFocused(null)'
     >
       <thead>
         <tr>
           <th v-for='h in tableKeys' :key='h'>
           {{ h }}
-          <!-- <v-btn flat size="small" @click='() => sortTable(h)'><v-icon>mdi-sort</v-icon></v-btn> -->
           </th>
           <th style='text-align: right'><slot name="globals"></slot></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for='(row, i) in ranges' :key='i'>
+        <tr v-for='(row, i) in ranges' :key='i' @click='setFocused(i)' :class='{ focused: i === focusedRow }'>
           <td>
             <MyNumberTextField
               min=1
@@ -120,5 +130,10 @@ const MyNumberTextField = defineComponent({
 </template>
 
 <style scoped>
-td { padding: 0; }
+td {
+  padding: 0;
+}
+.focused {
+  background-color: lightgray;
+}
 </style>

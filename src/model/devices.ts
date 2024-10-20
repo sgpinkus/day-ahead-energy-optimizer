@@ -25,14 +25,14 @@ type IAttributes = {
 // NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
 type Bounds = BoundsRunSpec;
 type CBounds = BoundsRunSpec | undefined;
-// Could rep costs like [NumberRunSpec, NumberRunSpec, NumberRunSpec] or NumberRunSpec<[number, number, number]>. Chose latter.
-type Cost = RunSpec<[number, number, number]>
-// Future, might be convenience to allow 0-N of each type but this is easier to impl for now.
-type CostType = 'flow' | 'cummulative_flow' | 'peak_flow' | 'flow_linked' | 'cummulative_flow_linked';
-type Costs = Partial<Record<CostType, {
-  cost: Cost,
-  boundToBounds: boolean,
-}>>;
+// type CostType = keyof Costs;
+type Costs = {
+  flow?: RunSpec<[number, number, number]>
+  cummulative_flow?: RunSpec<[number, number, number]>,
+  peak_flow?: [number, number, number],
+  flow_bounds_linked?: RunSpec<[number, number, number]>,
+  cummulative_flow_bounds_linked?: RunSpec<[number, number, number]>,
+};
 
 export interface  IBaseDevice {
   type: DeviceType,

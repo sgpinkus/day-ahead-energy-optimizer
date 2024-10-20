@@ -137,10 +137,12 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 }
 
+/**
+ * Bit ugh. hardBounds is an appendage to the RunSpec type for ~practical UI/validation concerns.
+ */
 export interface IBoundedNumberRunSpec<X> extends IRunSpec<X> {
   readonly hardBounds?: [number, number];
 }
-
 
 /**
  * Adds hardBounds and specific behaviour to set(). hardBounds are just one type of value validator you might want and
@@ -268,6 +270,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
     return this.runSpec.toRanges().map(([v, range]) => ([this.xToNumber(v), range]));
   }
 
+  // TODO: This should be copy of self.
   copy(): IRunSpec<number> {
     const newRunSpec = new RunSpec<number>(this.basis, 0);
     newRunSpec.runs = this.toRecord();
