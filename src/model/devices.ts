@@ -24,7 +24,7 @@ type IAttributes = {
 
 // NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
 type Bounds = BoundsRunSpec;
-type CBounds = BoundsRunSpec | undefined;
+type CumulativeBounds = BoundsRunSpec | undefined;
 // type CostType = keyof Costs;
 type Costs = {
   flow?: RunSpec<[number, number, number]>
@@ -45,7 +45,7 @@ export interface  IBaseDevice {
   shape?: string,
   tags?: Record<string, boolean | number | string>,
   bounds: Bounds,
-  cbounds: CBounds,
+  cumulative_bounds: CumulativeBounds,
   costs: Costs,
 }
 
@@ -91,7 +91,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
-  cbounds: CBounds = undefined;
+  cumulative_bounds: CumulativeBounds = undefined;
   costs: Costs = {};
   title?: string;
   description?: string;
@@ -129,7 +129,7 @@ export class FixedLoadDevice extends BaseDevice {
   description = 'A fixed load device';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(1, 1, [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
-  cbounds: CBounds = undefined;
+  cumulative_bounds: CumulativeBounds = undefined;
 
   constructor(data?: Partial<IFixedLoadDevice>) {
     super();
@@ -147,7 +147,7 @@ export class LoadDevice extends BaseDevice {
   color = 'blue';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  cbounds: CBounds = undefined;
+  cumulative_bounds: CumulativeBounds = undefined;
 
   constructor(data?: Partial<ILoadDevice>) {
     super();
@@ -165,7 +165,7 @@ export class SupplyDevice extends BaseDevice {
   color = 'red';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  cbounds: CBounds = undefined;
+  cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
     isLoad: true,
   };
@@ -185,7 +185,7 @@ export class StorageDevice extends BaseDevice {
   color = 'yellow';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
-  cbounds: CBounds = undefined;
+  cumulative_bounds: CumulativeBounds = undefined;
   efficiencyFactor = 1.0;
   cycleCostFactor = 0.0;
   depthCostFactor = 0.0;
