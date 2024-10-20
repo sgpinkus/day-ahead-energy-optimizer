@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import * as units from '@/model/units';
 import type { IBoundedNumberRunSpec } from '@/model/RunSpec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
@@ -13,7 +14,7 @@ export type Options = {
 }
 
 const defaultOptions: Options = {
-  margin: { top: 20, right: 20, bottom: 40, left: 40},
+  margin: { top: 20, right: 30, bottom: 60, left: 30},
   range: [undefined, undefined],
   autoPaddingFactor: [0.15, 0.15],
   xFormatter: null,
@@ -230,12 +231,26 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   g.append('g')
       .attr('class', 'axis axis--x')
       .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale).tickFormat(options.xFormatter));
+      .call(d3.axisBottom(xScale).tickFormat(options.xFormatter))
+      .call(g => g.append('text')
+        .attr('x', width/2)
+        .attr('y', options.margin.bottom)
+        .attr('fill', 'currentColor')
+        .attr('text-anchor', 'end')
+        .attr('font-size', 'larger')
+        .text('Time'));
   g.selectAll('.axis--x g.tick text')
-      .attr('transform', 'rotate(-90) translate(-20,-14)');
+      .attr('transform', 'rotate(-90) translate(-22,-14)');
   g.append('g')
       .attr('class', 'axis axis--y')
-      .call(d3.axisLeft(yScale).ticks(10, ''));
+      .call(d3.axisLeft(yScale).ticks(10, ''))
+      .call(g => g.append('text')
+        .attr('x', -options.margin.left / 2)
+        .attr('y', -options.margin.top + 10)
+        .attr('fill', 'currentColor')
+        .attr('text-anchor', 'start')
+        .attr('font-size', 'larger')
+        .text(units.FlowUnitSymbol));
   g.append('line')
     .attr('stroke', 'black')
     .attr('x1', 0)

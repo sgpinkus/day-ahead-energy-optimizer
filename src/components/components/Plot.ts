@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import * as units from '@/model/units';
 
 export type Options = {
   margin: Record<string, any>;
@@ -33,12 +34,26 @@ export function draw(
   g.append('g')
       .attr('class', 'axis axis--x')
       .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(x).tickFormat(options.xFormatter));
-  g.selectAll('.axis--x g.tick text')
-      .attr('transform', 'rotate(-90) translate(-20,-14)');
+      .call(d3.axisBottom(x).tickFormat(options.xFormatter))
+      .call(g => g.append('text')
+        .attr('x', width)
+        .attr('y', options.margin.bottom - 4)
+        .attr('fill', 'currentColor')
+        .attr('text-anchor', 'end')
+        .attr('font-size', 'larger')
+        .text(units.FlowUnitSymbol));
+  // g.selectAll('.axis--x g.tick text')
+  //     .attr('transform', 'rotate(-90) translate(-20,-14)');
   g.append('g')
       .attr('class', 'axis axis--y')
-      .call(d3.axisLeft(y).ticks(10, ''));
+      .call(d3.axisLeft(y).ticks(10, ''))
+      .call(g => g.append('text')
+        .attr('x', -options.margin.left / 2)
+        .attr('y', -options.margin.top + 10)
+        .attr('fill', 'currentColor')
+        .attr('text-anchor', 'start')
+        .attr('font-size', 'larger')
+        .text(units.CostUnitSymbol));
   g.append('line')
     .attr('stroke', 'black')
     .attr('x1', 0)
