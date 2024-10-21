@@ -72,17 +72,9 @@ export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadD
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
-// function boundsNumberRunSpecs(l: number, h: number, hb?: [number, number]): [NumberRunSpec, NumberRunSpec] {
-//   return [
-//     new NumberRunSpec(DefaultBasis, l, hb),
-//     new NumberRunSpec(DefaultBasis, h, hb),
-//   ];
-// }
-
 function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): BoundsRunSpec {
   return new BoundsRunSpec(DefaultBasis, [l, h] as [number, number], hb);
 }
-
 
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
@@ -117,6 +109,14 @@ export abstract class BaseDevice implements IBaseDevice {
     const o = new this(data);
     Object.assign(o, data);
     return o;
+  }
+
+  softBounds(type: 'bounds' | 'cumulative_bounds') {
+    if(this[type]) {
+      const values = this[type].toRanges().map(([v]) => v).flat();
+      return [Math.min(...values), Math.max(...values)];
+    }
+    return this.hardBounds;
   }
 }
 

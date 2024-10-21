@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, defineProps, nextTick, ref, useTemplateRef, watch, type ComputedRef, type Ref } from 'vue';
-import * as d3 from 'd3';
-import type { IBaseDevice } from '@/model/devices';
+import { computed, defineProps, ref, watch, type ComputedRef, type Ref } from 'vue';
+import type { BaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';
 // import RunSpecGraphView from './RunSpecGraphView.vue';
 import RunSpecTableView from './RunSpecTableView.vue';
@@ -10,15 +9,15 @@ import { cloneDeep } from 'lodash';
 import { linspace, quadratic } from '@/utils';
 
 const { device } = defineProps<{
-  device: IBaseDevice,
+  device: BaseDevice,
 }>();
 
 function unSet() {
-  device.costs.flow = undefined; // eslint-disable-line vue/no-mutating-props
+  device.costs.cumulative_flow = undefined; // eslint-disable-line vue/no-mutating-props
 }
 
 function set() {
-  device.costs.flow = new RunSpec(device.basis, [0, 0, 0] as [number, number, number]); // eslint-disable-line vue/no-mutating-props
+  device.costs.cumulative_flow = new RunSpec(device.basis, [0, 0, 0] as [number, number, number]); // eslint-disable-line vue/no-mutating-props
 }
 
 const tableValueSpec = [
@@ -27,16 +26,10 @@ const tableValueSpec = [
   { label: 'o', min: -1e3, max: 1e3, step: 0.01 },
 ];
 
-const ranges = computed(() => device.costs.flow?.toRanges() || null);
+const ranges = computed(() => device.costs.cumulative_flow?.toRanges() || null);
 const selectedRow: Ref<number | null> = ref(null);
 const selectedRange = computed(() => ranges.value && ranges.value.length && selectedRow.value !== null && ranges.value[selectedRow.value] || null);
-const domainBounds: ComputedRef<number[]> = computed(() => {
-  if(device.bounds) {
-    const values = device.bounds.toRanges().map(([v]) => v).flat();
-    return [Math.min(...values), Math.max(...values)];
-  }
-  return device.hardBounds;
-});
+const domainBounds: ComputedRef<number[]> = computed(() => device.softBounds('cumulative_bounds'));
 const domain = computed(() => linspace(...(domainBounds.value as [number, number])));
 const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries(domain.value.map((v) => [v, 0])));
 
@@ -52,17 +45,17 @@ watch(selectedRange, () => {
 </script>
 
 <template>
-  <template v-if='device.costs.flow'>
+  <template v-if='device.costs.cumulative_flow'>
     <v-card>
-      <h3>Flow Cost</h3>
+      <h3>Cumulative Flow Cost</h3>
       <RunSpecTableView
-        :run-spec='device.costs.flow'
+        :run-spec='device.costs.cumulative_flow'
         :value-spec='tableValueSpec'
         :focusable='true'
         @row-selected='(i: number | null) => selectedRow = i'
       >
         <template v-slot:globals>
-          <v-btn flat size="small" @click='unSet' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
+          <v-btn flat size="small" @click='unSet' title='delete cost entirely'><v-icon>mdi-delete</v-icon></v-btn>
         </template>
       </RunSpecTableView>
     </v-card>
@@ -72,7 +65,7 @@ watch(selectedRange, () => {
   </template>
   <template v-else>
     <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Flow Costs</v-btn>
+      <v-btn @click='set'>Set Cumulative Flow Costs</v-btn>
     </v-card>
   </template>
 </template>
