@@ -22,8 +22,8 @@ function set() {
 }
 
 const tableValueSpec = [
-  { label: 'price at min', min: 0, max: 1e3, step: 0.01 },
-  { label: 'price at max', min: 0, max: 1e3, step: 0.01 },
+  { label: 'price at min', min: -1e3, max: 1e3, step: 0.01 },
+  { label: 'price at max', min: -1e3, max: 1e3, step: 0.01 },
   // { label: 'o', min: -1e3, max: 1e3, step: 0.01 },
 ];
 
@@ -36,7 +36,7 @@ const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries
 watch(selectedRange, () => {
   const params = selectedRange.value ? selectedRange.value[0] : undefined;
   console.debug('selectedRange changed. New params', cloneDeep(params));
-  const f: (...a: any[]) => number = params ? boundsRelativeQuadratic([params[1], params[0], 0, 1]) : () => 0;
+  const f: (...a: any[]) => number = params ? boundsRelativeQuadratic(params[1], params[0], 0, 1) : () => 0;
   data.value = Object.fromEntries(domain.map(v => [v, f(v)]));
 }, {
   immediate: true
@@ -50,7 +50,10 @@ function setDialog(x: keyof typeof info | '') {
 }
 
 const info = {
-  flowBoundsRelative: 'The price of flow is "price at min" at minimum flow of device and "price at max" at maximum flow.',
+  flowBoundsRelative: 'The price of flow is "price at min" at minimum flow of device and "price at max" at maximum flow.' +
+  'For a demand respons load device, you generally want prices to be *negative* with the "price at min" less (more negative)' +
+  'than "price at high" assuming the max flow is the most desirable state if price is not a factor'
+  ,
   '': '',
 };
 

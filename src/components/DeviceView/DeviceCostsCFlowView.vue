@@ -36,7 +36,7 @@ const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries
 watch(selectedRange, () => {
   const params = selectedRange.value ? selectedRange.value[0] : undefined;
   console.debug('selectedRange changed. New params', cloneDeep(params));
-  const f: (...a: any[]) => number = params ? quadratic([...params, 0]) : () => 0;
+  const f: (...a: any[]) => number = params ? quadratic(...params, 0) : () => 0;
   data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
 }, {
   immediate: true

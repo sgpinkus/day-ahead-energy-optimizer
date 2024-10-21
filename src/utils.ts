@@ -67,12 +67,20 @@ export function linspace(a: number, b: number, n = 50) {
   return domain;
 }
 
-export function quadratic([a, b, o, c]: [number, number, number, number]) {
+export function quadratic(a: number, b: number, o: number, c: number) {
   return (x: number) => a*(x + o)**2 + b*(x + o) + c;
 }
 
-export function boundsRelativeQuadratic([p0, p1, xL, xH]: [number, number, number, number]) {
+/**
+ *
+ * @param p0,
+ * @returns
+ */
+export function boundsRelativeQuadratic(p0: number, p1: number, xL: number, xH: number) {
   // (x_h - x_l)*np.poly1d([(d0 - d1)/2, d1, 0])((x - x_l)/(x_h - x_l))
-  const f = quadratic([(p0 - p1)/2, p1, 0, 0]);
-  return (x: number) => (xH - xL)*f((x - xL)/(xH - xL));
+  const b = p1;
+  const a = (p0 - p1)/2; // p0 = 2*1*a + b; a = (p0-p1)/2
+  const c = quadratic(a, b, 0 , 0)(-b/(2*a)); // f'(x) = 2ax + b; f'(x) = 0 -> x* = -b/2a.
+  const f = quadratic(a, b, 0, 0);
+  return (x: number) => (xH - xL)*f((x - xL)/(xH - xL)) - c;
 }
