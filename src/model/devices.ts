@@ -30,8 +30,8 @@ type Costs = {
   flow?: RunSpec<[number, number, number]>
   cumulative_flow?: RunSpec<[number, number, number]>,
   peak_flow?: [number, number, number],
-  flow_bounds_linked?: RunSpec<[number, number, number]>,
-  cumulative_flow_bounds_linked?: RunSpec<[number, number, number]>,
+  flow_bounds_relative?: RunSpec<[number, number, number]>,
+  cumulative_flow_bounds_relative?: RunSpec<[number, number, number]>,
 };
 
 export interface  IBaseDevice {

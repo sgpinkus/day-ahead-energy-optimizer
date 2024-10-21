@@ -7,6 +7,8 @@ import DeviceCBoundsView from './DeviceCBoundsView.vue';
 import DeviceFlowCostsView from './DeviceCostsFlowView.vue';
 import DeviceCFlowCostsView from './DeviceCostsCFlowView.vue';
 import DevicePFlowCostsView from './DeviceCostsPFlowView.vue';
+import DeviceCostsBoundsRelativeFlow from './DeviceCostsBoundsRelativeFlow.vue';
+import DeviceCostsCBoundsRelativeFlow from './DeviceCostsCBoundsRelativeFlow.vue';
 import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
 import router from '@/router';
@@ -41,9 +43,13 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
               title="Costs"
             ></v-list-item>
           </template>
-          <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "costs"'>Flow Cost</v-list-item>
-          <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "ccosts"'>Cumulative Flow Cost</v-list-item>
-          <v-list-item v-if='!device.attrs.hideCosts' prepend-icon='mdi-function' @click='tab = "pcosts"'>Peak Flow Cost</v-list-item>
+          <template v-if='!device.attrs.hideCosts'>
+            <v-list-item prepend-icon='mdi-function' @click='tab = "costs"'>Flow Cost</v-list-item>
+            <v-list-item prepend-icon='mdi-function' @click='tab = "brcosts"'>Bounds Relative Flow Cost</v-list-item>
+            <v-list-item prepend-icon='mdi-function' @click='tab = "ccosts"'>Cumulative Flow Cost</v-list-item>
+            <v-list-item prepend-icon='mdi-function' @click='tab = "brccosts"'>Cumulative Bounds Relative Flow Cost</v-list-item>
+            <v-list-item prepend-icon='mdi-function' @click='tab = "pcosts"'>Peak Flow Cost</v-list-item>
+          </template>
         </v-list-group>
       </v-list>
   </AppNavDrawer>
@@ -53,10 +59,12 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
       <DeviceDescriptorsView v-if='tab === "descriptors"' :device='device'></DeviceDescriptorsView>
       <DeviceBoundsView v-if='tab === "bounds" && !device.attrs.hideBounds' :device='device'></DeviceBoundsView>
       <DeviceCBoundsView v-if='tab === "cbounds" && !device.attrs.hideCBounds' :device='device'></DeviceCBoundsView>
+      <DeviceParametersView v-if='tab === "params" && device.attrs.hasParameters' :device='device'></DeviceParametersView>
       <DeviceFlowCostsView v-if='tab === "costs" && !device.attrs.hideCosts' :device='device'></DeviceFlowCostsView>
+      <DeviceCostsBoundsRelativeFlow v-if='tab === "brcosts" && !device.attrs.hideCosts' :device='device'></DeviceCostsBoundsRelativeFlow>
+      <DeviceCostsCBoundsRelativeFlow v-if='tab === "brccosts" && !device.attrs.hideCosts' :device='device'></DeviceCostsCBoundsRelativeFlow>
       <DeviceCFlowCostsView v-if='tab === "ccosts" && !device.attrs.hideCosts' :device='device'></DeviceCFlowCostsView>
       <DevicePFlowCostsView v-if='tab === "pcosts" && !device.attrs.hideCosts' :device='device'></DevicePFlowCostsView>
-      <DeviceParametersView v-if='tab === "params" && device.attrs.hasParameters' :device='device'></DeviceParametersView>
     </v-container>
   </v-main>
 </template>

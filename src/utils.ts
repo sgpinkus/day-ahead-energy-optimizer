@@ -70,3 +70,9 @@ export function linspace(a: number, b: number, n = 50) {
 export function quadratic([a, b, o, c]: [number, number, number, number]) {
   return (x: number) => a*(x + o)**2 + b*(x + o) + c;
 }
+
+export function boundsRelativeQuadratic([p0, p1, xL, xH]: [number, number, number, number]) {
+  // (x_h - x_l)*np.poly1d([(d0 - d1)/2, d1, 0])((x - x_l)/(x_h - x_l))
+  const f = quadratic([(p0 - p1)/2, p1, 0, 0]);
+  return (x: number) => (xH - xL)*f((x - xL)/(xH - xL));
+}
