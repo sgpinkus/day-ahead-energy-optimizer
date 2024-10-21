@@ -5,8 +5,9 @@ import type { IBaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';
 // import RunSpecGraphView from './RunSpecGraphView.vue';
 import RunSpecTableView from './RunSpecTableView.vue';
-import { draw } from '@/components/components/Plot';
+import PlotView from './PlotView.vue';
 import { cloneDeep } from 'lodash';
+import { linspace, quadratic } from '@/utils';
 
 const { device } = defineProps<{
   device: IBaseDevice,
@@ -19,17 +20,6 @@ function unSet() {
 function set() {
   device.costs.flow = new RunSpec(device.basis, [0, 0, 0] as [number, number, number]); // eslint-disable-line vue/no-mutating-props
 }
-
-const plot = useTemplateRef('plot');
-
-function _draw() {
-  if(!plot.value) return console.debug('Not drawing because plot container ref is null!');
-  if(!data.value) return console.debug('Not drawing because data is null!');
-  d3.select(plot.value).selectAll('*').remove();
-  draw(plot.value, data.value);
-}
-
-const viewBox = '0 0 1280 480';
 
 const tableValueSpec = [
   { label: 'a', min: 0, max: 1e3, step: 0.01 },
@@ -53,34 +43,11 @@ const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries
 watch(selectedRange, () => {
   const params = selectedRange.value ? selectedRange.value[0] : undefined;
   console.debug('selectedRange changed. New params', cloneDeep(params));
-  const f: (...a: any[]) => number = params ? fx(params) : () => 0;
+  const f: (...a: any[]) => number = params ? quadratic([...params, 0]) : () => 0;
   data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
 }, {
   immediate: true
 });
-
-watch(ranges, (_n, o) => {
-  if(!o) nextTick(_draw);
-});
-
-watch(data, () => {
-  if(data.value) _draw();
-});
-
-function linspace(a: number, b: number, n = 50) {
-  // If a === b we get a repeated n times.
-  if(!n) return [];
-  const delta = (b - a);
-  const domain = [];
-  for(let i = 0; i < n; i++) {
-    domain.push(a + (i/n)*delta);
-  }
-  return domain;
-}
-
-function fx([a, b, o]: [number, number, number]) {
-  return (x: number) => a*(x + o)**2 + b*(x + o);
-}
 
 </script>
 
@@ -100,12 +67,7 @@ function fx([a, b, o]: [number, number, number]) {
       </RunSpecTableView>
     </v-card>
     <v-card>
-      <svg
-        ref='plot'
-        :viewBox=viewBox
-        preserveAspectRatio="xMidYMid meet"
-      >
-      </svg>
+      <PlotView v-if='data' :data='data'></PlotView>
     </v-card>
   </template>
   <template v-else>

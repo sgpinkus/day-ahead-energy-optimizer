@@ -4,7 +4,6 @@
 import type { IUser } from '@/types';
 import { pick, set } from 'lodash';
 
-
 /**
  * Merge updates from b into a inplace, in a way that preserves meaning of key in b.
  */
@@ -21,7 +20,6 @@ export function mergeArgs(a: Record<string, any>, b: Record<string, any>) {
   }
 }
 
-
 /**
  * coords and timestamp are implemented as getters at least in FF so won't just JSON.stringify.
  * https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
@@ -29,7 +27,6 @@ export function mergeArgs(a: Record<string, any>, b: Record<string, any>) {
 export function geolocationPositionToObject(o: GeolocationPosition): Omit<GeolocationPosition, 'new'> {
   return { timestamp: o.timestamp, coords: pick(o.coords, ['accuracy', 'altitude', 'altitudeAccuracy', 'heading', 'latitude', 'longitude', 'speed']) };
 }
-
 
 /**
  * make user title string.

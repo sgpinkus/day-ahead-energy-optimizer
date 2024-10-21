@@ -55,3 +55,18 @@ export function setIntersection(a: unknown[] | undefined, b: unknown[] | undefin
   if (!(a && a.length) || !(b && b.length)) return [];
   return a.filter(v => b.includes(v));
 }
+
+export function linspace(a: number, b: number, n = 50) {
+  // If a === b we get a repeated n times.
+  if(!n) return [];
+  const delta = (b - a);
+  const domain = [];
+  for(let i = 0; i < n; i++) {
+    domain.push(a + (i/n)*delta);
+  }
+  return domain;
+}
+
+export function quadratic([a, b, o, c]: [number, number, number, number]) {
+  return (x: number) => a*(x + o)**2 + b*(x + o) + c;
+}
