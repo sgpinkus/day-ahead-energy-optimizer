@@ -9,11 +9,11 @@ const { device } = defineProps<{
 }>();
 
 function unSet() {
-  device.costs.peak_flow = undefined; // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlow(undefined); // eslint-disable-line vue/no-mutating-props
 }
 
 function set() {
-  device.costs.peak_flow = [0,0,0]; // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlow([0,0,0]); // eslint-disable-line vue/no-mutating-props
 }
 
 const tableValueSpec = [
@@ -33,7 +33,7 @@ const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries
 function setNumber(i: 0 | 1 | 2, v: number) {
   const x = [...device.costs.peak_flow!]; // https://vuejs.org/guide/essentials/list.html#array-change-detection
   x[i] = v;
-  device.costs.peak_flow = x as any; // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlow(x as [number, number, number]);
 }
 
 watch(() => device.costs.peak_flow, () => {

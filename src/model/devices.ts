@@ -26,13 +26,24 @@ type IAttributes = {
 type Bounds = BoundsRunSpec;
 type CumulativeBounds = BoundsRunSpec | undefined;
 // type CostType = keyof Costs;
-type Costs = {
-  flow?: RunSpec<[number, number, number]>
+type ICosts = {
+  flow?: RunSpec<[number, number, number]>,
   cumulative_flow?: RunSpec<[number, number, number]>,
-  peak_flow?: [number, number, number],
   flow_bounds_relative?: RunSpec<[number, number, number]>,
   cumulative_flow_bounds_relative?: RunSpec<[number, number, number]>,
+  readonly peak_flow?: [number, number, number],
 };
+type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
+export class DeviceCosts implements ICosts {
+  flow?: RunSpec<[number, number, number]> = undefined;
+  cumulative_flow?: RunSpec<[number, number, number]> = undefined;
+  flow_bounds_relative?: RunSpec<[number, number, number]> = undefined;
+  cumulative_flow_bounds_relative?: RunSpec<[number, number, number]> = undefined;
+  readonly peak_flow?: [number, number, number] = undefined;
+  setPeakFlow(this: IWritableCosts, v: ICosts['peak_flow']) {
+    this.peak_flow = v ? [...v] : undefined;
+  }
+}
 
 export interface  IBaseDevice {
   type: DeviceType,
@@ -46,7 +57,7 @@ export interface  IBaseDevice {
   tags?: Record<string, boolean | number | string>,
   bounds: Bounds,
   cumulative_bounds: CumulativeBounds,
-  costs: Costs,
+  costs: DeviceCosts,
 }
 
 export interface ILoadDevice extends IBaseDevice {
@@ -84,7 +95,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
-  costs: Costs = {};
+  costs: DeviceCosts = new DeviceCosts();
   title?: string;
   description?: string;
   tags: Record<string, boolean | number | string> = {};
@@ -123,7 +134,6 @@ export abstract class BaseDevice implements IBaseDevice {
 export class FixedLoadDevice extends BaseDevice {
   type: DeviceType = 'fixed_load';
   basis = DefaultBasis;
-  costs = {};
   shape = 'circle';
   title = 'Fixed Load';
   description = 'A fixed load device';
@@ -140,7 +150,6 @@ export class FixedLoadDevice extends BaseDevice {
 export class LoadDevice extends BaseDevice {
   type: DeviceType = 'load';
   basis = DefaultBasis;
-  costs = {};
   shape = 'circle';
   title = 'Load';
   description = 'A load device';
@@ -158,7 +167,6 @@ export class LoadDevice extends BaseDevice {
 export class SupplyDevice extends BaseDevice {
   type: DeviceType = 'supply';
   basis = DefaultBasis;
-  costs = {};
   shape = 'circle';
   title = 'Supply';
   description = 'A supply device';
@@ -178,7 +186,6 @@ export class SupplyDevice extends BaseDevice {
 export class StorageDevice extends BaseDevice {
   type: DeviceType = 'storage';
   basis = DefaultBasis;
-  costs = {};
   shape = 'circle';
   title = 'Storage';
   description = 'A storage device';

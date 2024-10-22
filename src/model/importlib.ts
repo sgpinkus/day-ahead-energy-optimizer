@@ -8,6 +8,7 @@
 import { RunSpec, NumberRunSpec, BoundsRunSpec } from './RunSpec';
 import {
   Devices,
+  DeviceCosts,
   BaseDevice,
   LoadDevice,
   StorageDevice,
