@@ -72,15 +72,14 @@ export function quadratic(a: number, b: number, o: number, c: number) {
 }
 
 /**
- *
- * @param p0,
- * @returns
+ * To stay stay weak convex we just require pH >= PL
+ * @returns number.
  */
-export function boundsRelativeQuadratic(p0: number, p1: number, xL: number, xH: number) {
+export function boundsRelativeQuadratic(pL: number, pH: number, xL: number, xH: number) {
   // (x_h - x_l)*np.poly1d([(d0 - d1)/2, d1, 0])((x - x_l)/(x_h - x_l))
-  const b = p1;
-  const a = (p0 - p1)/2; // p0 = 2*1*a + b; a = (p0-p1)/2
-  const c = quadratic(a, b, 0 , 0)(-b/(2*a)); // f'(x) = 2ax + b; f'(x) = 0 -> x* = -b/2a.
+  const b = pL;
+  const a = (pH - pL)/2; // p0 = 2*1*a + b; a = (p0-p1)/2
+  const c = a === 0 ? 0 : quadratic(a, b, 0 , 0)(-b/(2*a)); // f'(x) = 2ax + b; f'(x) = 0 -> x* = -b/2a.
   const f = quadratic(a, b, 0, 0);
   return (x: number) => (xH - xL)*f((x - xL)/(xH - xL)) - c;
 }

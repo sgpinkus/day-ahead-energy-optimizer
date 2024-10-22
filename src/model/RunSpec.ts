@@ -20,12 +20,18 @@ export interface IRunSpec<X> {
   copy(): IRunSpec<X>;
 }
 
+/**
+ * Basically a Map<[number, number], X> that enforces certain constraints on the [number, number], also has a few useful
+ * mutators. Validating the value X is beyond the scope of this class. That can be done in three ways: in the type X, or using
+ * the `setter` initialization parameter to this class, or overriding set().
+ */
 export class RunSpec<X> implements IRunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
   runs: Record<number, X> = {};
   constructor(
     public readonly basis: number,
     zerothValue: X,
+    public readonly setter: (v: X) => X = (v) => v,
   ) {
     this.runs[0] = zerothValue;
   }
@@ -40,7 +46,7 @@ export class RunSpec<X> implements IRunSpec<X> {
 
   set(i: number, v: X) {
     this.assertIndexBounds(i);
-    this.runs[i] = v;
+    this.runs[i] = this.setter(v);
   }
 
   unset(i: number) {
@@ -145,29 +151,17 @@ export interface IBoundedNumberRunSpec<X> extends IRunSpec<X> {
 }
 
 /**
- * Adds hardBounds and specific behaviour to set(). hardBounds are just one type of value validator you might want and
- * only really applicable where X = number.
+ * Adds hardBounds constraint and specific coerce behaviour to set(). hardBounds are just one type of value validator you
+ * might want and only really applicable where X = number.
  */
 export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunSpec<number> {
   constructor(
     public readonly basis: number,
     zerothValue?: number,
     public readonly hardBounds?: [number, number],
+    coerce: boolean = true
   ) {
-    super(basis, zerothValue ?? NumberRunSpec._figureZero(hardBounds));
-  }
-
-  set(i: number, v: number, coerce = true) {
-    this.assertIndexBounds(i);
-    if(this.hardBounds && (v < this.hardBounds[0])) {
-      if(!coerce) throw new RangeError('value out of bounds');
-      v = this.hardBounds[0];
-    }
-    if(this.hardBounds && v > this.hardBounds[1]) {
-      if(!coerce) throw new RangeError('value out of bounds');
-      v = this.hardBounds[1];
-    }
-    this.runs[i] = v;
+    super(basis, zerothValue ?? NumberRunSpec._figureZero(hardBounds),  NumberRunSpec._setter(hardBounds, coerce));
   }
 
   copy(): NumberRunSpec {
@@ -178,26 +172,48 @@ export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunS
     if(hardBounds) return Math.abs(hardBounds[1]) > Math.abs(hardBounds[0]) ? hardBounds[0] : hardBounds[1];
     return 0;
   }
+
+  static _setter(hardBounds?: [number,  number], coerce: boolean = true) {
+    return (v: number) => {
+      if(hardBounds && (v < hardBounds[0])) {
+        if(!coerce) throw new RangeError('value out of bounds');
+        v = hardBounds[0];
+      }
+      if(hardBounds && v > hardBounds[1]) {
+        if(!coerce) throw new RangeError('value out of bounds');
+        v = hardBounds[1];
+      }
+      return v;
+    };
+  }
 }
 
 export class BoundsRunSpec extends RunSpec<[number, number]> implements IBoundedNumberRunSpec<[number, number]> {
-  constructor(basis: number, zerothValue: [number, number] = [0,0], public readonly hardBounds?: [number, number]) {
-    super(basis, zerothValue);
+  constructor(
+    public readonly basis: number,
+    zerothValue: [number, number] = [0,0],
+    public readonly hardBounds?: [number, number],
+    coerce: boolean = true
+  ) {
+    super(basis, zerothValue, BoundsRunSpec._setter(hardBounds, coerce));
   }
-  set(i: number, v: [number, number], coerce = true) {
-    if(this.hardBounds) {
-      if(v.some((_v) => (_v < this.hardBounds![0] || _v > this.hardBounds![1]))) {
-        if(!coerce) throw new RangeError('value out of bounds');
-        v = v.map(_v => Math.max(Math.min(_v, this.hardBounds![1]), this.hardBounds![0])) as [number, number];
+
+  static _setter(hardBounds?: [number, number], coerce: boolean = true) {
+    return (v: [number, number]) => {
+      if(hardBounds) {
+        if(v.some((_v) => (_v < hardBounds![0] || _v > hardBounds![1]))) {
+          if(!coerce) throw new RangeError('value out of bounds');
+          v = v.map(_v => Math.max(Math.min(_v, hardBounds![1]), hardBounds![0])) as [number, number];
+        }
       }
-    }
-    if(v[1] < v[0]) {
-      // This results in asymmetric behaviour when only one of L, H is changed, but good enough.
-      if(!coerce) throw new RangeError('value out of bounds');
-      v[0] = Math.min(...v);
-      v[1] = Math.max(...v);
-    }
-    super.set(i, v);
+      if(v[1] < v[0]) {
+        // This results in asymmetric behaviour when only one of L, H is changed, but good enough.
+        if(!coerce) throw new RangeError('value out of bounds');
+        v[0] = Math.min(...v);
+        v[1] = Math.max(...v);
+      }
+      return v;
+    };
   }
 }
 

@@ -29,16 +29,16 @@ type CumulativeBounds = BoundsRunSpec | undefined;
 type ICosts = {
   flow?: RunSpec<[number, number, number]>,
   cumulative_flow?: RunSpec<[number, number, number]>,
-  flow_bounds_relative?: RunSpec<[number, number, number]>,
-  cumulative_flow_bounds_relative?: RunSpec<[number, number, number]>,
+  flow_bounds_relative?: BoundsRunSpec,
+  cumulative_flow_bounds_relative?: BoundsRunSpec,
   readonly peak_flow?: [number, number, number],
 };
 type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
 export class DeviceCosts implements ICosts {
   flow?: RunSpec<[number, number, number]> = undefined;
   cumulative_flow?: RunSpec<[number, number, number]> = undefined;
-  flow_bounds_relative?: RunSpec<[number, number, number]> = undefined;
-  cumulative_flow_bounds_relative?: RunSpec<[number, number, number]> = undefined;
+  flow_bounds_relative?: BoundsRunSpec = undefined;
+  cumulative_flow_bounds_relative?: BoundsRunSpec = undefined;
   readonly peak_flow?: [number, number, number] = undefined;
   setPeakFlow(this: IWritableCosts, v: ICosts['peak_flow']) {
     this.peak_flow = v ? [...v] : undefined;

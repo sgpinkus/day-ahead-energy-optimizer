@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
 import LocalStorageNotice from './LocalStorageNotice.vue';
+import InfoDialogs from './InfoDialogs.vue';
 import SystemBar from './SystemBar.vue';
 import ActionBar from './ActionBar.vue';
 
@@ -26,6 +27,7 @@ const doLocalStorageNotice = ref(false);
   >
     <local-storage-notice></local-storage-notice>
   </v-dialog>
+  <InfoDialogs></InfoDialogs>
   <SystemBar></SystemBar>
   <RouteView></RouteView>
   <ActionBar></ActionBar>
