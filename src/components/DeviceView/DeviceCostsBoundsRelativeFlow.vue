@@ -9,17 +9,20 @@ import PlotView from './PlotView.vue';
 import { cloneDeep } from 'lodash';
 import { linspace, boundsRelativeQuadratic } from '@/utils';
 
+const costKey = 'flow_bounds_relative';
+const title = 'Bounds Relative Flow Costs';
+
 const { device } = defineProps<{
   device: BaseDevice,
 }>();
 
 function unSet() {
-  device.costs.flow_bounds_relative = undefined; // eslint-disable-line vue/no-mutating-props
+  device.costs[costKey] = undefined; // eslint-disable-line vue/no-mutating-props
 }
 
 function set() {
   if(device.hardBounds[0] !== 0) throw new Error('Bounds relative costs not supported for this device type currently');
-  device.costs.flow_bounds_relative = new BoundsRunSpec(device.basis, [0, 0], priceHardBounds); // eslint-disable-line vue/no-mutating-props
+  device.costs[costKey] = new BoundsRunSpec(device.basis, [0, 0], priceHardBounds); // eslint-disable-line vue/no-mutating-props
 }
 
 
@@ -29,7 +32,7 @@ const tableValueSpec = [
   { label: 'price at max', min: -1e3, max: 1e3, step: 0.01 },
   // { label: 'o', min: -1e3, max: 1e3, step: 0.01 },
 ];
-const ranges = computed(() => device.costs.flow_bounds_relative?.toRanges() || null);
+const ranges = computed(() => device.costs[costKey]?.toRanges() || null);
 const selectedRow: Ref<number | null> = ref(null);
 const selectedRange = computed(() => ranges.value && ranges.value.length && selectedRow.value !== null && ranges.value[selectedRow.value] || null);
 const domain = linspace(0, 1);
@@ -46,11 +49,11 @@ watch(selectedRange, () => {
 </script>
 
 <template>
-  <template v-if='device.costs.flow_bounds_relative'>
+  <template v-if='device.costs[costKey]'>
     <v-card>
-      <h3>Bounds Relative Flow Cost <v-icon @click='setDialog("FlowBoundsRelative")' size='18'>mdi-information</v-icon></h3>
+      <h3>{{ title }}<v-icon @click='setDialog("FlowBoundsRelative")' size='18'>mdi-information</v-icon></h3>
       <RunSpecTableView
-        :run-spec='device.costs.flow_bounds_relative'
+        :run-spec='device.costs[costKey]!'
         :value-spec='tableValueSpec'
         :focusable='true'
         @row-selected='(i: number | null) => selectedRow = i'
@@ -66,7 +69,7 @@ watch(selectedRange, () => {
   </template>
   <template v-else>
     <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Bounds Relative Flow Costs</v-btn>
+      <v-btn @click='set'>Set {{ title }}</v-btn>
     </v-card>
   </template>
 </template>
