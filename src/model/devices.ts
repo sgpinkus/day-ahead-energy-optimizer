@@ -140,7 +140,10 @@ export class FixedLoadDevice extends BaseDevice {
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(1, 1, [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
   cumulative_bounds: CumulativeBounds = undefined;
-
+  attrs: IAttributes = {
+    hideCosts: true,
+    hideCBounds: true,
+  };
   constructor(data?: Partial<IFixedLoadDevice>) {
     super();
     Object.assign(this, data);

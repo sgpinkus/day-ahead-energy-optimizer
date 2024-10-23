@@ -30,17 +30,25 @@ const addTypes: TypeSpec[] = [
     icon: 'mdi-vector-polyline-plus',
     type: 'fixed_load'
   },
-]
+];
 
 </script>
 <template>
-  <v-list class='flex-shrink-0'>
-    <v-list-subheader>Add Device</v-list-subheader>
-        <v-list-item v-for='spec in addTypes' :key='spec.type'
-          :title=spec.title
-          :prepend-icon=spec.icon
-          @click=devices.addDeviceType(spec.type);
-        >
-        </v-list-item>
+  <v-list>
+    <v-list-group value="Add Device">
+      <template v-slot:activator="{ props }">
+        <v-list-item
+          v-bind="props"
+          prepend-icon='mdi-vector-polyline-plus'
+          title="Add Device"
+        ></v-list-item>
+      </template>
+      <v-list-item v-for='spec in addTypes' :key='spec.type'
+        :title=spec.title
+        :prepend-icon=spec.icon
+        @click=devices.addDeviceType(spec.type);
+      >
+      </v-list-item>
+    </v-list-group>
   </v-list>
 </template>

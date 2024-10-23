@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, provide, ref, type Ref } from 'vue';
-import UserListItemCard from './UserListItemCard.vue';
+// import UserListItemCard from './UserListItemCard.vue';
 
 const rail = ref(false);
 
@@ -17,7 +17,7 @@ function login() {
   null;
 }
 
-const authUser = computed(() => null);
+// const authUser = computed(() => null);
 const connectionOk: Ref<string | boolean> = computed(() => false);
 const authOk: Ref<string | boolean> = computed(() => false);
 
@@ -46,7 +46,7 @@ function clickOutsideClear() {
         </template>
         Checking Connection
       </v-list-item>
-      <v-list-item v-else-if='connectionOk === false' @click=''>
+      <v-list-item v-else-if='connectionOk === false' @click='() => {}'>
         <template v-slot:prepend>
           <v-icon>mdi-api-off</v-icon>
         </template>

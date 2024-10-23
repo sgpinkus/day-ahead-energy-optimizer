@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import model from '@/model';
-import AddDeviceActionList from './AddDeviceActionList.vue'
+import AddDeviceActionList from './AddDeviceActionList.vue';
 import DeviceList from './DeviceList.vue';
 </script>
 
 <template>
   <div class='details-content'>
     <v-list class='flex-shrink-0'>
-      <v-list-subheader>OtherActions</v-list-subheader>
-            <v-list-item
-              @click='model.reset()'
-              prepend-icon="mdi-refresh"
-            >
-            Reset Local Data
-            </v-list-item>
-      </v-list>
+      <!-- <v-list-subheader>OtherActions</v-list-subheader> -->
+      <v-list-item
+        @click='model.reset()'
+        prepend-icon="mdi-refresh"
+      >
+      Reset Local Data
+      </v-list-item>
     <v-divider></v-divider>
     <AddDeviceActionList></AddDeviceActionList>
     <v-divider></v-divider>
     <DeviceList></DeviceList>
-    <v-divider></v-divider>
+    </v-list>
   </div>
 </template>
 
@@ -31,10 +30,6 @@ import DeviceList from './DeviceList.vue';
     flex-flow: nowrap;
     display: flex;
     flex-direction: column;
-  }
-
-  .v-divider {
-    opacity: 50%;
   }
 
   .v-btn {

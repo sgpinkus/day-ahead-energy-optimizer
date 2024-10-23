@@ -5,9 +5,13 @@
   $mdi-version: "0",
   $mdi-font-path: "@sgpinkus/mdi-font/fonts",
 );
-
-
 $mdi-version: "0" !important;
+
+.v-list-group__items .v-list-item {
+  padding-inline-start: 16px !important;
+}
+
+.v-list { padding: 0; }
 
 html {
   overflow: auto;
