@@ -11,6 +11,7 @@ export type Options = {
   precision: number,
   hEditable: boolean,
   vEditable: boolean,
+  ticks: number, // vertical ticks, +ve number.
 }
 
 const defaultOptions: Options = {
@@ -19,6 +20,7 @@ const defaultOptions: Options = {
   autoPaddingFactor: [0.15, 0.15],
   xFormatter: null,
   precision: 3,
+  ticks: 10,
   hEditable: true,
   vEditable: true,
 };
@@ -60,7 +62,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   function vStopped(this: Element, event: DragEvent, datum: Range) {
     const [_v, range] = datum;
     const value = -event.y;
-    const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toPrecision(options.precision));
+    const domainValue = Number(Number(yScale.invert(yScale(0) - value)).toFixed(options.precision));
     lineGroup.attr('opacity', 0);
     try {
       data.set(range[0], domainValue);
@@ -86,6 +88,9 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   function getRange() {
     const [min, max] = [Math.min(...data.toArray()), Math.max(...data.toArray())];
     const spread = max - min;
+    const hardBoundsMin = data.hardBounds ? data.hardBounds[0] : Number.NEGATIVE_INFINITY;
+    const hardBoundsMax = data.hardBounds ? data.hardBounds[1] : Number.POSITIVE_INFINITY;
+    const absTicksBound = options.ticks*1/10**options.precision;
     function getMin() {
       let v = -1;
       if(options.range && options.range[0] !== undefined) {
@@ -95,7 +100,8 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       } else if(min !== 0) {
         v = (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
       }
-      return Math.max(v, data.hardBounds ? data.hardBounds[0] : Number.NEGATIVE_INFINITY);
+      v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
+      return Math.max(v, hardBoundsMin);
     }
     function getMax() {
       let v = 1;
@@ -106,7 +112,8 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       } else if(max !== 0) {
         v = (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
       }
-      return Math.min(v, data.hardBounds ? data.hardBounds[1] : Number.POSITIVE_INFINITY);
+      v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
+      return Math.min(v, hardBoundsMax);
     }
     return [getMin(), getMax()];
   }
@@ -126,6 +133,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   const height = svg.node()!.height.animVal.value - options.margin.top - options.margin.bottom;
   const xScale = d3.scaleBand<number>().rangeRound([0, width]).padding(0.1).domain(Object.keys(data.toArray()).map(i => +i));
   const yScale = d3.scaleLinear().rangeRound([height, 0]).domain(getRange());
+  yScale.ticks(options.ticks);
   let selectedIndex: number | undefined = undefined;
   const g = svg.append('g')
       .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
