@@ -82,7 +82,6 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
 </template>
 
 <style scoped>
-
   .container {
     min-height: 100vh;
     max-width: 960px;
@@ -92,6 +91,5 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
     padding: 1em;
     justify-content: stretch;
   }
-
   /* .device-components > .v-list-item, .device-components > .v-list-group { border-bottom: solid 1px gray; } */
 </style>

@@ -233,12 +233,14 @@ function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
 
 export class Devices {
   private devices: Record<string, ContainerDevice> = {};
+  static readonly MaxDevices = 20;
 
   addDevice(device: Device) {
     this.devices[device.id] = device;
   }
 
   addDeviceType(type: DeviceType) {
+    if(this.length >= Devices.MaxDevices) throw new RangeError(`Too many device (max=${Devices.MaxDevices})`);
     const device = deviceFactory({ type });
     console.log('addDeviceType', device);
     this.addDevice(device);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContainerDevice } from '@/model/devices';
-import { Network } from 'vis-network/standalone';
+// import { Network } from 'vis-network/standalone';
 import DeviceDescriptorsForm from './DeviceDescriptorsForm.vue';
 import { computed, onMounted, useTemplateRef, watch, type Ref } from 'vue';
 
@@ -27,21 +27,20 @@ const deviceNode = computed(() => ({
   })
 );
 const container: Ref<HTMLElement | null> = useTemplateRef('container');
-let network: Network;
 
 watch(deviceNode, (newDeviceNode) => {
-  if(network) network.destroy();
-  network = new Network(container.value!, { nodes: [newDeviceNode] }, options);
+  // if(network) network.destroy();
+  // network = new Network(container.value!, { nodes: [newDeviceNode] }, options);
 });
 
 onMounted(() => {
-  network = new Network(container.value!, { nodes: [deviceNode.value] }, options);
+  // network = new Network(container.value!, { nodes: [deviceNode.value] }, options);
 });
 
 </script>
 
 <template>
-    <v-sheet><div ref='container' class='container'></div></v-sheet>
+    <v-sheet><div ref='container' class='container'>XXX</div></v-sheet>
     <v-sheet>
       <DeviceDescriptorsForm :device='device'></DeviceDescriptorsForm>
     </v-sheet>

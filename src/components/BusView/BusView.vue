@@ -9,8 +9,20 @@ import BusMainView from './BusMainGraphView.vue';
     <BusNavView></BusNavView>
   </AppNavDrawer>
   <v-main>
-    <v-container class='d-flex align-content-center flex-column h-100 ma-0 pa-0'>
+    <v-container class='container'>
       <BusMainView></BusMainView>
     </v-container>
   </v-main>
 </template>
+
+<style scoped>
+  .container {
+    min-height: 100vh;
+    max-width: 720px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    padding: 1em;
+    justify-content: stretch;
+  }
+</style>

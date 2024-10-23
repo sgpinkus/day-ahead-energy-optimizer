@@ -1,90 +1,73 @@
 <script setup lang="ts">
+import * as d3 from 'd3';
+import { computed, onMounted, useTemplateRef, watch, watchEffect, type Ref } from 'vue';
 import model from '@/model';
 import router from '@/router';
-import { computed, onMounted, ref, useTemplateRef, watch, type Ref, inject } from 'vue';
-import { DataSet, Network } from 'vis-network/standalone';
-import { pick } from 'lodash';
+import { draw, type Options } from '@/components/components/NetworkHub';
 
 const nodeDefaults = {
   color: 'lightblue',
   shape: 'circle',
+};
+
+const deviceNodes = computed(() => Object.values(model.devices.getDevices()));
+const busNode = { id: 'hub', title: 'Bus', ...nodeDefaults };
+
+const options: Partial<Options> = {
+  focusedNode: '',
+};
+const container: Ref<SVGSVGElement | null> = useTemplateRef('container');
+
+function _draw() {
+  if(!container.value) return;
+  d3.select(container.value).selectAll('*').remove();
+  draw(
+    container.value!,
+    {
+      nodes: deviceNodes.value,
+      hub: busNode,
+    },
+    options,
+    onClick,
+    onDoubleClick,
+  );
 }
 
+function onClick(id: string) {
+  console.log('onClick', id);
+  if(id !== undefined && id !== 'hub')
+  model.focusedDeviceId = id;
+}
 
-const deviceNodes = computed(() => Object.values(model.devices.getDevices())
-  .map(v => ({
-    ...nodeDefaults,
-    id: v.id,
-    label: v.title || v.id,
-    title: v.description,
-    fixed: false,
-    ...pick(v, ['shape', 'color']),
-  }))
-);
+function onDoubleClick(id: string) {
+  if(id !== undefined) router.dispatch({ name: 'devices', params: { id } });
+}
 
-const busNode = { id: 0, label: 'bus', fixed: true, ...nodeDefaults };
+watch(deviceNodes, () => _draw());
 
-const nodes = computed(() => new DataSet([busNode, ... deviceNodes.value]));
-const edges = computed(() => new DataSet(deviceNodes.value.map((v) => ({ from: 0, to: v.id })) as any));
-const options = {
-  autoResize: false,
-  height: '100%',
-  width: '100%',
-  locale: 'en',
-  physics: false,
-  interaction: {
-    dragView: false,
-    zoomView: false,
-  },
-};
-const container: Ref<HTMLElement | null> = useTemplateRef('container');
-let network: Network;
-
-watch(nodes, (newComponentNodes) => {
-  if(network) network.destroy();
-  network = new Network(container.value!, { nodes: newComponentNodes, edges: edges.value as any }, options);
-  network.on('click', onClick);
-  network.on('doubleClick', onDoubleClick);
-},
-);
-
-watch(model, () => {
-  try {
-    if(model.focusedDeviceId) network.selectNodes([model.focusedDeviceId]);
-  } catch {
-  }
+watchEffect(() => {
+  console.log('watchEffect');
+  options.focusedNode = model.focusedDeviceId || undefined;
+  _draw();
 });
 
-function onClick(params: any) {
-  const clickedNodeId = String(network.getNodeAt(params.pointer.DOM));
-  model.focusedDeviceId = clickedNodeId;
-}
-
-function onDoubleClick(params: any) {
-  const clickedNodeId = String(network.getNodeAt(params.pointer.DOM));
-  router.dispatch({ name: 'devices', params: { id: clickedNodeId } });
-}
-
 onMounted(() => {
-  network = new Network(container.value!, { nodes: nodes.value, edges: edges.value as any }, options);
-  network.on('click', onClick);
-  network.on('doubleClick', onDoubleClick);
+  _draw();
 });
 
 </script>
+
 <template>
-  <div ref='container' class='container'></div>
+  <svg
+    id='container'
+    ref='container'
+    viewBox="0 0 480 480"
+    preserveAspectRatio="xMidYMid meet">
+  </svg>
 </template>
 
 <style scoped>
-  .focused {
-    background-color: lightgray;
-  }
-
-  .container {
-    height: 100%;
-    border: 0;
-    padding: 0;
-    margin: 0;
+  :global(.focused-node) {
+    stroke-width: 3;
   }
 </style>
