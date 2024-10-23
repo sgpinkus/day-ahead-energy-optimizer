@@ -16,7 +16,7 @@ function editDevice(id: string) {
 <template>
   <v-list class='flex-shrink-0'>
     <v-list-item
-      prepend-icon='mdi-map-marker'
+      prepend-icon='mdi-cellphone-settings'
       :append-icon='showObjectList ? "mdi-chevron-up" : "mdi-chevron-down"'
       @click='showObjectList = !showObjectList'
     >

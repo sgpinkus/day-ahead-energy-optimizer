@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import model from '@/model';
 import AddDeviceActionList from './AddDeviceActionList.vue';
+import AddDataActionList from './AddDataActionList.vue';
 import DeviceList from './DeviceList.vue';
+import DatumList from './DatumList.vue';
 </script>
 
 <template>
@@ -18,6 +20,9 @@ import DeviceList from './DeviceList.vue';
     <AddDeviceActionList></AddDeviceActionList>
     <v-divider></v-divider>
     <DeviceList></DeviceList>
+    <AddDataActionList></AddDataActionList>
+    <v-divider></v-divider>
+    <DatumList></DatumList>
     </v-list>
   </div>
 </template>

@@ -35,7 +35,7 @@ const addTypes: TypeSpec[] = [
 </script>
 <template>
   <v-list>
-    <v-list-group value="Add Device">
+    <v-list-group>
       <template v-slot:activator="{ props }">
         <v-list-item
           v-bind="props"
