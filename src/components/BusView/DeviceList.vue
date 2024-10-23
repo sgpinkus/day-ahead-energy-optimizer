@@ -22,8 +22,10 @@ function editDevice(id: string) {
     >
         <v-list-item-title>Devices ({{ devices.length || 0 }})</v-list-item-title>
     </v-list-item>
-    <v-divider></v-divider>
-    <template v-if='showObjectList && devices.length'>
+  </v-list>
+  <v-divider></v-divider>
+  <template v-if='showObjectList && devices.length'>
+    <v-list class='item-list'>
       <DeviceListItem v-for='item in devices.getDevices()' :key='item.id'
         :item=item
         @edit='() => editDevice(item.id)'
@@ -32,14 +34,14 @@ function editDevice(id: string) {
         @click.stop='model.focusedDeviceId = item.id'
       >
       </DeviceListItem>
-    </template>
-  </v-list>
+    </v-list>
+  </template>
+
 </template>
 
 <style scoped>
   .item-list {
     overflow-y: scroll !important;
     font-size: smaller;
-    min-height: 64px;
   }
 </style>

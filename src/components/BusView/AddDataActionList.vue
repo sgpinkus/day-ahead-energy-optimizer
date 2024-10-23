@@ -24,7 +24,7 @@ function addDataType(type: string) {
 
 </script>
 <template>
-  <v-list disabled>
+  <v-list disabled class='flex-shrink-0'>
     <v-list-group>
       <template v-slot:activator="{ props }">
         <v-list-item

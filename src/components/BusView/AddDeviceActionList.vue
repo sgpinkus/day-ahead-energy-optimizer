@@ -34,7 +34,7 @@ const addTypes: TypeSpec[] = [
 
 </script>
 <template>
-  <v-list>
+  <v-list class='flex-shrink-0'>
     <v-list-group>
       <template v-slot:activator="{ props }">
         <v-list-item
