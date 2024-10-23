@@ -5,11 +5,11 @@ import { computed } from 'vue';
 defineEmits(['edit', 'delete']);
 
 const icons = {
-  load: 'mdi-map-marker',
-  supply: 'mdi-vector-polyline',
-  storage: 'mdi-vector-polyline',
-  fixed_load: 'mdi-vector-polyline',
-}
+  load: 'mdi-cellphone-settings',
+  supply: 'mdi-generator-stationary',
+  storage: 'mdi-battery-charging',
+  fixed_load: 'mdi-cellphone-settings',
+};
 
 interface props {
   focused?: boolean,
