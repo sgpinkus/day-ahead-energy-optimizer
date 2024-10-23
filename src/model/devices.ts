@@ -124,8 +124,8 @@ export abstract class BaseDevice implements IBaseDevice {
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {
     if(this[type]) {
-      const values = this[type].toRanges().map(([v]) => v).flat();
-      return [Math.min(...values), Math.max(...values)];
+      const values = this[type]?.toRanges().map(([v]) => v).flat();
+      return [Math.min(...(values as number[])), Math.max(...(values as number[]))];
     }
     return this.hardBounds;
   }

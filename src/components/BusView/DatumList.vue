@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import model from '@/model';
 import { ref } from 'vue';
-import DeviceListItem from './DeviceListItem.vue';
 
-const datums = [];
+const datums: number[] = [];
 const showObjectList = ref(false);
 
 </script>
@@ -18,16 +16,8 @@ const showObjectList = ref(false);
         <v-list-item-title>Data ({{ datums.length || 0 }})</v-list-item-title>
     </v-list-item>
     <v-divider></v-divider>
-    <template v-if='showObjectList && datums.length'>
-      <DeviceListItem v-for='item in datums' :key='item.id'
-        :item=item
-        @edit='() => {}'
-        @delete='() => {}'
-        focused=''
-        @click.stop=''
-      >
-      </DeviceListItem>
-    </template>
+    <!-- <template v-if='showObjectList && datums.length'>
+    </template> -->
   </v-list>
 </template>
 

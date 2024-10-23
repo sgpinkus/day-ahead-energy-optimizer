@@ -4,7 +4,7 @@ import type { BaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';
 // import RunSpecGraphView from './RunSpecGraphView.vue';
 import RunSpecTableView from './RunSpecTableView.vue';
-import PlotView from './PlotView.vue';
+import PlotView from '@/components/components/PlotView.vue';
 import { cloneDeep } from 'lodash';
 import { linspace, quadratic } from '@/utils';
 

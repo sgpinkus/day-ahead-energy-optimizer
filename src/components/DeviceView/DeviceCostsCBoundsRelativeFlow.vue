@@ -5,7 +5,7 @@ import type { BaseDevice } from '@/model/devices';
 import { setDialog } from '@/model/infos';
 import { BoundsRunSpec } from '@/model/RunSpec';
 import RunSpecTableView from './RunSpecTableView.vue';
-import PlotView from './PlotView.vue';
+import PlotView from '@/components/components/PlotView.vue';
 import { cloneDeep } from 'lodash';
 import { linspace, boundsRelativeQuadratic } from '@/utils';
 
