@@ -46,7 +46,7 @@ export class RunSpec<X> implements IRunSpec<X> {
 
   set(i: number, v: X) {
     this.assertIndexBounds(i);
-    this.runs[i] = this.setter(v);
+    this.runs[i] = this.setter.apply(this, [v]);
   }
 
   unset(i: number) {
@@ -193,9 +193,9 @@ export class BoundsRunSpec extends RunSpec<[number, number]> implements IBounded
     public readonly basis: number,
     zerothValue: [number, number] = [0,0],
     public readonly hardBounds?: [number, number],
-    coerce: boolean = true
+    setter: (v: [number, number]) => [number, number] = BoundsRunSpec._setter(hardBounds, true)
   ) {
-    super(basis, zerothValue, BoundsRunSpec._setter(hardBounds, coerce));
+    super(basis, zerothValue, setter);
   }
 
   static _setter(hardBounds?: [number, number], coerce: boolean = true) {
@@ -214,6 +214,19 @@ export class BoundsRunSpec extends RunSpec<[number, number]> implements IBounded
       }
       return v;
     };
+  }
+}
+
+/**
+ * Another hackush subtype for binding upper/lower values together needed in fixed load use cases - just easier to
+ * subtype than use setter.
+ */
+export class FixedBoundsRunSpec extends BoundsRunSpec {
+  set(i: number, v: [number, number]) {
+    const cv: [number, number] = this.get(i);
+    const _v: [number, number] = [cv[0] === v[0] ? v[1] : v[0], cv[1] === v[1] ? v[0] : v[1]];
+    console.log('set', v, cv, _v);
+    super.set(i, _v);
   }
 }
 

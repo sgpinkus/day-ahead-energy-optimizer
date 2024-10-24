@@ -7,15 +7,13 @@ Cost Functions:
   - Timewise.
   - Linear, quadratic, ...
   - Constraint parametized (IDevice)
-  
+
 Constraint Types:
 
   - l|h bounds.
   - cummulative over some window or implicitly all time.
   - sliding window.
   - run-level.
-
- 
 
 # RESOLUTIONS & REQUIREMENTS
 
@@ -33,14 +31,14 @@ Constraint Types:
   - It's all localStorage to start.
   - Forms for each device type.
   - Widget for profile input and edit.
-  
+
 # KEY QUESTIONS
 **Q: Relationship between a devices and profiles?**
 D: Exactly what are they?
 
-  - L|H bounds for ~ every device type. Can either be a profile or a 
+  - L|H bounds for ~ every device type. Can either be a profile or a
   - Fixed device profile - the L|H bound are equal.
-  
+
 That's it AFAIK (could be more ..). To have be sat L <= H all t. But if profiles are mutable this can change after association how to handle? Solution: just allow unsat! This is fine. Secondly profile can be deleted. How to handle? Alt 1: Make a copy on ref. Alt 2: ON DELETE ERROR. Alt 3: ON DELETE CASCADE. Alt 4: Ref by id and let it dangle - "the profile does not exist, or just clean up on demand - silently unset it.
 
 Related issue is results are tied to a certain version of a scenario. Seem clear need to keep both together. So if scenario can evolve. how are we doing that? For device-kit experiements we did it explicitly - create the scenario run the optimisation then stash both. Alt 1: same "leave it to the user" approach here giving a way to save or snapshot a  scenario. Is there an better alt? Alt 2: keep a version of everything and full lineage, stash version number with ecah optimisation result. Alt 3: Take a snapshot (serialization) at optimisation time. #3 is an addon to #1. #2 is overkill
@@ -48,7 +46,7 @@ Related issue is results are tied to a certain version of a scenario. Seem clear
 *Conclusion:* Alt 1 initially. User can export optimisation results and scenario.
 
 **Q: "Scenarios"?**
-From device-kit have the term "device set", but this is really just a bus, use "bus" herein. Can attempt to solve any bus really. So what's a "scenario" over a bus? Given a collection of devices in the same name space, would be useful to be able to take some subset of device and generation technologies then run optimization. In a given space there's is many many different scenarios you might want to run and for each you need a bus .. So we just have busses and any bus can be solved. We also need projects, but this is different from a scenario because 
+From device-kit have the term "device set", but this is really just a bus, use "bus" herein. Can attempt to solve any bus really. So what's a "scenario" over a bus? Given a collection of devices in the same name space, would be useful to be able to take some subset of device and generation technologies then run optimization. In a given space there's is many many different scenarios you might want to run and for each you need a bus .. So we just have busses and any bus can be solved. We also need projects, but this is different from a scenario because
 
 Summary: "Scenario" whatever that ever meant out, "bus" in. Projects are different again.
 
@@ -62,7 +60,7 @@ At one level a device is just a a collection of constraints and costs. Those two
 
 Solved this in device-kit by actually having types. When you use a device type you instantiate it with all the necessary parameters. Different type have different parameters, require different form types, there is a fixed number of types. Downside: set of types is fixed and this is limiting. Consideration: If we had a type that was just an arbitrary collection of costs and constraints to allow ~arbitrary device type construction, we still probably want to reuse instances of that class in a prototyping fashion.
 
-The prototype alt: particular issue: we have two collections costs and constraints, what's the extension semantics? Solution: it's ambiguous with arrays and merge doesn't really work for arrays, but we definitely want merge semantics so .. all constraints are named in a Map. Can be overridden via the name. New ones added via new names. 
+The prototype alt: particular issue: we have two collections costs and constraints, what's the extension semantics? Solution: it's ambiguous with arrays and merge doesn't really work for arrays, but we definitely want merge semantics so .. all constraints are named in a Map. Can be overridden via the name. New ones added via new names.
 
 How does customizing an object work exactly?: When you add a device to a bus your adding a placeholder that extends that prototype. A bus then is a specific context that does overriding. From users perspective it's just a device they edit. Leads to another question: Device that only belong to a given bus.  Global device that don't are really ~ named prototypes or something. Fine.
 
@@ -71,7 +69,7 @@ What about constraints and costs? We've presumed the system is typed based till 
 
 Scenerio: We have named devices, cost and constraints. Like you can create a device prototype (named one) you can for costs and constraints. Problem is we need some kind of maths interpreter to define constraints.
 
-**Solution - Device and Constraint Types** Initially we'll have built-in cost and constraints. These are just as if the user had defined them but they are predefined. Could do the same for device. May or may not. We'll tag predefined somehow so they don't show up in user lists. 
+**Solution - Device and Constraint Types** Initially we'll have built-in cost and constraints. These are just as if the user had defined them but they are predefined. Could do the same for device. May or may not. We'll tag predefined somehow so they don't show up in user lists.
 
 
 Costs: is some mathematical function, exposes a bunch of paremeter with defaults. These can be overridden. They have a schema so we can build an edit form for them. Constraints:

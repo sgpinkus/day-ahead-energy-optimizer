@@ -5,7 +5,12 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars   */
 
-import { RunSpec, NumberRunSpec, BoundsRunSpec } from './RunSpec';
+import {
+  RunSpec,
+  NumberRunSpec,
+  BoundsRunSpec,
+  FixedBoundsRunSpec,
+} from './RunSpec';
 import {
   Devices,
   DeviceCosts,

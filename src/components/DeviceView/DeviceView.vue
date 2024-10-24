@@ -3,6 +3,7 @@ import { ref, defineProps } from 'vue';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
+import FixedDeviceBoundsView from './FixedDeviceBoundsView.vue';
 import DeviceCBoundsView from './DeviceCBoundsView.vue';
 import DeviceFlowCostsView from './DeviceCostsFlowView.vue';
 import DeviceCFlowCostsView from './DeviceCostsCFlowView.vue';
@@ -20,6 +21,15 @@ const tab = ref('descriptors');
 const { id: deviceId } = defineProps<props>();
 const device = model.devices.getDevice(deviceId);
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
+
+function boundsView() {
+  switch(device.type) {
+    case 'fixed_load':
+      return FixedDeviceBoundsView;
+    default:
+      return DeviceBoundsView;
+  }
+}
 
 </script>
 
@@ -69,7 +79,7 @@ if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: de
     <v-container class='container'>
       <h2>{{ device.title }}</h2>
       <DeviceDescriptorsView v-if='tab === "descriptors"' :device='device'></DeviceDescriptorsView>
-      <DeviceBoundsView v-if='tab === "bounds" && !device.attrs.hideBounds' :device='device'></DeviceBoundsView>
+      <component :is='boundsView()' v-if='tab === "bounds" && !device.attrs.hideBounds' :device='device'></component>
       <DeviceCBoundsView v-if='tab === "cbounds" && !device.attrs.hideCBounds' :device='device'></DeviceCBoundsView>
       <DeviceParametersView v-if='tab === "params" && device.attrs.hasParameters' :device='device'></DeviceParametersView>
       <DeviceFlowCostsView v-if='tab === "costs" && !device.attrs.hideCosts' :device='device'></DeviceFlowCostsView>

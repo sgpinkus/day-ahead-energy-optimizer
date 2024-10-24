@@ -7,7 +7,7 @@
  */
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
-import { RunSpec, BoundsRunSpec } from './RunSpec';
+import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './RunSpec';
 import { pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
@@ -93,7 +93,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
-  bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
+  readonly bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
   costs: DeviceCosts = new DeviceCosts();
   readonly title?: string;
@@ -138,7 +138,7 @@ export class FixedLoadDevice extends BaseDevice {
   title = 'Fixed Load';
   description = 'A fixed load device';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = boundsNumberRunSpec(1, 1, [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
+  bounds = new FixedBoundsRunSpec(DefaultBasis, [0,0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
   cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
     hideCosts: true,
