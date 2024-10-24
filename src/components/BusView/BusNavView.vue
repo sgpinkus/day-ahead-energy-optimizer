@@ -4,6 +4,14 @@ import AddDeviceActionList from './AddDeviceActionList.vue';
 import AddDataActionList from './AddDataActionList.vue';
 import DeviceList from './DeviceList.vue';
 import DatumList from './DatumList.vue';
+
+
+function exportModel() {
+  const blob = new Blob([model.toObject()], { type: 'application/json' });
+  const blobUrl = URL.createObjectURL(blob);
+  window.location.href = blobUrl;
+}
+
 </script>
 
 <template>
@@ -14,6 +22,13 @@ import DatumList from './DatumList.vue';
             prepend-icon="mdi-refresh"
           >
           Reset Local Data
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item
+            @click='exportModel()'
+            prepend-icon="mdi-export"
+          >
+          Export Data
           </v-list-item>
       </v-list>
       <v-divider></v-divider>

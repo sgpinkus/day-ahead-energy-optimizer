@@ -51,7 +51,11 @@ export class Model {
   shutdown() {
     console.log('Model: Shutting down');
     this.messages.clearAll();
-    window.localStorage.setItem(MyName, jsonStringify(this));
+    window.localStorage.setItem(MyName, this.toObject());
+  }
+
+  toObject() {
+    return jsonStringify(this);
   }
 }
 
