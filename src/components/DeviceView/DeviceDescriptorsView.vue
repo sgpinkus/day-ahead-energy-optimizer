@@ -2,45 +2,23 @@
 import type { ContainerDevice } from '@/model/devices';
 // import { Network } from 'vis-network/standalone';
 import DeviceDescriptorsForm from './DeviceDescriptorsForm.vue';
-import { computed, onMounted, useTemplateRef, watch, type Ref } from 'vue';
+import NetworkHubView from '../components/NetworkHubView.vue';
 
 const { device } = defineProps<{ device: ContainerDevice }>();
-const options = {
-  autoResize: false,
-  height: '100%',
-  width: '100%',
-  locale: 'en',
-  physics: false,
-  interaction: {
-    dragView: false,
-    zoomView: false,
-  },
-};
-
-const deviceNode = computed(() => ({
-    id: device.id,
-    label: device.title || device.id,
-    title: device.description,
-    fixed: false,
-    shape: device.shape || 'circle',
-    color: device.color
-  })
-);
-const container: Ref<HTMLElement | null> = useTemplateRef('container');
-
-watch(deviceNode, (newDeviceNode) => {
-  // if(network) network.destroy();
-  // network = new Network(container.value!, { nodes: [newDeviceNode] }, options);
-});
-
-onMounted(() => {
-  // network = new Network(container.value!, { nodes: [deviceNode.value] }, options);
-});
 
 </script>
 
 <template>
-    <v-sheet><div ref='container' class='container'>XXX</div></v-sheet>
+    <v-sheet>
+      <div class='container'>
+        <NetworkHubView
+          :device-nodes='[]'
+          :hub-node='device'
+          :height='480/4'
+          :width='480'
+        ></NetworkHubView>
+      </div>
+    </v-sheet>
     <v-sheet>
       <DeviceDescriptorsForm :device='device'></DeviceDescriptorsForm>
     </v-sheet>
@@ -50,4 +28,7 @@ onMounted(() => {
 .v-sheet {
   max-width: 960px;
 }
+// .container {
+//   max-width: 0
+// }
 </style>

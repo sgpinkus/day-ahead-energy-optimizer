@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import * as d3 from 'd3';
-import { onMounted, ref, useTemplateRef, watch, watchEffect, type Ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch, watchEffect, type Ref } from 'vue';
 import { draw, type Options, type Node } from './NetworkHub';
 
 
 const emits = defineEmits(['click', 'dblclick']);
 
-const { deviceNodes, focusedNodeId, hubNode } = defineProps<{
+const { deviceNodes, focusedNodeId, hubNode, height = 480, width = 480 } = defineProps<{
   deviceNodes: Node[],
   hubNode?: Partial<Node>,
   focusedNodeId?: string,
+  height?: number,
+  width?: number,
 }>();
 
+const viewBox = computed(() => `0 0 ${width} ${height}`);
 const container: Ref<SVGSVGElement | null> = useTemplateRef('container');
 const options: Ref<Partial<Options>> = ref({
   focusedNodeId,
@@ -55,7 +58,7 @@ onMounted(() => {
   <svg
     id='container'
     ref='container'
-    viewBox="0 0 480 480"
+    :viewBox=viewBox
     preserveAspectRatio="xMidYMid meet">
   </svg>
 </template>

@@ -9,13 +9,11 @@ const deviceNodes = computed(() => Object.values(model.devices.getDevices()));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
 
 function onClick(id: string) {
-  console.log('onClick');
   if(id !== undefined && id !== 'hub')
   model.focusedDeviceId = id;
 }
 
 function onDoubleClick(id: string) {
-  console.log('onDblClick');
   if(id !== undefined) router.dispatch({ name: 'devices', params: { id } });
 }
 

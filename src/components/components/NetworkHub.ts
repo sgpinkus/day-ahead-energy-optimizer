@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { merge } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 const { PI, cos, sin, sqrt } = Math;
 
 export type Node = {
@@ -57,7 +57,7 @@ export function draw(
       });
   }
 
-  const options: Options = merge(defaultOptions, _options);
+  const options: Options = merge(cloneDeep(defaultOptions), _options);
   const _hubNode = (options.hubNode as Node);
   const index = d3.local<number>();
   const svg = d3.select(container);
@@ -70,7 +70,6 @@ export function draw(
   const m = (i: number) => sqrt(x(i)**2 + y(i)**2);
   const g = svg.append('g')
     .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
-  console.log(width, height);
   const rScale = d3.scaleLinear().range([0,2*PI]).domain([0, nodes.length]);
   const hub = g.append('g')
     .attr('transform', `translate(${width/2}, ${height/2})`);
@@ -81,6 +80,8 @@ export function draw(
     .classed('focused-node', function(d) { return [d.id, Number(index.get(this))].includes(options.focusedNodeId as any); });
   rimNodes.exit().remove();
   rimNodes.append('line')
+    .attr('x1', (_d, i) => -1*(nodeR)/m(i)*x(i))
+    .attr('y1', (_d, i) => -1*(nodeR)/m(i)*y(i))
     .attr('x2', (_d, i) => -1*((m(i) - nodeR)/m(i))*x(i))
     .attr('y2', (_d, i) => -1*((m(i) - nodeR)/m(i))*y(i))
     .attr('stroke', 'yellow');
@@ -91,7 +92,11 @@ export function draw(
   rimNodes.append('text')
     .text((d) => d.title)
     .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'middle');
+    .attr('dominant-baseline', 'middle')
+    .attr('textLength', function(_d, i, g) {
+      return Math.min(g[i].getComputedTextLength(), 2.5*nodeR);
+    })
+    .attr('lengthAdjust', 'spacingAndGlyphs');
   rimNodes.append('text').text((d) => d.description || '')
     .attr('class', 'tool-tip')
     .attr('opacity', '0')

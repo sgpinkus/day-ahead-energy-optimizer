@@ -96,11 +96,11 @@ export abstract class BaseDevice implements IBaseDevice {
   bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
   costs: DeviceCosts = new DeviceCosts();
-  title?: string;
-  description?: string;
-  tags: Record<string, boolean | number | string> = {};
-  color?: string;
-  shape?: string;
+  readonly title?: string;
+  readonly description?: string;
+  readonly tags: Record<string, boolean | number | string> = {};
+  readonly color?: string;
+  readonly shape?: string;
 
   protected constructor() {
     this.id = uuid();
