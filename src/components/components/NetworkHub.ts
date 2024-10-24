@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { merge } from 'lodash';
 const { PI, cos, sin, sqrt } = Math;
 
 export type Node = {
@@ -8,32 +9,28 @@ export type Node = {
   color?: string,
   shape?: string,
 }
-
+const nodeDefaults = {
+  color: 'lightblue',
+  shape: 'circle',
+};
 export type Data = {
   hub: Node,
   nodes: Node[],
 }
-
 export type Options = {
   margin: Record<string, any>;
-  range: [number | undefined, number | undefined],
-  autoPaddingFactor: [number, number],
-  xFormatter: any,
-  precision: number,
-  focusedNode?: string | number
+  focusedNodeId: string | number
+  hubNode: Partial<Node>,
 }
 const defaultOptions: Options = {
   margin: { top: 40, right: 40, bottom: 40, left: 40},
-  range: [undefined, undefined],
-  autoPaddingFactor: [0.15, 0.15],
-  xFormatter: null,
-  precision: 3,
-  focusedNode: -1,
+  focusedNodeId: -1,
+  hubNode: { id: 'hub', title: 'Bus', ...nodeDefaults }
 };
 
 export function draw(
   container: SVGSVGElement,
-  data: Data,
+  nodes: Node[],
   _options: Partial<Options> = {},
   click?: (id: string, index: number) => void,
   dblclick?: (id: string, index: number) => void
@@ -60,8 +57,8 @@ export function draw(
       });
   }
 
-  const options: Options = { ...defaultOptions, ..._options };
-  const { hub: _hubNode, nodes } = data;
+  const options: Options = merge(defaultOptions, _options);
+  const _hubNode = (options.hubNode as Node);
   const index = d3.local<number>();
   const svg = d3.select(container);
   const width = svg.node()!.width.animVal.value - options.margin.left - options.margin.right;
@@ -81,7 +78,7 @@ export function draw(
     .attr('transform', (_d, i) => `translate(${x(i)}, ${y(i)})`)
     .each(function(_d, i) { index.set(this, i+1); }) // Hub is index 0.
     .classed('node', true)
-    .classed('focused-node', function(d) { return [d.id, Number(index.get(this))].includes(options.focusedNode as any); });
+    .classed('focused-node', function(d) { return [d.id, Number(index.get(this))].includes(options.focusedNodeId as any); });
   rimNodes.exit().remove();
   rimNodes.append('line')
     .attr('x2', (_d, i) => -1*((m(i) - nodeR)/m(i))*x(i))
@@ -104,7 +101,7 @@ export function draw(
   hubNode.classed('node', true)
     .classed('hub-node', true)
     .each(function() { index.set(this, 0); }) // Hub is index 0.
-    .classed('focused-node', [0, _hubNode.id].includes(options.focusedNode as any));
+    .classed('focused-node', [0, _hubNode.id].includes(options.focusedNodeId as any));
   hubNode.append('circle')
     .classed('node', true)
     .attr('r', nodeR)
