@@ -4,10 +4,11 @@ import AddDeviceActionList from './AddDeviceActionList.vue';
 import AddDataActionList from './AddDataActionList.vue';
 import DeviceList from './DeviceList.vue';
 import DatumList from './DatumList.vue';
+import { jsonStringify } from '@/model/importlib';
 
 
 function exportModel() {
-  const blob = new Blob([model.toObject()], { type: 'application/json' });
+  const blob = new Blob([jsonStringify(model)], { type: 'application/json' });
   const blobUrl = URL.createObjectURL(blob);
   window.location.href = blobUrl;
 }

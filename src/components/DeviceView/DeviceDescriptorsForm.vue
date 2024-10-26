@@ -6,7 +6,7 @@ import { ref, useTemplateRef, type Ref } from 'vue';
 
 const { device } = defineProps<{ device: Device }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
-const work = ref(device.toObject());
+const work = ref(device.getDescriptors());
 const initialValue = cloneDeep(work.value);
 const valid = ref(false);
 const shapeTypes = ['ellipse', 'circle', 'database', 'box', 'text'];
@@ -25,7 +25,7 @@ async function change() { // change(changeKey: string)
   const { valid } = await form.value!.validate();
   const changes = deepDiffObjects2(work.value, initialValue);
   console.log('changes', changes);
-  if(changes) {
+  if(changes && valid) {
     device.updateDescriptors(changes);
   }
 }

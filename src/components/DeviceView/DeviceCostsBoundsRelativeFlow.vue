@@ -25,7 +25,6 @@ function set() {
   device.costs[costKey] = new BoundsRunSpec(device.basis, [0, 0], priceHardBounds); // eslint-disable-line vue/no-mutating-props
 }
 
-
 const priceHardBounds: [number, number] = [-1e3, 1e3];
 const tableValueSpec = [
   { label: 'price at min', min: -1e3, max: 1e3, step: 0.01 },

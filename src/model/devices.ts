@@ -8,7 +8,7 @@
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constants';
 import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './RunSpec';
-import { pick } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
@@ -110,8 +110,9 @@ export abstract class BaseDevice implements IBaseDevice {
     Object.assign(this, pick(o, ['title', 'description', 'shape', 'color', 'tags']));
   }
 
-  toObject(): IDevice {
-    return JSON.parse(JSON.stringify(this));
+  getDescriptors(this: BaseDevice): Partial<IDevice> {
+    // TODO: put descriptor in descriptors field. TODO: Why is attrs in here? Coz they are readonly descriptors??
+    return cloneDeep({ ...this.attrs, ... pick(this, ['title', 'description', 'shape', 'color', 'tags']) });
   }
 
   static fromObject(data: any) {
