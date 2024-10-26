@@ -1,5 +1,6 @@
 <script setup lang="tsx">
-import { computed, defineComponent, defineProps, ref, watch, type ComputedRef, type Ref } from 'vue';
+import { computed, defineComponent, defineProps, ref, watch } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/devices';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';

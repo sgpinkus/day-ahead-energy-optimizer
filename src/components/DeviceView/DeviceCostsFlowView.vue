@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, defineProps, ref, watch, type ComputedRef, type Ref } from 'vue';
+import { computed, defineProps, ref, watch } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/devices';
 import { RunSpec } from '@/model/RunSpec';
 import RunSpecTableView from './RunSpecTableView.vue';
