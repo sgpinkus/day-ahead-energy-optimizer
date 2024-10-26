@@ -34,6 +34,7 @@ type ICosts = {
   readonly peak_flow?: [number, number, number],
 };
 type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
+
 export class DeviceCosts implements ICosts {
   flow?: RunSpec<[number, number, number]> = undefined;
   cumulative_flow?: RunSpec<[number, number, number]> = undefined;
@@ -42,6 +43,16 @@ export class DeviceCosts implements ICosts {
   readonly peak_flow?: [number, number, number] = undefined;
   setPeakFlow(this: IWritableCosts, v: ICosts['peak_flow']) {
     this.peak_flow = v ? [...v] : undefined;
+  }
+
+  toExportObject() {
+    return {
+      flow: this.flow?.toArray() || undefined,
+      cumulative_flow: this.cumulative_flow?.toArray() || undefined,
+      flow_bounds_relative: this.flow_bounds_relative?.toArray() || undefined,
+      cumulative_flow_bounds_relative: this.cumulative_flow_bounds_relative?.toArray() || undefined,
+      peak_flow: this.peak_flow,
+    };
   }
 }
 
@@ -112,15 +123,18 @@ export abstract class BaseDevice implements IBaseDevice {
 
   getDescriptors(this: BaseDevice): Partial<IDevice> {
     // TODO: put descriptor in descriptors field. TODO: Why is attrs in here? Coz they are readonly descriptors??
-    return cloneDeep({ ...this.attrs, ... pick(this, ['title', 'description', 'shape', 'color', 'tags']) });
+    return cloneDeep({ ...pick(this, ['title', 'description', 'shape', 'color', 'tags']) });
   }
 
-  static fromObject(data: any) {
-    // @ts-expect-error 2511 "Cannot create an instance of an abstract class" yeah, so by definition "this" refers to
-    // a subclass! So shutup!
-    const o = new this(data);
-    Object.assign(o, data);
-    return o;
+  toExportObject() {
+    return {
+      descriptors: this.getDescriptors(),
+      id: this.id,
+      type: this.type,
+      bounds: this.bounds.toArray(),
+      cumulative_bounds: this.cumulative_bounds?.toArray() || undefined,
+      costs: this.costs.toExportObject(),
+    };
   }
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {
@@ -129,6 +143,13 @@ export abstract class BaseDevice implements IBaseDevice {
       return [Math.min(...(values as number[])), Math.max(...(values as number[]))];
     }
     return this.hardBounds;
+  }
+
+  static fromObject(data: any) {
+    // @ts-expect-error 2511 "Cannot create an instance of an abstract class" so by definition "this" refers to a subclass?!
+    const o = new this(data);
+    Object.assign(o, data);
+    return o;
   }
 }
 
@@ -222,7 +243,7 @@ export class StorageDevice extends BaseDevice {
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
 export type ContainerDevice = Device & { readonly id: string };
 
-function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
+export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
   switch(data.type) {
     case 'load': return new LoadDevice(data);
     case 'supply': return new SupplyDevice(data);
@@ -265,6 +286,13 @@ export class Devices {
 
   reset() {
     this.devices = {};
+  }
+
+  toExportObject() {
+    return {
+      basis: DefaultBasis,
+      devices: Object.values(this.devices).map(d => d.toExportObject()),
+    };
   }
 }
 

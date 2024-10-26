@@ -8,7 +8,8 @@ import { jsonStringify } from '@/model/importlib';
 
 
 function exportModel() {
-  const blob = new Blob([jsonStringify(model)], { type: 'application/json' });
+  const data = jsonStringify(model.devices.toExportObject());
+  const blob = new Blob([data], { type: 'application/json' });
   const blobUrl = URL.createObjectURL(blob);
   window.location.href = blobUrl;
 }
