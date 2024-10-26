@@ -7,22 +7,16 @@ import { ref, useTemplateRef, type Ref } from 'vue';
 
 const { device } = defineProps<{ device: StorageDevice }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
-const work = ref({
-  capacity: device.capacity,
-  efficiencyFactor: device.efficiencyFactor,
-  cycleCostFactor: device.cycleCostFactor,
-  depthCostFactor: device.depthCostFactor,
-  deepDepthRatio: device.deepDepthRatio
-});
-  const initialValue = cloneDeep(work.value);
-  const valid = ref(false);
+const work = ref(cloneDeep(device.parameters));
+const initialValue = cloneDeep(work.value);
+const valid = ref(false);
 
 async function change() { // change(changeKey: string)
   form.value!.resetValidation();
   const { valid } = await form.value!.validate();
   const changes = deepDiffObjects2(work.value, initialValue);
   if(valid && changes) {
-    Object.assign(device, cloneDeep(work.value));
+    Object.assign(device.parameters, changes);
   }
 }
 
@@ -38,7 +32,7 @@ async function change() { // change(changeKey: string)
       <v-icon @click='setDialog("StorageCapacity")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model="work.capacity"
+      v-model.number="work.capacity"
       type="number"
       :min=0
       :max=100
@@ -50,7 +44,7 @@ async function change() { // change(changeKey: string)
       <v-icon @click='setDialog("StorageEfficiencyFactor")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model="work.efficiencyFactor"
+      v-model.number="work.efficiencyFactor"
       type="number"
       :min=0
       :max=1
@@ -62,7 +56,7 @@ async function change() { // change(changeKey: string)
       <v-icon @click='setDialog("StorageCycleCostFactor")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model="work.cycleCostFactor"
+      v-model.number="work.cycleCostFactor"
       type="number"
       :min=0
       :max=10
@@ -74,7 +68,7 @@ async function change() { // change(changeKey: string)
       <v-icon @click='setDialog("StorageDepthCostFactor")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model="work.depthCostFactor"
+      v-model.number="work.depthCostFactor"
       type="number"
       :min=0
       :max=10
@@ -86,7 +80,7 @@ async function change() { // change(changeKey: string)
       <v-icon @click='setDialog("StorageDeepDepthRatio")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model="work.deepDepthRatio"
+      v-model.number="work.deepDepthRatio"
       type="number"
       :min=0
       :max=1

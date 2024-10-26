@@ -112,6 +112,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly tags: Record<string, boolean | number | string> = {};
   readonly color?: string;
   readonly shape?: string;
+  readonly parameters: Record<string, boolean | number | string | (boolean | number | string)[]> = {};
 
   protected constructor() {
     this.id = uuid();
@@ -128,12 +129,14 @@ export abstract class BaseDevice implements IBaseDevice {
 
   toExportObject() {
     return {
-      descriptors: this.getDescriptors(),
       id: this.id,
       type: this.type,
+      basis: this.basis,
       bounds: this.bounds.toArray(),
       cumulative_bounds: this.cumulative_bounds?.toArray() || undefined,
       costs: this.costs.toExportObject(),
+      parameters: this.parameters,
+      descriptors: this.getDescriptors(),
     };
   }
 
@@ -159,6 +162,7 @@ export class FixedLoadDevice extends BaseDevice {
   shape = 'circle';
   title = 'Fixed Load';
   description = 'A fixed load device';
+  color = '#A9A9A9';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = new FixedBoundsRunSpec(DefaultBasis, [0,0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
   cumulative_bounds: CumulativeBounds = undefined;
@@ -178,7 +182,7 @@ export class LoadDevice extends BaseDevice {
   shape = 'circle';
   title = 'Load';
   description = 'A load device';
-  color = 'blue';
+  color = '#0000FF';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
@@ -195,7 +199,7 @@ export class SupplyDevice extends BaseDevice {
   shape = 'circle';
   title = 'Supply';
   description = 'A supply device';
-  color = 'red';
+  color = '#FF0000';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
@@ -208,27 +212,38 @@ export class SupplyDevice extends BaseDevice {
   }
 }
 
+type IStorageDeviceParameters = {
+  efficiencyFactor: number,
+  cycleCostFactor: number,
+  depthCostFactor: number,
+  deepDepthRatio: number, // How deep does depth damage potentially kick in.
+  reserveRequirement: number,
+  capacity: 1, // kwh.
+}
+
 export class StorageDevice extends BaseDevice {
   type: DeviceType = 'storage';
   basis = DefaultBasis;
   shape = 'circle';
   title = 'Storage';
   description = 'A storage device';
-  color = 'yellow';
+  color = '#FFD700';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
-  efficiencyFactor = 1.0;
-  cycleCostFactor = 0.0;
-  depthCostFactor = 0.0;
-  deepDepthRatio = 0.2; // How deep does depth damage potentially kick in.
-  reserveRequirement = 0.5;
-  capacity = 1; // kwh.
   attrs: IAttributes = {
     hideBounds: true,
     hideCBounds: true,
     hideCosts: true,
     hasParameters: true,
+  };
+  parameters: IStorageDeviceParameters = {
+    efficiencyFactor: 1.0,
+    cycleCostFactor: 0.0,
+    depthCostFactor: 0.0,
+    deepDepthRatio: 0.2,
+    reserveRequirement: 0.5,
+    capacity: 1,
   };
   constructor(data?: Partial<IStorageDevice>) {
     super();
