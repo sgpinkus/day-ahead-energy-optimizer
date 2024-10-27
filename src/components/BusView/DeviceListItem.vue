@@ -25,6 +25,7 @@ const icon = computed(() => icons[item.type]);
       :prepend-icon='icon'
       :class='{ focused: focused }'
       :id="`list-item-${item.id}`"
+      @dblclick.stop='$emit("edit")'
     >
       <div class='d-flex flex-nowrap flex-row'>
         <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>

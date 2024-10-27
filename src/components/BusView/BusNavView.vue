@@ -5,13 +5,15 @@ import AddDataActionList from './AddDataActionList.vue';
 import DeviceList from './DeviceList.vue';
 import DatumList from './DatumList.vue';
 import { jsonStringify } from '@/model/importlib';
+import { ref } from 'vue';
 
+const blobUrl = ref('');
 
 function exportModel() {
   const data = jsonStringify(model.devices.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
-  const blobUrl = URL.createObjectURL(blob);
-  window.location.href = blobUrl;
+  blobUrl.value = URL.createObjectURL(blob);
+  // window.location.href = blobUrl;
 }
 
 </script>
@@ -30,7 +32,7 @@ function exportModel() {
             @click='exportModel()'
             prepend-icon="mdi-export"
           >
-          Export Data
+          <a :href='blobUrl' download='model.json'> Export Data</a>
           </v-list-item>
       </v-list>
       <v-divider></v-divider>

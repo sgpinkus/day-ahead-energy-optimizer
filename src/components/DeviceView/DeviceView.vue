@@ -13,6 +13,7 @@ import DeviceCostsCBoundsRelativeFlow from './DeviceCostsCBoundsRelativeFlow.vue
 import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
 import router from '@/router';
+import type { ICosts } from '@/model/devices';
 
 type props = {
   id: string;
@@ -29,6 +30,10 @@ function boundsView() {
     default:
       return DeviceBoundsView;
   }
+}
+
+function costStatusIcon(type: keyof ICosts) {
+  return device.costs[type] ? 'mdi-checkbox-outline' : '-';
 }
 
 </script>
@@ -65,11 +70,11 @@ function boundsView() {
               title="Costs"
             ></v-list-item>
           </template>
-          <v-list-item prepend-icon='mdi-function' @click='tab = "costs"'>Flow Cost</v-list-item>
-          <v-list-item prepend-icon='mdi-function' @click='tab = "brcosts"'>Bounds Relative Flow Cost</v-list-item>
-          <v-list-item prepend-icon='mdi-function' @click='tab = "ccosts"'>Cumulative Flow Cost</v-list-item>
-          <v-list-item prepend-icon='mdi-function' @click='tab = "brccosts"'>Cumulative Bounds Relative Flow Cost</v-list-item>
-          <v-list-item prepend-icon='mdi-function' @click='tab = "pcosts"'>Peak Flow Cost</v-list-item>
+          <v-list-item prepend-icon='mdi-function' :append-icon='costStatusIcon("flow")' @click='tab = "costs"'>Flow Cost</v-list-item>
+          <v-list-item prepend-icon='mdi-function' :append-icon='costStatusIcon("flow_bounds_relative")' @click='tab = "brcosts"'>Bounds Relative Flow Cost</v-list-item>
+          <v-list-item prepend-icon='mdi-function' :append-icon='costStatusIcon("cumulative_flow")' @click='tab = "ccosts"'>Cumulative Flow Cost</v-list-item>
+          <v-list-item prepend-icon='mdi-function' :append-icon='costStatusIcon("cumulative_flow_bounds_relative")' @click='tab = "brccosts"'>Cumulative Bounds Relative Flow Cost</v-list-item>
+          <v-list-item prepend-icon='mdi-function' :append-icon='costStatusIcon("peak_flow")' @click='tab = "pcosts"'>Peak Flow Cost</v-list-item>
         </v-list-group>
       </template>
       <v-divider></v-divider>

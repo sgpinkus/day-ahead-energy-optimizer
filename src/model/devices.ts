@@ -26,14 +26,14 @@ type IAttributes = {
 type Bounds = BoundsRunSpec;
 type CumulativeBounds = BoundsRunSpec | undefined;
 // type CostType = keyof Costs;
-type ICosts = {
+export type ICosts = {
   flow?: RunSpec<[number, number, number]>,
   cumulative_flow?: RunSpec<[number, number, number]>,
   flow_bounds_relative?: BoundsRunSpec,
   cumulative_flow_bounds_relative?: BoundsRunSpec,
   readonly peak_flow?: [number, number, number],
 };
-type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
+export type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
 
 export class DeviceCosts implements ICosts {
   flow?: RunSpec<[number, number, number]> = undefined;
