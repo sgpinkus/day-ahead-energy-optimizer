@@ -39,7 +39,7 @@ function setNumber(i: 0 | 1 | 2, v: number) {
 
 watch(() => device.costs.peak_flow, () => {
   const params = device.costs.peak_flow ? device.costs.peak_flow : undefined;
-  const f: (...a: any[]) => number = params ? quadratic(...params, 0) : () => 0;
+  const f: (...a: any[]) => number = params ? quadratic(params[0], params[1], 0, params[2]) : () => 0;
   data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
 }, {
   immediate: true,

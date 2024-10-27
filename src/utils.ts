@@ -67,7 +67,7 @@ export function linspace(a: number, b: number, n = 50) {
   return domain;
 }
 
-export function quadratic(a: number, b: number, o: number, c: number) {
+export function quadratic(a: number, b: number, c: number, o: number) {
   return (x: number) => a*(x + o)**2 + b*(x + o) + c;
 }
 
