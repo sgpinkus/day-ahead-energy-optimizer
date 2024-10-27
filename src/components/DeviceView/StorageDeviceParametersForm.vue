@@ -38,7 +38,9 @@ async function change() { // change(changeKey: string)
       :max=100
       :step=0.1
       @change='change'
+      placeholder='None'
     ></v-text-field>
+
     <div class="d-flex flex-row justify-space-between">
       <v-label>Efficiency Factor</v-label>
       <v-icon @click='setDialog("StorageEfficiencyFactor")' size='18'>mdi-information</v-icon>
@@ -50,31 +52,79 @@ async function change() { // change(changeKey: string)
       :max=1
       :step=0.01
       @change='change'
+      placeholder='None'
     ></v-text-field>
+
     <div class="d-flex flex-row justify-space-between">
-      <v-label>Cycle Cost Factor</v-label>
-      <v-icon @click='setDialog("StorageCycleCostFactor")' size='18'>mdi-information</v-icon>
+      <v-label>Reserve Ratio</v-label>
+      <v-icon @click='setDialog("ReserveRatio")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model.number="work.cycleCostFactor"
+      v-model.number="work.reserveRatio"
+      type="number"
+      :min=0
+      :max=1
+      :step=0.01
+      @update:model-value='change'
+      placeholder='None'
+    ></v-text-field>
+
+    <div class="d-flex flex-row justify-space-between">
+      <v-label>Starting Ratio</v-label>
+      <v-icon @click='setDialog("StartingRatio")' size='18'>mdi-information</v-icon>
+    </div>
+    <v-text-field
+      v-model.number="work.startingRatio"
+      type="number"
+      :min=0
+      :max=1
+      :step=0.01
+      @update:model-value='change'
+      placeholder='None'
+    ></v-text-field>
+
+    <div class="d-flex flex-row justify-space-between">
+      <v-label>Fast Charge/Discharge Cost Factor</v-label>
+      <v-icon @click='setDialog("FastChargeCostFactor")' size='18'>mdi-information</v-icon>
+    </div>
+    <v-text-field
+      v-model.number="work.fastChargeCostFactor"
       type="number"
       :min=0
       :max=10
       :step=0.1
       @change='change'
+      placeholder='None'
     ></v-text-field>
+
+    <div class="d-flex flex-row justify-space-between">
+      <v-label>Flip Flip Cost Factor</v-label>
+      <v-icon @click='setDialog("StorageCycleCostFactor")' size='18'>mdi-information</v-icon>
+    </div>
+    <v-text-field
+      v-model.number="work.flipFlopCostFactor"
+      type="number"
+      :min=0
+      :max=10
+      :step=0.1
+      @change='change'
+      placeholder='None'
+    ></v-text-field>
+
     <div class="d-flex flex-row justify-space-between">
       <v-label>Deep Discharge Cost Factor</v-label>
       <v-icon @click='setDialog("StorageDepthCostFactor")' size='18'>mdi-information</v-icon>
     </div>
     <v-text-field
-      v-model.number="work.depthCostFactor"
+      v-model.number="work.deepDischargeCostFactor"
       type="number"
       :min=0
       :max=10
       :step=0.1
       @update:model-value='change'
+      placeholder='None'
     ></v-text-field>
+
     <div class="d-flex flex-row justify-space-between">
       <v-label>Deep Depth</v-label>
       <v-icon @click='setDialog("StorageDeepDepthRatio")' size='18'>mdi-information</v-icon>
@@ -86,6 +136,35 @@ async function change() { // change(changeKey: string)
       :max=1
       :step=0.01
       @update:model-value='change'
+      placeholder='None'
+    ></v-text-field>
+
+    <div class="d-flex flex-row justify-space-between">
+      <v-label>Charge Rate Clipping Factor</v-label>
+      <v-icon @click='setDialog("ChargeRateClippingFactor")' size='18'>mdi-information</v-icon>
+    </div>
+    <v-text-field
+      v-model.number="work.chargeRateClippingFactor"
+      type="number"
+      :min=1
+      :max=10
+      :step=0.01
+      @update:model-value='change'
+      placeholder='None'
+    ></v-text-field>
+
+    <div class="d-flex flex-row justify-space-between">
+      <v-label>Discharge Rate Clipping Factor</v-label>
+      <v-icon @click='setDialog("DischargeRateClippingFactor")' size='18'>mdi-information</v-icon>
+    </div>
+    <v-text-field
+      v-model.number="work.disChargeRateClippingFactor"
+      type="number"
+      :min=1
+      :max=10
+      :step=0.01
+      @update:model-value='change'
+      placeholder='None'
     ></v-text-field>
   </v-form>
 </template>

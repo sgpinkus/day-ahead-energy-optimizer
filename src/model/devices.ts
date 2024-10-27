@@ -213,12 +213,16 @@ export class SupplyDevice extends BaseDevice {
 }
 
 type IStorageDeviceParameters = {
-  efficiencyFactor: number,
-  cycleCostFactor: number,
-  depthCostFactor: number,
-  deepDepthRatio: number, // How deep does depth damage potentially kick in.
-  reserveRequirement: number,
-  capacity: 1, // kwh.
+  capacity: number, // kwh.
+  efficiencyFactor?: number,
+  reserveRatio?: number,
+  startingRatio?: number,
+  fastChargeCostFactor?: number, // Also applies to discharge ..
+  flipFlopCostFactor?: number,
+  deepDischargeCostFactor?: number,
+  deepDepthRatio?: number, // How deep does deepDischargeCostFactor (i.e. costly battery damaged) kick in
+  chargeRateClippingFactor?: number,
+  disChargeRateClippingFactor?: number,
 }
 
 export class StorageDevice extends BaseDevice {
@@ -238,12 +242,14 @@ export class StorageDevice extends BaseDevice {
     hasParameters: true,
   };
   parameters: IStorageDeviceParameters = {
-    efficiencyFactor: 1.0,
-    cycleCostFactor: 0.0,
-    depthCostFactor: 0.0,
-    deepDepthRatio: 0.2,
-    reserveRequirement: 0.5,
     capacity: 1,
+    efficiencyFactor: 1.0,
+    reserveRatio: 0.5,
+    startingRatio: 0.5,
+    fastChargeCostFactor: 0.0,
+    flipFlopCostFactor: 0.0,
+    deepDischargeCostFactor: 0.0,
+    deepDepthRatio: 0.2,
   };
   constructor(data?: Partial<IStorageDevice>) {
     super();
