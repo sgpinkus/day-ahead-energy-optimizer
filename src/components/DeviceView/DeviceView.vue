@@ -40,7 +40,7 @@ function boundsView() {
     </route-path>
     <v-divider></v-divider>
     <v-list class='flex-shrink-0 device-components'>
-      <template>
+      <template v-if=true>
         <v-list-item prepend-icon='mdi-text-box-edit' @click='tab = "descriptors"'>Descriptors</v-list-item>
         <v-divider></v-divider>
       </template>
