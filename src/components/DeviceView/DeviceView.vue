@@ -53,7 +53,7 @@ function boundsView() {
         <v-divider></v-divider>
       </template>
       <template v-if='device.attrs.hasParameters'>
-        <v-list-item prepend-icon='mdi-function' @click='tab = "params"'>Parameters</v-list-item>
+        <v-list-item prepend-icon='mdi-code-braces' @click='tab = "params"'>Parameters</v-list-item>
         <v-divider></v-divider>
       </template>
       <template v-if='!device.attrs.hideCosts'>

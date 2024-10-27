@@ -236,7 +236,7 @@ export class StorageDevice extends BaseDevice {
   bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
-    hideBounds: true,
+    // hideBounds: true, // Currently this is how Max RoC/RoD is set.
     hideCBounds: true,
     hideCosts: true,
     hasParameters: true,
