@@ -30,7 +30,7 @@ export type ICosts = {
   flow?: RunSpec<[number, number, number]>,
   cumulative_flow?: RunSpec<[number, number, number]>,
   flow_bounds_relative?: BoundsRunSpec,
-  cumulative_flow_bounds_relative?: BoundsRunSpec,
+  cumulative_flow_bounds_relative?: [number, number], // No make sense this be a RunSpec, since low/high tightly coupled to actual constraint RunSpec.
   readonly peak_flow?: [number, number, number],
 };
 export type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
@@ -39,10 +39,14 @@ export class DeviceCosts implements ICosts {
   flow?: RunSpec<[number, number, number]> = undefined;
   cumulative_flow?: RunSpec<[number, number, number]> = undefined;
   flow_bounds_relative?: BoundsRunSpec = undefined;
-  cumulative_flow_bounds_relative?: BoundsRunSpec = undefined;
+  cumulative_flow_bounds_relative?: [number, number] = undefined;
   readonly peak_flow?: [number, number, number] = undefined;
-  setPeakFlow(this: IWritableCosts, v: ICosts['peak_flow']) {
+  setPeakFlowCost(this: IWritableCosts, v: ICosts['peak_flow']) {
     this.peak_flow = v ? [...v] : undefined;
+  }
+
+  setPeakCumulativeFlowBoundsRelativeCost(this: IWritableCosts, v: ICosts['cumulative_flow_bounds_relative']) {
+    this.cumulative_flow_bounds_relative = v ? [...v] : undefined;
   }
 
   toExportObject() {
@@ -50,7 +54,7 @@ export class DeviceCosts implements ICosts {
       flow: this.flow?.toArray() || undefined,
       cumulative_flow: this.cumulative_flow?.toArray() || undefined,
       flow_bounds_relative: this.flow_bounds_relative?.toArray() || undefined,
-      cumulative_flow_bounds_relative: this.cumulative_flow_bounds_relative?.toArray() || undefined,
+      cumulative_flow_bounds_relative: this.cumulative_flow_bounds_relative,
       peak_flow: this.peak_flow,
     };
   }
@@ -133,7 +137,7 @@ export abstract class BaseDevice implements IBaseDevice {
       type: this.type,
       basis: this.basis,
       bounds: this.bounds.toArray(),
-      cumulative_bounds: this.cumulative_bounds?.toArray() || undefined,
+      cumulative_bounds: this.cumulative_bounds?.toRanges() || undefined,
       costs: this.costs.toExportObject(),
       parameters: this.parameters,
       descriptors: this.getDescriptors(),

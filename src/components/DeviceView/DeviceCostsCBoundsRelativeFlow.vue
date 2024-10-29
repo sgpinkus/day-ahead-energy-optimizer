@@ -1,13 +1,9 @@
-<script setup lang="ts">
-// (x_h - x_l)*np.poly1d([(d0 - d1)/2, d1, 0])((x - x_l)/(x_h - x_l))
-import { computed, defineProps, ref, watch, type Ref } from 'vue';
+<script setup lang="tsx">
+import { computed, defineComponent, defineProps, ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import type { BaseDevice } from '@/model/devices';
-import { setDialog } from '@/model/infos';
-import { BoundsRunSpec } from '@/model/RunSpec';
-import RunSpecTableView from './RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
-import { cloneDeep } from 'lodash';
-import { linspace, boundsRelativeQuadratic } from '@/utils';
+import { boundsRelativeQuadratic, linspace } from '@/utils';
 
 const costKey = 'cumulative_flow_bounds_relative';
 const title = 'Cumulative Bounds Relative Flow Costs';
@@ -17,51 +13,93 @@ const { device } = defineProps<{
 }>();
 
 function unSet() {
-  device.costs[costKey] = undefined; // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakCumulativeFlowBoundsRelativeCost(undefined); // eslint-disable-line vue/no-mutating-props
 }
 
 function set() {
-  if(device.hardBounds[0] !== 0) throw new Error('Bounds relative costs not supported for this device type currently');
-  device.costs[costKey] = new BoundsRunSpec(device.basis, [0, 0], priceHardBounds); // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakCumulativeFlowBoundsRelativeCost([0,0]); // eslint-disable-line vue/no-mutating-props
 }
 
-
-const priceHardBounds: [number, number] = [-1e3, 1e3];
 const tableValueSpec = [
   { label: 'price at min', min: -1e3, max: 1e3, step: 0.01 },
   { label: 'price at max', min: -1e3, max: 1e3, step: 0.01 },
-  // { label: 'o', min: -1e3, max: 1e3, step: 0.01 },
 ];
-const ranges = computed(() => device.costs[costKey]?.toRanges() || null);
-const selectedRow: Ref<number | null> = ref(null);
-const selectedRange = computed(() => ranges.value && ranges.value.length && selectedRow.value !== null && ranges.value[selectedRow.value] || null);
+
+const tableKeys = computed(() => {
+  return tableValueSpec.map(v => v.label);
+});
+
 const domain = linspace(0, 1);
 const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries(domain.map((v) => [v, 0])));
 
-watch(selectedRange, () => {
-  const params = selectedRange.value ? selectedRange.value[0] : undefined;
-  console.debug('selectedRange changed. New params', cloneDeep(params));
+function setNumber(i: 0 | 1, v: number) {
+  const x = [...device.costs[costKey]!]; // https://vuejs.org/guide/essentials/list.html#array-change-detection
+  x[i] = Number(v);
+  device.costs.setPeakCumulativeFlowBoundsRelativeCost(x as [number, number]);
+}
+
+watch(() => device.costs[costKey], () => {
+  const params = device.costs[costKey] ? device.costs[costKey] : undefined;
   const f: (...a: any[]) => number = params ? boundsRelativeQuadratic(params[0], params[1], 0, 1) : () => 0;
   data.value = Object.fromEntries(domain.map(v => [v, f(v)]));
 }, {
-  immediate: true
+  immediate: true,
 });
+
+
+const MyNumberTextField = defineComponent({
+  name: 'MyNumberTextField',
+  setup(_props, { slots, attrs }) {
+    return () =>
+      <v-text-field
+        type='number'
+        hide-details
+        rounded='0'
+        label=''
+        density='compact'
+        flat
+        {...attrs}
+      >{slots.default && slots.default()}</v-text-field>;
+  },
+});
+
 </script>
 
 <template>
   <template v-if='device.costs[costKey]'>
     <v-card>
-      <h3>{{ title }}<v-icon @click='setDialog("FlowBoundsRelative")' size='18'>mdi-information</v-icon></h3>
-      <RunSpecTableView
-        :run-spec='device.costs[costKey]!'
-        :value-spec='tableValueSpec'
-        :focusable='true'
-        @row-selected='(i: number | null) => selectedRow = i'
-      >
-        <template v-slot:globals>
-          <v-btn flat size="small" @click='unSet' title='delete cost entirely'><v-icon>mdi-delete</v-icon></v-btn>
-        </template>
-      </RunSpecTableView>
+      <h3>{{ title }}</h3>
+      <v-table>
+        <thead>
+          <tr>
+            <th v-for='h in tableKeys' :key='h'>
+            {{ h }}
+            </th>
+            <th style='text-align: right'><slot name="globals"></slot></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <template v-for='(spec, i) in tableValueSpec' :key=i>
+              <td>
+                <MyNumberTextField
+                    :min='spec.min ?? null'
+                    :max='spec.max ?? null'
+                    :step='spec.step ?? null'
+                    :model-value='device.costs[costKey]![i]'
+                    @update:modelValue='(newValue: number) => setNumber(i as any, newValue)'
+                  >
+                </MyNumberTextField>
+              </td>
+            </template>
+            <td style='text-align: right'>
+              <v-btn title='delete' flat size="small" @click='unSet'>
+                <v-icon>mdi-delete-circle</v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
     </v-card>
     <v-card>
       <PlotView v-if='data' :data='data'></PlotView>
@@ -75,7 +113,11 @@ watch(selectedRange, () => {
 </template>
 
 <style scoped>
-  .v-card {
-    margin: 1em;
-  }
+.v-card {
+  margin: 1em;
+}
+
+td {
+  padding: 0;
+}
 </style>

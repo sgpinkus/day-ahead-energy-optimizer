@@ -3,9 +3,10 @@
  * Takes a RunSpec whose value is a number[] and renders it as an editable table
  * with value editor specified by ValueSpec prop.
  */
-import { computed, defineComponent, defineProps, onMounted, ref } from 'vue';
+import { computed, defineProps, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import type { IRunSpec } from '@/model/RunSpec';
+import MyNumberTextField from '@/components/components/MyNumberTextField';
 
 type ValueSpec = {
   label: string,
@@ -49,22 +50,6 @@ function setNumber(i: number, oldValue: number[], j: number, v: number) {
   newValue[j] = Number(v);
   runSpec.set(i, newValue);
 }
-
-const MyNumberTextField = defineComponent({
-  name: 'MyNumberTextField',
-  setup(_props, { slots, attrs }) {
-    return () =>
-      <v-text-field
-        type='number'
-        hide-details
-        rounded='0'
-        label=''
-        density='compact'
-        flat
-        {...attrs}
-      >{slots.default && slots.default()}</v-text-field>;
-  },
-});
 
 function setFocused(i: number | null) {
   if(!focusable) return;

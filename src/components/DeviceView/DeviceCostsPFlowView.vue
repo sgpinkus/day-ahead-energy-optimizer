@@ -5,16 +5,19 @@ import type { BaseDevice } from '@/model/devices';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';
 
+const costKey = 'peak_flow';
+const title = 'Peak Flow Cost';
+
 const { device } = defineProps<{
   device: BaseDevice,
 }>();
 
 function unSet() {
-  device.costs.setPeakFlow(undefined); // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlowCost(undefined); // eslint-disable-line vue/no-mutating-props
 }
 
 function set() {
-  device.costs.setPeakFlow([0,0,0]); // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlowCost([0,0,0]); // eslint-disable-line vue/no-mutating-props
 }
 
 const tableValueSpec = [
@@ -32,13 +35,13 @@ const domain = computed(() => linspace(...(domainBounds.value as [number, number
 const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries(domain.value.map((v) => [v, 0])));
 
 function setNumber(i: 0 | 1 | 2, v: number) {
-  const x = [...device.costs.peak_flow!]; // https://vuejs.org/guide/essentials/list.html#array-change-detection
+  const x = [...device.costs[costKey]!]; // https://vuejs.org/guide/essentials/list.html#array-change-detection
   x[i] = v;
-  device.costs.setPeakFlow(x as [number, number, number]);
+  device.costs.setPeakFlowCost(x as [number, number, number]);
 }
 
-watch(() => device.costs.peak_flow, () => {
-  const params = device.costs.peak_flow ? device.costs.peak_flow : undefined;
+watch(() => device.costs[costKey], () => {
+  const params = device.costs[costKey] ? device.costs[costKey] : undefined;
   const f: (...a: any[]) => number = params ? quadratic(params[0], params[1], 0, params[2]) : () => 0;
   data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
 }, {
@@ -65,9 +68,9 @@ const MyNumberTextField = defineComponent({
 </script>
 
 <template>
-  <template v-if='device.costs.peak_flow'>
+  <template v-if='device.costs[costKey]'>
     <v-card>
-      <h3>Peak Flow Cost</h3>
+      <h3>{{ title }}</h3>
       <v-table>
         <thead>
           <tr>
@@ -85,7 +88,7 @@ const MyNumberTextField = defineComponent({
                     :min='spec.min ?? null'
                     :max='spec.max ?? null'
                     :step='spec.step ?? null'
-                    :model-value='device.costs.peak_flow[i]'
+                    :model-value='device.costs[costKey]![i]'
                     @update:modelValue='(newValue: number) => setNumber(i as any, newValue)'
                   >
                 </MyNumberTextField>
@@ -106,7 +109,7 @@ const MyNumberTextField = defineComponent({
   </template>
   <template v-else>
     <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Peak Flow Cost</v-btn>
+      <v-btn @click='set'>Set {{ title }}</v-btn>
     </v-card>
   </template>
 </template>

@@ -53,6 +53,15 @@ export class Model {
     this.messages.clearAll();
     window.localStorage.setItem(MyName, jsonStringify(this));
   }
+
+  toExportObject() {
+    return {
+      data: this.devices.toExportObject(),
+      meta: {
+        // version
+      }
+    };
+  }
 }
 
 export function fromLocalStorage() {
