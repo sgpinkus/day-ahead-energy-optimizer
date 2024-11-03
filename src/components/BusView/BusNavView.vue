@@ -37,7 +37,7 @@ function exportModel() {
           <v-list-item
             prepend-icon="mdi-play-box"
           >
-          <route-name name='run'>Run</route-name>
+          <route-name name='run'>Run Optimization</route-name>
           </v-list-item>
       </v-list>
       <v-divider></v-divider>

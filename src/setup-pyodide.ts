@@ -1,3 +1,5 @@
+import { loadPyodide } from 'pyodide';
+
 const venvRequirementsTxt = `
 async-timeout==4.0.3
 coloredlogs==15.0.1
@@ -13,26 +15,26 @@ export const PyodideLoadStates = {
   2: 'Ready',
 };
 
-async function loadPyodide(): Promise<Pyodide> {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
+// async function loadPyodide(): Promise<Pyodide> {
+//   return new Promise((resolve, reject) => {
+//     const script = document.createElement('script');
 
-    script.onerror = e => reject(e);
-    script.onload = async () => {
-      const pyodide = await (window as any).loadPyodide();
-      resolve(pyodide);
-    };
+//     script.onerror = e => reject(e);
+//     script.onload = async () => {
+//       const pyodide = await (window as any).loadPyodide();
+//       resolve(pyodide);
+//     };
 
-    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.3/full/pyodide.js';
-    document.body.appendChild(script);
-  });
-}
+//     script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.3/full/pyodide.js';
+//     document.body.appendChild(script);
+//   });
+// }
 
 export async function setupPyodide(
   onStateChange: (newStateCode: number, newStateName: string) => any
 ): Promise<Pyodide> {
   onStateChange(0, PyodideLoadStates[0]);
-  const pyodide = await loadPyodide();
+  const pyodide = await loadPyodide({ indexURL: '/pyodide' });
 
   onStateChange(1, PyodideLoadStates[1]);
   await pyodide.loadPackage('micropip');

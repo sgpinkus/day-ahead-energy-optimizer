@@ -3,7 +3,6 @@ import { setupPyodide, type Pyodide } from '@/setup-pyodide';
 import { onMounted, ref, computed, type Ref } from 'vue';
 import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
-import BusNavView from './BusNavView.vue';
 import loadScript from '@/python-scripts/load.py?raw';
 import solveScript from '@/python-scripts/solve.py?raw';
 import tablesScript from '@/python-scripts/tables.py?raw';
@@ -13,7 +12,7 @@ import plotsScript from '@/python-scripts/plots.py?raw';
 let pyodide: Pyodide;
 const loadingStateMessage = ref('');
 const loadingStateCode = ref(0);
-const optimizationStatus = ref('');
+const optimizationStateMessage = ref('');
 const isWorking: Ref<boolean> = computed(() => loadingStateCode.value >= 0);
 const tableData = ref('');
 const cumulativeTableData = ref('');
@@ -21,7 +20,6 @@ const plot1Image = ref('');
 const plot1Src = computed(() => `data:image/png;base64,${plot1Image.value}`);
 const plot2Image = ref('');
 const plot2Src = computed(() => `data:image/png;base64,${plot2Image.value}`);
-
 
 function pyodideLoadingStateCallback(code: number, name: string) {
   loadingStateCode.value = code;
@@ -36,7 +34,7 @@ function run() {
   const tables = pyodide.runPython(tablesScript);
   const deviceset = load(JSON.stringify(modelExport));
   const [x, solveMeta] = solve(deviceset);
-  optimizationStatus.value = solveMeta.message;
+  optimizationStateMessage.value = solveMeta.message;
   console.log(x, solveMeta);
   if(solveMeta.success) {
     [tableData.value, cumulativeTableData.value] = tables(deviceset, x);
@@ -46,10 +44,15 @@ function run() {
 }
 
 onMounted(async () => {
-  pyodide = await setupPyodide(pyodideLoadingStateCallback);
-  loadingStateMessage.value = 'Running Optimization';
-  run();
-  loadingStateMessage.value = 'Finished';
+  try {
+    pyodide = await setupPyodide(pyodideLoadingStateCallback);
+    loadingStateMessage.value = 'Running Optimization';
+    run();
+    loadingStateMessage.value = 'Finished: ' + optimizationStateMessage.value;
+  } catch(e: any) {
+    loadingStateMessage.value = 'Error: ' + e?.message;
+    loadingStateCode.value = -1;
+  }
   loadingStateCode.value = -1;
 });
 
@@ -57,8 +60,10 @@ onMounted(async () => {
 
 <template>
   <AppNavDrawer>
-    <BusNavView></BusNavView>
-  </AppNavDrawer>
+    <route-path path='/'>
+      <v-list-item prepend-icon='mdi-arrow-left'>Bus View</v-list-item>
+    </route-path>
+    <v-divider></v-divider>  </AppNavDrawer>
   <v-main>
     <v-container class='container'>
       <div>
@@ -72,13 +77,13 @@ onMounted(async () => {
       <hr>
       <div v-if='tableData'>
         <h3>Results Data</h3>
-        <pre>
+        <div class='table-data'>
           {{ tableData }}
-        </pre>
+        </div>
         <h3>Cumulative Results Data</h3>
-        <pre>
+        <div class='table-data'>
           {{ cumulativeTableData }}
-        </pre>
+        </div>
       </div>
       <hr>
       <v-table>
@@ -106,11 +111,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-  pre {
-    overflow-x: scroll;
-    margin-top: 1em;
-    margin-bottom: 1me;
-  }
   .container {
     min-height: 100vh;
     max-width: 1280px;
@@ -120,6 +120,13 @@ onMounted(async () => {
     padding: 1em;
     justify-content: stretch;
     border: solid 1px green;
+  }
+  .table-data {
+    font: monospace;
+    white-space: pre-wrap;
+    overflow-x: scroll;
+    margin-top: 1em;
+    margin-bottom: 1em;
   }
 </style>
 

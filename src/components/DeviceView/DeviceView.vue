@@ -41,7 +41,7 @@ function costStatusIcon(type: keyof ICosts) {
 <template>
   <AppNavDrawer>
     <route-path path='/'>
-      <v-list-item prepend-icon='mdi-arrow-left'>Bus</v-list-item>
+      <v-list-item prepend-icon='mdi-arrow-left'>Bus View</v-list-item>
     </route-path>
     <v-divider></v-divider>
     <v-list class='flex-shrink-0 device-components'>

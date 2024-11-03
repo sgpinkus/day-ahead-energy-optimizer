@@ -1,8 +1,12 @@
 <script setup lang='ts'>
-import { computed, provide, ref, type Ref } from 'vue';
+import { computed, provide, type Ref } from 'vue';
+import model from '@/model';
 // import UserListItemCard from './UserListItemCard.vue';
 
-const rail = ref(false);
+const rail = computed({
+  get() { return model.rail; },
+  set(v) { model.rail = v; }
+});
 
 provide('rail', rail);
 
