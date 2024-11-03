@@ -32,7 +32,12 @@ function exportModel() {
             @click='exportModel()'
             prepend-icon="mdi-export"
           >
-          <a :href='blobUrl' download='model.json'> Export Data</a>
+          <a :href='blobUrl' download='model.json'>Export Data</a>
+          </v-list-item>
+          <v-list-item
+            prepend-icon="mdi-play-box"
+          >
+          <route-name name='run'>Run</route-name>
           </v-list-item>
       </v-list>
       <v-divider></v-divider>

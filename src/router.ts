@@ -3,6 +3,7 @@ import BusView from '@/components/BusView/BusView.vue';
 import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
+import RunBusView from '@/components/BusView/RunBusView.vue';
 
 const router = createRouter([
   {
@@ -14,6 +15,11 @@ const router = createRouter([
     path: '/devices/:id',
     name: 'devices',
     component: DeviceView,
+  },
+  {
+    path: '/run/',
+    name: 'run',
+    component: RunBusView,
   },
   {
     path: '/*pathMatch',

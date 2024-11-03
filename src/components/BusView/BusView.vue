@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import BusNavView from './BusNavView.vue';
-import BusMainView from './BusMainGraphView.vue';
+import BusMainGraphView from './BusMainGraphView.vue';
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import BusMainView from './BusMainGraphView.vue';
   </AppNavDrawer>
   <v-main>
     <v-container class='container'>
-      <BusMainView></BusMainView>
+      <BusMainGraphView></BusMainGraphView>
     </v-container>
   </v-main>
 </template>
