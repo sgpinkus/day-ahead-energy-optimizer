@@ -14,8 +14,10 @@ const loadingStateMessage = ref('');
 const loadingStateCode = ref(0);
 const optimizationStateMessage = ref('');
 const isWorking: Ref<boolean> = computed(() => loadingStateCode.value >= 0);
-const tableData = ref('');
-const cumulativeTableData = ref('');
+const flowData = ref('');
+const totalFlowsData = ref('');
+const totalCostsData = ref('');
+const flowDerivsData = ref('');
 const plot1Image = ref('');
 const plot1Src = computed(() => `data:image/png;base64,${plot1Image.value}`);
 const plot2Image = ref('');
@@ -37,7 +39,7 @@ function run() {
   optimizationStateMessage.value = solveMeta.message;
   console.log(x, solveMeta);
   if(solveMeta.success) {
-    [tableData.value, cumulativeTableData.value] = tables(deviceset, x);
+    [flowData.value, totalFlowsData.value, totalCostsData.value, flowDerivsData.value] = tables(deviceset, x);
     [plot1Image.value, plot2Image.value] = plots(deviceset, x);
   }
   // console.log(imageString.value);
@@ -74,38 +76,34 @@ onMounted(async () => {
               indeterminate
             ></v-progress-circular>
       </div>
+      <div class='image-container'>
+        <template v-if='plot1Image'>
+          <img :src='plot1Src' />
+        </template>
+        <template v-else>
+            -
+        </template>
+      </div>
       <hr>
-      <div v-if='tableData'>
-        <h3>Results Data</h3>
+      <div v-if='flowData'>
+        <h3>Device Flows:</h3>
         <div class='table-data'>
-          {{ tableData }}
+          {{ flowData }}
         </div>
-        <h3>Cumulative Results Data</h3>
+        <h3>Supply Device Flow Derivatives (Marginal Cost):</h3>
         <div class='table-data'>
-          {{ cumulativeTableData }}
+          {{ flowDerivsData }}
+        </div>
+        <h3>Total Device Flows:</h3>
+        <div class='table-data'>
+          {{ totalFlowsData }}
+        </div>
+        <h3>Total Supply Device Costs:</h3>
+        <div class='table-data'>
+          {{ totalCostsData }}
         </div>
       </div>
       <hr>
-      <v-table>
-        <tr>
-          <td>
-            <template v-if='plot1Image'>
-              <img :src='plot1Src' />
-            </template>
-            <template v-else>
-                -
-            </template>
-          </td>
-          <td>
-            <template v-if='plot2Image'>
-              <img :src='plot2Src' />
-            </template>
-            <template v-else>
-                -
-            </template>
-          </td>
-        </tr>
-      </v-table>
     </v-container>
   </v-main>
 </template>
@@ -119,14 +117,14 @@ onMounted(async () => {
     align-items: stretch;
     padding: 1em;
     justify-content: stretch;
-    border: solid 1px green;
   }
   .table-data {
     font: monospace;
     white-space: pre-wrap;
     overflow-x: scroll;
-    margin-top: 1em;
-    margin-bottom: 1em;
+  }
+  .image-container {
+    margin: 1em auto;
   }
 </style>
 

@@ -4,8 +4,11 @@ const venvRequirementsTxt = `
 async-timeout==4.0.3
 coloredlogs==15.0.1
 humanfriendly==10.0
+scipy
 pandas
 matplotlib
+numdifftools==0.9.41
+device_kit==1.0.6
 `;
 export type Pyodide = any;
 
@@ -54,7 +57,8 @@ export async function setupPyodide(
   const coloredlogs = pyodide.pyimport('coloredlogs');
   coloredlogs.install.callKwargs({ level: 'DEBUG' });
 
-  await micropip.install('http://127.0.0.1:8080/device_kit-1.0.5-py3-none-any.whl');
+  // Dev
+  // await micropip.install('http://127.0.0.1:8080/device_kit-1.0.5-py3-none-any.whl');
 
   onStateChange(2, PyodideLoadStates[2]);
 
