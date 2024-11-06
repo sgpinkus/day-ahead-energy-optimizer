@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@sgpinkus/mdi-font": "^7.3.67",
-    "@sgpinkus/my-vue-router": "^1.2.0",
+    "@sgpinkus/my-vue-router": "^1.2.1",
     "axios": "^1.7.7",
     "d3": "^7.9.0",
     "dayjs": "^1.11.13",

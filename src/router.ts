@@ -4,6 +4,7 @@ import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
 import RunBusView from '@/components/BusView/RunBusView.vue';
+import { basePath } from '@/config';
 
 const router = createRouter([
   {
@@ -31,6 +32,6 @@ const router = createRouter([
     name: 'resource-not-found',
     component: NotFoundResource,
   },
-], { installGlobalRef: '$my-vue-router', paramsToProps: true });
+], { installGlobalRef: '$my-vue-router', paramsToProps: true, basePath });
 
 export default router;
