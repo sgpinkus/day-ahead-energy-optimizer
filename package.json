@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev-gh": "vite -c vite.config.gh-pages.ts",
     "build": "run-p type-check \"build-only {@}\" --",
+    "build-gh": "run-p type-check \"build-only-gh {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
+    "build-only-gh": "vite build -c vite.config.gh-pages.ts",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
@@ -15,7 +18,7 @@
   },
   "dependencies": {
     "@sgpinkus/mdi-font": "^7.3.67",
-    "@sgpinkus/my-vue-router": "^1.2.1",
+    "@sgpinkus/my-vue-router": "^1.2.2",
     "axios": "^1.7.7",
     "d3": "^7.9.0",
     "dayjs": "^1.11.13",

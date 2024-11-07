@@ -4,10 +4,11 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { copyFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { basePath } from './src/config';
 
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export const config = {
   optimizeDeps: { exclude: ['pyodide'] },
   plugins: [
     vue(),
@@ -37,7 +38,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  build: {
-    outDir: 'docs',
-  },
-});
+  // build: {
+  //   outDir: 'docs',
+  // },
+  base: basePath,
+};
+
+export default defineConfig(config);
