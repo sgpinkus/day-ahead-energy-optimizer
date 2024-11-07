@@ -1,9 +1,11 @@
 <script setup lang="tsx">
-import { computed, defineComponent, defineProps, ref, watch } from 'vue';
+import { computed, defineProps, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import type { BaseDevice } from '@/model/devices';
 import PlotView from '@/components/components/PlotView.vue';
 import { boundsRelativeQuadratic, linspace } from '@/utils';
+import MyNumberTextField from '@/components/components/MyNumberTextField';
+
 
 const costKey = 'cumulative_flow_bounds_relative';
 const title = 'Cumulative Bounds Relative Flow Costs';
@@ -44,23 +46,6 @@ watch(() => device.costs[costKey], () => {
   data.value = Object.fromEntries(domain.map(v => [v, f(v)]));
 }, {
   immediate: true,
-});
-
-
-const MyNumberTextField = defineComponent({
-  name: 'MyNumberTextField',
-  setup(_props, { slots, attrs }) {
-    return () =>
-      <v-text-field
-        type='number'
-        hide-details
-        rounded='0'
-        label=''
-        density='compact'
-        flat
-        {...attrs}
-      >{slots.default && slots.default()}</v-text-field>;
-  },
 });
 
 </script>

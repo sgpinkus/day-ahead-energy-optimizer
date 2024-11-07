@@ -1,9 +1,11 @@
 <script setup lang="tsx">
-import { computed, defineComponent, defineProps, ref, watch } from 'vue';
+import { computed, defineProps, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/devices';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';
+import MyNumberTextField from '@/components/components/MyNumberTextField';
+
 
 const costKey = 'peak_flow';
 const title = 'Peak Flow Cost';
@@ -36,7 +38,7 @@ const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries
 
 function setNumber(i: 0 | 1 | 2, v: number) {
   const x = [...device.costs[costKey]!]; // https://vuejs.org/guide/essentials/list.html#array-change-detection
-  x[i] = v;
+  x[i] = Number(v);
   device.costs.setPeakFlowCost(x as [number, number, number]);
 }
 
@@ -49,21 +51,7 @@ watch(() => device.costs[costKey], () => {
 });
 
 
-const MyNumberTextField = defineComponent({
-  name: 'MyNumberTextField',
-  setup(_props, { slots, attrs }) {
-    return () =>
-      <v-text-field
-        type='number'
-        hide-details
-        rounded='0'
-        label=''
-        density='compact'
-        flat
-        {...attrs}
-      >{slots.default && slots.default()}</v-text-field>;
-  },
-});
+
 
 </script>
 

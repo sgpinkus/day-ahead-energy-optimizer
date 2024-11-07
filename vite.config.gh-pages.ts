@@ -26,6 +26,11 @@ export default defineConfig({
   build: {
     outDir: 'dist-gh',
     minify: 'terser',
+    terserOptions: {
+      keep_classnames: true,
+      keep_fnames: true,
+      mangle: false,
+    }
   },
   base: basePath,
 });
