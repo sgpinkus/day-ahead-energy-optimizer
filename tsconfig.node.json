@@ -10,6 +10,7 @@
   "include": [
     "src/scripts/*.ts",
     "src/config.ts",
+    "vite-plugin-pyodide.ts",
     "vite.config.*",
     "vitest.config.*",
     "cypress.config.*",

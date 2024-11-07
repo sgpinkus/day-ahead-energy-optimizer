@@ -1,23 +1,31 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
-import { config } from './vite.config';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import vuePyodide from './vite-plugin-pyodide';
 import { basePath } from './src/config';
 
-export default defineConfig({ ...config,
+
+// https://vitejs.dev/config/
+export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify('v0.0.1'),
     __GH_BUILD__: true,
   },
-  base: basePath,
+  optimizeDeps: { exclude: ['pyodide'] },
+  plugins: [
+    vue(),
+    vueJsx(),
+    vuePyodide('dist-gh/assets')
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
   build: {
     outDir: 'dist-gh',
     minify: 'terser',
   },
-  plugins: [
-    ...config.plugins,
-  ],
-  resolve: {
-    alias: {
-      ...config.resolve.alias,
-    },
-  },
+  base: basePath,
 });
