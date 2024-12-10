@@ -1,3 +1,1 @@
-# [day-ahead-energy-planner](https://sgpinkus.github.io/day-ahead-energy-planner/)
-Webapp.
-
+<a href="https://sgpinkus.github.io/day-ahead-energy-planner/"><img src='./screenshot.png' /></a>
