@@ -18,11 +18,11 @@ import BusMainGraphView from './BusMainGraphView.vue';
 <style scoped>
   .container {
     min-height: 100vh;
-    max-width: 720px;
+    max-width: 900px;
     display: flex;
     flex-flow: column nowrap;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
     padding: 1em;
-    justify-content: stretch;
   }
 </style>
