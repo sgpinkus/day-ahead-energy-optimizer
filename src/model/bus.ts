@@ -5,22 +5,25 @@ class Bus {
   public readonly devices: Record<string, ContainerDevice> = {};
   static readonly MaxDevices = 20;
 
-  addDevice(device: Device) {
-    this.devices[device.id] = device;
-  }
-
-  addDeviceType(type: DeviceType) {
-    if(this.length >= Bus.MaxDevices) throw new RangeError(`Too many device (max=${Bus.MaxDevices})`);
-    const device = deviceFactory({ type });
-    this.addDevice(device);
-  }
-
-  deleteDevice(id: string) {
-    delete this.devices[id];
-  }
-
   get length() {
     return Object.keys(this.devices).length;
+  }
+
+  add(device: Device) {
+    if(!(device.id in this.devices)) {
+      if(this.length >= Bus.MaxDevices) throw new RangeError(`Too many device (max=${Bus.MaxDevices})`);
+      this.devices[device.id] = device;
+    }
+  }
+
+  addType(type: DeviceType) {
+    if(this.length >= Bus.MaxDevices) throw new RangeError(`Too many device (max=${Bus.MaxDevices})`);
+    const device = deviceFactory({ type });
+    this.add(device);
+  }
+
+  delete(id: string) {
+    delete this.devices[id];
   }
 
   reset() {

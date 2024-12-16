@@ -36,7 +36,7 @@ const icons = {
         :focused='model.focusedDeviceId === item.id'
         :icon='icons[item.type]'
         @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
-        @delete='() => model.bus.deleteDevice(item.id)'
+        @delete='() => model.bus.delete(item.id)'
         @click.stop='model.focusedDeviceId = item.id'
       >
       </DeviceListItem>

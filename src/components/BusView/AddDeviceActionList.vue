@@ -46,7 +46,7 @@ const addTypes: TypeSpec[] = [
       <v-list-item v-for='spec in addTypes' :key='spec.type'
         :title=spec.title
         :prepend-icon=spec.icon
-        @click=devices.addDeviceType(spec.type);
+        @click=devices.addType(spec.type);
       >
       </v-list-item>
     </v-list-group>
