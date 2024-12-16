@@ -5,15 +5,15 @@ import { reactive } from 'vue';
 import { randomUUID } from '@/utils';
 import { jsonParse, jsonStringify } from './importlib';
 import messages from './messages';
-import Devices from './devices';
-import { MyName } from './constants';
+import Bus from './bus';
+import { MyName } from './constant';
 
 export class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
-  devices: Devices;
+  bus: Bus;
   rail = false;
   focusedDeviceId: string | null = null;
   editingDeviceId: string | null = null;
@@ -23,7 +23,7 @@ export class Model {
    * Syncronously initialize state restoring from local storage if any.
    */
   constructor() {
-    this.devices = new Devices();
+    this.bus = new Bus();
   }
 
   /**
@@ -32,7 +32,7 @@ export class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
-    this.devices.reset();
+    this.bus.reset();
   }
 
   /**
@@ -56,7 +56,7 @@ export class Model {
 
   toExportObject() {
     return {
-      data: this.devices.toExportObject(),
+      data: this.bus.toExportObject(),
       meta: {
         // version
       }

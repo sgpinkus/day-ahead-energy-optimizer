@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StorageDevice } from '@/model/devices';
+import type { StorageDevice } from '@/model/device';
 import { setDialog } from '@/model/infos';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';

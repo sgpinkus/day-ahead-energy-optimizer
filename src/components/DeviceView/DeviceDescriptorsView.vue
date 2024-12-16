@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContainerDevice } from '@/model/devices';
+import type { ContainerDevice } from '@/model/device';
 // import { Network } from 'vis-network/standalone';
 import DeviceDescriptorsForm from './DeviceDescriptorsForm.vue';
 import NetworkHubView from '../components/NetworkHubView.vue';

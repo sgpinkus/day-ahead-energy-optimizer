@@ -4,7 +4,7 @@ import router from '@/router';
 import { ref } from 'vue';
 import DeviceListItem from './DeviceListItem.vue';
 
-const devices = model.devices;
+const devices = model.bus;
 const showObjectList = ref(false);
 
 function editDevice(id: string) {
@@ -29,7 +29,7 @@ function editDevice(id: string) {
       <DeviceListItem v-for='item in devices.getDevices()' :key='item.id'
         :item=item
         @edit='() => editDevice(item.id)'
-        @delete='() => model.devices.deleteDevice(item.id)'
+        @delete='() => model.bus.deleteDevice(item.id)'
         :focused='model.focusedDeviceId === item.id'
         @click.stop='model.focusedDeviceId = item.id'
       >

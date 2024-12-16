@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContainerDevice } from '@/model/devices';
+import type { ContainerDevice } from '@/model/device';
 import { computed } from 'vue';
 
 defineEmits(['edit', 'delete']);

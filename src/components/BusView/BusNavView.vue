@@ -10,7 +10,7 @@ import { ref } from 'vue';
 const blobUrl = ref('');
 
 function exportModel() {
-  const data = jsonStringify(model.devices.toExportObject());
+  const data = jsonStringify(model.bus.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
   blobUrl.value = URL.createObjectURL(blob);
   // window.location.href = blobUrl;

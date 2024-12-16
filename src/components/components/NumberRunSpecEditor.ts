@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as units from '@/model/units';
-import type { IBoundedNumberRunSpec } from '@/model/RunSpec';
+import type { IBoundedNumberRunSpec } from '@/model/runspec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
 export type Options = {

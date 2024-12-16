@@ -4,7 +4,7 @@ import model from '@/model';
 import router from '@/router';
 import NetworkHubView from '@/components/components/NetworkHubView.vue';
 
-const deviceNodes = computed(() => Object.values(model.devices.getDevices()));
+const deviceNodes = computed(() => Object.values(model.bus.getDevices()));
 // const busNode = { id: 'hub', title: 'Bus' };
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
 

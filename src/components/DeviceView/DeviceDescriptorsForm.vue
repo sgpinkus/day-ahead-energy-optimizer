@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Device } from '@/model/devices';
+import type { Device } from '@/model/device';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 import { ref, useTemplateRef, type Ref } from 'vue';

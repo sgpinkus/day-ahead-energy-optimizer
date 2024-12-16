@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, defineProps, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
-import type { BaseDevice } from '@/model/devices';
-import { RunSpec } from '@/model/RunSpec';
+import type { BaseDevice } from '@/model/device';
+import { RunSpec } from '@/model/runspec';
 import RunSpecTableView from './RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
 import { cloneDeep } from 'lodash';

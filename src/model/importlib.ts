@@ -10,16 +10,16 @@ import {
   NumberRunSpec,
   BoundsRunSpec,
   FixedBoundsRunSpec,
-} from './RunSpec';
+} from './runspec';
 import {
-  Devices,
   DeviceCosts,
   BaseDevice,
   LoadDevice,
   StorageDevice,
   SupplyDevice,
   FixedLoadDevice,
-} from './devices';
+} from './device';
+import Bus from './bus';
 import { Messages } from './messages';
 import { Model } from './index';
 

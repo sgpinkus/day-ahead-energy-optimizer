@@ -13,14 +13,14 @@ import DeviceCostsCBoundsRelativeFlow from './DeviceCostsCBoundsRelativeFlow.vue
 import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
 import router from '@/router';
-import type { ICosts } from '@/model/devices';
+import type { ICosts } from '@/model/device';
 
 type props = {
   id: string;
 }
 const tab = ref('descriptors');
 const { id: deviceId } = defineProps<props>();
-const device = model.devices.getDevice(deviceId);
+const device = model.bus.getDevice(deviceId);
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
 
 function boundsView() {

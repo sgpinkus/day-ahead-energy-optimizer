@@ -5,7 +5,7 @@
  */
 import { computed, defineProps, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
-import type { IRunSpec } from '@/model/RunSpec';
+import type { IRunSpec } from '@/model/runspec';
 import MyNumberTextField from '@/components/components/MyNumberTextField';
 
 type ValueSpec = {

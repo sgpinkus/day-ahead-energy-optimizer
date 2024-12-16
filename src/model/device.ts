@@ -6,8 +6,8 @@
  * bounds/cost belong to a load/supply so need to be inverted ...
  */
 import { v4 as uuid } from 'uuid';
-import { DefaultBasis, BigNumber } from './constants';
-import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './RunSpec';
+import { DefaultBasis, BigNumber } from './constant';
+import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
 import { cloneDeep, pick } from 'lodash';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
@@ -277,48 +277,3 @@ export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): De
     default: throw new Error(`Unknown device type [data=${data}]`);
   }
 }
-
-export class Devices {
-  private devices: Record<string, ContainerDevice> = {};
-  static readonly MaxDevices = 20;
-
-  addDevice(device: Device) {
-    this.devices[device.id] = device;
-  }
-
-  addDeviceType(type: DeviceType) {
-    if(this.length >= Devices.MaxDevices) throw new RangeError(`Too many device (max=${Devices.MaxDevices})`);
-    const device = deviceFactory({ type });
-    console.log('addDeviceType', device);
-    this.addDevice(device);
-  }
-
-  getDevice(id: string) {
-    return this.devices[id];
-  }
-
-  getDevices() {
-    return {...this.devices};
-  }
-
-  deleteDevice(id: string) {
-    delete this.devices[id];
-  }
-
-  get length() {
-    return Object.keys(this.devices).length;
-  }
-
-  reset() {
-    this.devices = {};
-  }
-
-  toExportObject() {
-    return {
-      basis: DefaultBasis,
-      devices: Object.values(this.devices).map(d => d.toExportObject()),
-    };
-  }
-}
-
-export default Devices;

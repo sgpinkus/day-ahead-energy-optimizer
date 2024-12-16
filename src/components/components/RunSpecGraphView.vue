@@ -2,7 +2,7 @@
 import { onMounted, useTemplateRef, computed, watch } from 'vue';
 import { draw, type Options } from '@/components/components/NumberRunSpecEditor';
 import * as d3 from 'd3';
-import type { IRunSpec } from '@/model/RunSpec';
+import type { IRunSpec } from '@/model/runspec';
 
 const emit = defineEmits(['data-changed']);
 

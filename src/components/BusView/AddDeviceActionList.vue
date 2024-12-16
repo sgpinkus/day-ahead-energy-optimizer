@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import model from '@/model';
-import type { DeviceType } from '@/model/devices';
-const devices = model.devices;
+import type { DeviceType } from '@/model/device';
+const devices = model.bus;
 
 type TypeSpec = {
   type: DeviceType,
