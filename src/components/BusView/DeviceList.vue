@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { values } from 'lodash';
 import model from '@/model';
 import router from '@/router';
-import { ref } from 'vue';
+
 import DeviceListItem from '../components/MyListItem.vue';
 
-const items = model.bus;
+const items = computed(() => values(model.bus.devices));
 const showObjectList = ref(false);
 
 const icons = {
@@ -29,7 +31,7 @@ const icons = {
   <v-divider></v-divider>
   <template v-if='showObjectList && items.length'>
     <v-list class='item-list'>
-      <DeviceListItem v-for='item in items.getDevices()' :key='item.id'
+      <DeviceListItem v-for='item in items' :key='item.id'
         :item=item
         :focused='model.focusedDeviceId === item.id'
         :icon='icons[item.type]'
