@@ -3,6 +3,7 @@ import { deviceFactory, type ContainerDevice, type Device, type DeviceType } fro
 
 class Bus {
   public readonly devices: Record<string, ContainerDevice> = {};
+  public readonly basis: number = DefaultBasis;
   static readonly MaxDevices = 20;
 
   get length() {
@@ -32,7 +33,7 @@ class Bus {
 
   toExportObject() {
     return {
-      basis: DefaultBasis,
+      basis: this.basis,
       devices: Object.values(this.devices).map(d => d.toExportObject()),
     };
   }

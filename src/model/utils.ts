@@ -1,7 +1,6 @@
 /**
  * Random collection of utils, will SoC as app grows.
  */
-import type { IUser } from '@/types';
 import { pick, set } from 'lodash';
 
 /**
@@ -26,12 +25,4 @@ export function mergeArgs(a: Record<string, any>, b: Record<string, any>) {
  */
 export function geolocationPositionToObject(o: GeolocationPosition): Omit<GeolocationPosition, 'new'> {
   return { timestamp: o.timestamp, coords: pick(o.coords, ['accuracy', 'altitude', 'altitudeAccuracy', 'heading', 'latitude', 'longitude', 'speed']) };
-}
-
-/**
- * make user title string.
- */
-export function userTitle(user: IUser) {
-  const name = user.name || (user.given_name && user.given_name + user.family_name ? ' ' + user.family_name : '') || user.email;
-  return name;
 }
