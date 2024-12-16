@@ -13,8 +13,8 @@ const router = createRouter([
     component: BusView,
   },
   {
-    path: '/devices/:id',
-    name: 'devices',
+    path: '/device/:id',
+    name: 'device',
     component: DeviceView,
   },
   {

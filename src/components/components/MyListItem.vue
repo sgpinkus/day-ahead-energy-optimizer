@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import type { ContainerDevice } from '@/model/device';
-import { computed } from 'vue';
+
+export type Item = {
+  id: string,
+  title?: string,
+}
 
 defineEmits(['edit', 'delete']);
 
-const icons = {
-  load: 'mdi-cellphone-settings',
-  supply: 'mdi-generator-stationary',
-  storage: 'mdi-battery-charging',
-  fixed_load: 'mdi-cellphone-settings',
-};
-
 interface props {
   focused?: boolean,
-  item: ContainerDevice,
+  item: Item,
+  icon?: string,
 }
 
-const { item, focused = false } = defineProps<props>();
-const icon = computed(() => icons[item.type]);
+const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
 </script>
 
 <template>
@@ -30,9 +26,9 @@ const icon = computed(() => icons[item.type]);
       <div class='d-flex flex-nowrap flex-row'>
         <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
         <span style="flex: 1"></span>
-        <!-- <v-btn flat density="compact" :block="false" @click.stop='activateItem'><v-icon>mdi-vector-polyline-edit</v-icon></v-btn>&nbsp; -->
         <v-btn flat density="compact" :block="false" @click.stop='$emit("edit")'><v-icon>mdi-pencil</v-icon></v-btn>&nbsp;
         <v-btn flat density="compact" :block="false" @click.stop='$emit("delete")'><v-icon>mdi-delete</v-icon></v-btn>
+        <slot />
       </div>
     </v-list-item>
 </template>

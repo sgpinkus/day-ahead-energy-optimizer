@@ -20,7 +20,7 @@ type props = {
 }
 const tab = ref('descriptors');
 const { id: deviceId } = defineProps<props>();
-const device = model.bus.getDevice(deviceId);
+const device = model.bus.devices[deviceId];
 if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
 
 function boundsView() {

@@ -2,14 +2,17 @@
 import model from '@/model';
 import router from '@/router';
 import { ref } from 'vue';
-import DeviceListItem from './DeviceListItem.vue';
+import DeviceListItem from '../components/MyListItem.vue';
 
-const devices = model.bus;
+const items = model.bus;
 const showObjectList = ref(false);
 
-function editDevice(id: string) {
-  router.dispatch({ name: 'devices', params: { id } });
-}
+const icons = {
+  load: 'mdi-cellphone-settings',
+  supply: 'mdi-generator-stationary',
+  storage: 'mdi-battery-charging',
+  fixed_load: 'mdi-cellphone-settings',
+};
 
 </script>
 
@@ -20,17 +23,18 @@ function editDevice(id: string) {
       :append-icon='showObjectList ? "mdi-chevron-up" : "mdi-chevron-down"'
       @click='showObjectList = !showObjectList'
     >
-        <v-list-item-title>Devices ({{ devices.length || 0 }})</v-list-item-title>
+        <v-list-item-title>Devices ({{ items.length || 0 }})</v-list-item-title>
     </v-list-item>
   </v-list>
   <v-divider></v-divider>
-  <template v-if='showObjectList && devices.length'>
+  <template v-if='showObjectList && items.length'>
     <v-list class='item-list'>
-      <DeviceListItem v-for='item in devices.getDevices()' :key='item.id'
+      <DeviceListItem v-for='item in items.getDevices()' :key='item.id'
         :item=item
-        @edit='() => editDevice(item.id)'
-        @delete='() => model.bus.deleteDevice(item.id)'
         :focused='model.focusedDeviceId === item.id'
+        :icon='icons[item.type]'
+        @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
+        @delete='() => model.bus.deleteDevice(item.id)'
         @click.stop='model.focusedDeviceId = item.id'
       >
       </DeviceListItem>
