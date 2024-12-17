@@ -1,24 +1,27 @@
 <script setup lang='ts'>
-import model, { Bus } from '@/model';
+import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import BusNavView from './BusNavView.vue';
 import BusMainGraphView from './BusMainGraphView.vue';
+import { BusInjection } from '@/model/injectionKeys';
+import { provide } from 'vue';
 // import NotFoundError from '@/errors';
 
 // const { id } = defineProps<{ id: string }>();
 // const bus: Bus = model.collection.busses[id];
 // if(!bus) throw new NotFoundError();
 const bus = model.bus;
+provide(BusInjection, bus);
 
 </script>
 
 <template>
   <AppNavDrawer>
-    <BusNavView :bus=bus></BusNavView>
+    <BusNavView></BusNavView>
   </AppNavDrawer>
   <v-main>
     <v-container class='container'>
-      <BusMainGraphView :bus=bus></BusMainGraphView>
+      <BusMainGraphView></BusMainGraphView>
     </v-container>
   </v-main>
 </template>

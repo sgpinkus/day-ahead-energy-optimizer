@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { values } from 'lodash';
-import model, { Bus } from '@/model';
+import model from '@/model';
 import router from '@/router';
 import DeviceListItem from '../components/MyListItem.vue';
+import requireBus from './requireBus';
 
-const { bus } = defineProps<{ bus: Bus }>();
+const bus = requireBus();
 
 const items = computed(() => values(model.bus.devices));
 const showObjectList = ref(false);

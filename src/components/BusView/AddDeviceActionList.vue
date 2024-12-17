@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Bus } from '@/model';
 import type { DeviceType } from '@/model/device';
+import requireBus from './requireBus';
 
-const { bus } = defineProps<{ bus: Bus }>();
+const bus = requireBus();
 
 type TypeSpec = {
   type: DeviceType,

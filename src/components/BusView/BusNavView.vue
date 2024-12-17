@@ -6,8 +6,9 @@ import BusDeviceList from './DeviceList.vue';
 // import DatumList from './DatumList.vue';
 import { jsonStringify } from '@/model/importlib';
 import { ref } from 'vue';
+import requireBus from './requireBus';
 
-const { bus } = defineProps<{ bus: Bus }>();
+const bus: Bus = requireBus();
 
 const blobUrl = ref('');
 
@@ -43,9 +44,9 @@ function exportModel() {
           </v-list-item>
       </v-list>
       <v-divider></v-divider>
-      <AddDeviceActionList :bus=bus></AddDeviceActionList>
+      <AddDeviceActionList></AddDeviceActionList>
       <v-divider></v-divider>
-      <BusDeviceList :bus=bus></BusDeviceList>
+      <BusDeviceList></BusDeviceList>
       <!-- <v-divider></v-divider>
       <AddDataActionList></AddDataActionList>
       <v-divider></v-divider>
