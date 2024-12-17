@@ -7,12 +7,18 @@ import { jsonParse, jsonStringify } from './importlib';
 import messages from './messages';
 import Bus from './bus';
 import { MyName } from './constant';
+import Collection from './collection';
+
+export { default as Bus } from './bus';
+export { default as Collection } from './collection';
+
 
 export class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
+  collection: Collection = new Collection();
   bus: Bus;
   rail = false;
   focusedDeviceId: string | null = null;

@@ -19,6 +19,7 @@ import {
   SupplyDevice,
   FixedLoadDevice,
 } from './device';
+import Collection from './collection';
 import Bus from './bus';
 import { Messages } from './messages';
 import { Model } from './index';

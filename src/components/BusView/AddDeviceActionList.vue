@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import model from '@/model';
+import type { Bus } from '@/model';
 import type { DeviceType } from '@/model/device';
-const devices = model.bus;
+
+const { bus } = defineProps<{ bus: Bus }>();
 
 type TypeSpec = {
   type: DeviceType,
@@ -46,7 +47,7 @@ const addTypes: TypeSpec[] = [
       <v-list-item v-for='spec in addTypes' :key='spec.type'
         :title=spec.title
         :prepend-icon=spec.icon
-        @click=devices.addType(spec.type);
+        @click=bus.addType(spec.type);
       >
       </v-list-item>
     </v-list-group>

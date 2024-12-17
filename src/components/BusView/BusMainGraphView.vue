@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { values } from 'lodash';
-import model from '@/model';
+import model, { Bus } from '@/model';
 import router from '@/router';
 import NetworkHubView from '@/components/components/NetworkHubView.vue';
 
-const deviceNodes = computed(() => values(model.bus.devices));
-// const busNode = { id: 'hub', title: 'Bus' };
+const { bus } = defineProps<{ bus: Bus }>();
+
+const deviceNodes = computed(() => values(bus.devices));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
 
 function onClick(id: string) {

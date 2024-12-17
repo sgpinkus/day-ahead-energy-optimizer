@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import model from '@/model';
+import { Bus } from '@/model';
 import AddDeviceActionList from './AddDeviceActionList.vue';
-import AddDataActionList from './AddDataActionList.vue';
-import DeviceList from './DeviceList.vue';
-import DatumList from './DatumList.vue';
+import BusDeviceList from './DeviceList.vue';
+// import AddDataActionList from './AddDataActionList.vue';
+// import DatumList from './DatumList.vue';
 import { jsonStringify } from '@/model/importlib';
 import { ref } from 'vue';
+
+const { bus } = defineProps<{ bus: Bus }>();
 
 const blobUrl = ref('');
 
 function exportModel() {
-  const data = jsonStringify(model.bus.toExportObject());
+  const data = jsonStringify(bus.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
   blobUrl.value = URL.createObjectURL(blob);
   // window.location.href = blobUrl;
@@ -22,7 +24,7 @@ function exportModel() {
     <v-list class='flex-shrink-0 details-content' >
       <v-list class='flex-shrink-0'>
           <v-list-item
-            @click='model.reset()'
+            @click='bus.reset()'
             prepend-icon="mdi-refresh"
           >
           Reset Local Data
@@ -41,13 +43,13 @@ function exportModel() {
           </v-list-item>
       </v-list>
       <v-divider></v-divider>
-      <AddDeviceActionList></AddDeviceActionList>
+      <AddDeviceActionList :bus=bus></AddDeviceActionList>
       <v-divider></v-divider>
-      <DeviceList></DeviceList>
-      <v-divider></v-divider>
+      <BusDeviceList :bus=bus></BusDeviceList>
+      <!-- <v-divider></v-divider>
       <AddDataActionList></AddDataActionList>
       <v-divider></v-divider>
-      <DatumList></DatumList>
+      <DatumList></DatumList> -->
     </v-list>
 </template>
 

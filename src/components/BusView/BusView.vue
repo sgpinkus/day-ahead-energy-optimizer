@@ -1,16 +1,24 @@
 <script setup lang='ts'>
+import model, { Bus } from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import BusNavView from './BusNavView.vue';
 import BusMainGraphView from './BusMainGraphView.vue';
+// import NotFoundError from '@/errors';
+
+// const { id } = defineProps<{ id: string }>();
+// const bus: Bus = model.collection.busses[id];
+// if(!bus) throw new NotFoundError();
+const bus = model.bus;
+
 </script>
 
 <template>
   <AppNavDrawer>
-    <BusNavView></BusNavView>
+    <BusNavView :bus=bus></BusNavView>
   </AppNavDrawer>
   <v-main>
     <v-container class='container'>
-      <BusMainGraphView></BusMainGraphView>
+      <BusMainGraphView :bus=bus></BusMainGraphView>
     </v-container>
   </v-main>
 </template>

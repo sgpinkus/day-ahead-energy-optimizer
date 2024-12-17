@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { values } from 'lodash';
-import model from '@/model';
+import model, { Bus } from '@/model';
 import router from '@/router';
-
 import DeviceListItem from '../components/MyListItem.vue';
+
+const { bus } = defineProps<{ bus: Bus }>();
 
 const items = computed(() => values(model.bus.devices));
 const showObjectList = ref(false);
@@ -36,7 +37,7 @@ const icons = {
         :focused='model.focusedDeviceId === item.id'
         :icon='icons[item.type]'
         @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
-        @delete='() => model.bus.delete(item.id)'
+        @delete='() => bus.delete(item.id)'
         @click.stop='model.focusedDeviceId = item.id'
       >
       </DeviceListItem>

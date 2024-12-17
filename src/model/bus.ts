@@ -1,27 +1,33 @@
+import { v4 as uuid } from 'uuid';
 import { DefaultBasis } from './constant';
 import { deviceFactory, type ContainerDevice, type Device, type DeviceType } from './device';
 
-class Bus {
+export default class Bus {
+  readonly id: string;
   public readonly devices: Record<string, ContainerDevice> = {};
   public readonly basis: number = DefaultBasis;
-  static readonly MaxDevices = 20;
+  static readonly MaxItems = 20;
 
-  get length() {
-    return Object.keys(this.devices).length;
+  public constructor() {
+    this.id = uuid();
   }
 
-  add(device: Device) {
-    if(!(device.id in this.devices)) {
-      if(this.length >= Bus.MaxDevices) throw new RangeError(`Too many device (max=${Bus.MaxDevices})`);
-      this.devices[device.id] = device;
-    }
-  }
+   get length() {
+     return Object.keys(this.devices).length;
+   }
 
-  addType(type: DeviceType) {
-    if(this.length >= Bus.MaxDevices) throw new RangeError(`Too many device (max=${Bus.MaxDevices})`);
-    const device = deviceFactory({ type });
-    this.add(device);
-  }
+   add(device: Device) {
+     if(!(device.id in this.devices)) {
+      if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+       this.devices[device.id] = device;
+     }
+   }
+
+   addType(type: DeviceType) {
+    if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+     const device = deviceFactory({ type });
+     this.add(device);
+   }
 
   delete(id: string) {
     delete this.devices[id];
@@ -37,6 +43,4 @@ class Bus {
       devices: Object.values(this.devices).map(d => d.toExportObject()),
     };
   }
-}
-
-export default Bus;
+ }
