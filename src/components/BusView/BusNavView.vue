@@ -8,7 +8,6 @@ import { ref } from 'vue';
 const { bus } = defineProps<{ bus: Bus }>();
 
 const blobUrl = ref('');
-
 function exportModel() {
   const data = jsonStringify(bus.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });

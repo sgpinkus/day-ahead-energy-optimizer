@@ -4,6 +4,7 @@ import App from '@/components/App.vue';
 import router from '@/router';
 import model from '@/model';
 import { createVuetify } from 'vuetify';
+//  import { VFileUpload } from 'vuetify/labs/VFileUpload';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import './index.scss';
