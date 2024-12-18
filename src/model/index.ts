@@ -8,9 +8,12 @@ import messages from './messages';
 import Bus from './bus';
 import { MyName } from './constant';
 import Collection from './collection';
+import type { BaseDevice } from './device';
 
 export { default as Bus } from './bus';
 export { default as Collection } from './collection';
+
+
 
 
 export class Model {
@@ -19,17 +22,27 @@ export class Model {
   doneLocalStorageNotice = false;
   messages = messages;
   collection: Collection = new Collection();
-  bus: Bus;
+  collections: Record<string, Collection> = {};
+  busses: Record<string, Bus> = {};
+  devices: Record<string, BaseDevice> = {};
   rail = false;
-  focusedDeviceId: string | null = null;
-  editingDeviceId: string | null = null;
+  focusedDeviceId?: string = undefined;
+  focusedBusId?: string = undefined;
+  focusedCollectionId?: string = undefined;
   basis = 48;
 
   /**
    * Syncronously initialize state restoring from local storage if any.
    */
   constructor() {
-    this.bus = new Bus();
+  }
+
+  get focusedBus() {
+    return this.focusedBusId ? this.busses[this.focusedBusId] : undefined;
+  }
+
+  get focusedDevice() {
+    return this.focusedDeviceId ? this.devices[this.focusedDeviceId] : undefined;
   }
 
   /**
@@ -38,7 +51,9 @@ export class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
-    this.bus.reset();
+    this.collections = {};
+    this.busses = {};
+    this.devices = {};
   }
 
   /**
@@ -58,15 +73,6 @@ export class Model {
     console.log('Model: Shutting down');
     this.messages.clearAll();
     window.localStorage.setItem(MyName, jsonStringify(this));
-  }
-
-  toExportObject() {
-    return {
-      data: this.bus.toExportObject(),
-      meta: {
-        // version
-      }
-    };
   }
 }
 

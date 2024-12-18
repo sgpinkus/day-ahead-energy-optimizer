@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { values } from 'lodash';
-import model from '@/model';
+import model, { Bus } from '@/model';
 import router from '@/router';
-import requireBus from './requireBus';
 import NetworkHubView from '@/components/components/NetworkHubView.vue';
 
-const bus = requireBus();
+const { bus } = defineProps<{ bus: Bus }>();
 
-const deviceNodes = computed(() => values(bus.devices));
+const deviceNodes = computed(() => values(bus?.devices || {}));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
 
 function onClick(id: string) {
@@ -23,7 +22,7 @@ function onDoubleClick(id: string) {
 </script>
 
 <template>
-  <NetworkHubView
+  <NetworkHubView v-if='bus'
     :deviceNodes=deviceNodes
     :focusedNodeId='focusedNodeId'
     :hubNode='{ title: "Network" }'

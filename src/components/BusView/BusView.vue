@@ -3,25 +3,25 @@ import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import BusNavView from './BusNavView.vue';
 import BusMainGraphView from './BusMainGraphView.vue';
-import { BusInjection } from '@/model/injectionKeys';
-import { provide } from 'vue';
-// import NotFoundError from '@/errors';
+import { NotFoundError } from '@/errors';
 
-// const { id } = defineProps<{ id: string }>();
-// const bus: Bus = model.collection.busses[id];
-// if(!bus) throw new NotFoundError();
-const bus = model.bus;
-provide(BusInjection, bus);
+const { id } = defineProps<{ id: string }>();
+const bus = model.busses[id];
+if(!bus) throw new NotFoundError();
 
 </script>
 
 <template>
   <AppNavDrawer>
-    <BusNavView></BusNavView>
+    <route-path path='/'>
+      <v-list-item prepend-icon='mdi-arrow-left'>Collection</v-list-item>
+    </route-path>
+    <v-divider></v-divider>
+    <BusNavView :bus=bus></BusNavView>
   </AppNavDrawer>
   <v-main>
     <v-container class='container'>
-      <BusMainGraphView></BusMainGraphView>
+      <BusMainGraphView :bus=bus></BusMainGraphView>
     </v-container>
   </v-main>
 </template>

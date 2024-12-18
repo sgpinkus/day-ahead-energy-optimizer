@@ -1,26 +1,32 @@
 import { createRouter } from '@sgpinkus/my-vue-router';
+import CollectionView from '@/components/CollectionView/CollectionView.vue';
 import BusView from '@/components/BusView/BusView.vue';
 import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
-import RunBusView from '@/components/BusView/RunBusView.vue';
+import BusRunView from '@/components/BusRunView.vue';
 import { basePath } from '@/config';
 
 const router = createRouter([
   {
     path: '/',
     name: 'root',
+    component: CollectionView,
+  },
+  {
+    path: '/bus/:id',
+    name: 'bus',
     component: BusView,
+  },
+  {
+    path: '/bus/:id/run/',
+    name: 'run',
+    component: BusRunView,
   },
   {
     path: '/device/:id',
     name: 'device',
     component: DeviceView,
-  },
-  {
-    path: '/run/',
-    name: 'run',
-    component: RunBusView,
   },
   {
     path: '/*pathMatch',

@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 import { computed, onMounted, ref, useTemplateRef, watch, watchEffect, type Ref } from 'vue';
 import { draw, type Options, type Node } from './NetworkHub';
 
-
 const emits = defineEmits(['click', 'dblclick']);
 
 const { deviceNodes, focusedNodeId, hubNode, height = 480, width = 480 } = defineProps<{

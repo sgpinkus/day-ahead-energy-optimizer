@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { setupPyodide, type Pyodide } from '@/setup-pyodide';
 import { onMounted, ref, computed, type Ref } from 'vue';
-import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import loadScript from '@/python-scripts/load.py?raw';
 import solveScript from '@/python-scripts/solve.py?raw';
 import tablesScript from '@/python-scripts/tables.py?raw';
 import plotsScript from '@/python-scripts/plots.py?raw';
-// import x from '@/assets/';
+import { NotFoundError } from '@/errors';
+import model from '@/model';
+
+const { id } = defineProps<{ id: string }>();
+const bus = model.busses[id];
+if(!bus) throw new NotFoundError();
 
 let pyodide: Pyodide;
 const loadingStateMessage = ref('');
@@ -21,7 +25,6 @@ const flowDerivsData = ref('');
 const plot1Image = ref('');
 const plot1Src = computed(() => `data:image/png;base64,${plot1Image.value}`);
 const plot2Image = ref('');
-const plot2Src = computed(() => `data:image/png;base64,${plot2Image.value}`);
 
 function pyodideLoadingStateCallback(code: number, name: string) {
   loadingStateCode.value = code;
@@ -29,7 +32,7 @@ function pyodideLoadingStateCallback(code: number, name: string) {
 }
 
 function run() {
-  const modelExport = model.toExportObject();
+  const modelExport = bus.toExportObject();
   const load = pyodide.runPython(loadScript);
   const solve = pyodide.runPython(solveScript);
   const plots = pyodide.runPython(plotsScript);
@@ -63,7 +66,7 @@ onMounted(async () => {
 <template>
   <AppNavDrawer>
     <route-path path='/'>
-      <v-list-item prepend-icon='mdi-arrow-left'>Bus View</v-list-item>
+      <v-list-item prepend-icon='mdi-arrow-left'>Bus</v-list-item>
     </route-path>
     <v-divider></v-divider>  </AppNavDrawer>
   <v-main>

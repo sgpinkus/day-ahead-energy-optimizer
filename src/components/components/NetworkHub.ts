@@ -3,7 +3,7 @@ import { cloneDeep, merge } from 'lodash';
 const { PI, cos, sin, sqrt } = Math;
 
 export type Node = {
-  title: string,
+  title?: string,
   id: string,
   description?: string,
   color?: string,

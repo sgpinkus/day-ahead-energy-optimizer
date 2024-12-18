@@ -12,16 +12,13 @@ import DeviceCostsBoundsRelativeFlow from './DeviceCostsBoundsRelativeFlow.vue';
 import DeviceCostsCBoundsRelativeFlow from './DeviceCostsCBoundsRelativeFlow.vue';
 import DeviceParametersView from './DeviceParametersView.vue';
 import model from '@/model';
-import router from '@/router';
 import type { ICosts } from '@/model/device';
+import { NotFoundError } from '@/errors';
 
-type props = {
-  id: string;
-}
 const tab = ref('descriptors');
-const { id: deviceId } = defineProps<props>();
-const device = model.bus.devices[deviceId];
-if(!device) router.dispatch({ name: 'resource-not-found', params: { resource: deviceId } });
+const { id: deviceId } = defineProps<{ id: string }>();
+const device = model.devices[deviceId];
+if(!device) throw new NotFoundError();
 
 function boundsView() {
   switch(device.type) {
@@ -40,9 +37,9 @@ function costStatusIcon(type: keyof ICosts) {
 
 <template>
   <AppNavDrawer>
-    <route-path path='/'>
-      <v-list-item prepend-icon='mdi-arrow-left'>Bus View</v-list-item>
-    </route-path>
+    <route-name name='bus' :params="{ id: device.busId }">
+      <v-list-item prepend-icon='mdi-arrow-left'>Bus</v-list-item>
+    </route-name>
     <v-divider></v-divider>
     <v-list class='flex-shrink-0 device-components'>
       <template v-if=true>

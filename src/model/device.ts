@@ -104,6 +104,7 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
 
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
+  busId?: string;
   abstract readonly type: DeviceType;
   readonly attrs: IAttributes = {};
   readonly basis: number = DefaultBasis;
@@ -266,7 +267,10 @@ export class StorageDevice extends BaseDevice {
 // }
 
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
-export type ContainerDevice = Device & { readonly id: string };
+export type ContainerDevice = Device & {
+  readonly id: string,
+  readonly busId?: string,
+};
 
 export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
   switch(data.type) {

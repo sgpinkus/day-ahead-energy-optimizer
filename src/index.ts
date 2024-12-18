@@ -22,10 +22,13 @@ async function main() {
     },
   }));
 
-
   app.config.errorHandler = async (err: any = {}) => {
-    console.debug('Hit global errorHandler', err);
-    model.messages.addAlertFromError(err);
+    console.debug('Hit global error handler', err);
+    if(err?.name === 'NotFoundError') {
+      router.dispatch({ name: 'resource-not-found' });
+    } else {
+      model.messages.addAlertFromError(err);
+    }
   };
 
   // TODO: All this init/shutdown in App LC events.

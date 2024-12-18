@@ -1,46 +1,55 @@
 import { v4 as uuid } from 'uuid';
+import model from '@/model';
 import { DefaultBasis } from './constant';
-import { deviceFactory, type ContainerDevice, type Device, type DeviceType } from './device';
+import { deviceFactory, type Device, type DeviceType } from './device';
+import { values } from 'lodash';
 
 export default class Bus {
   readonly id: string;
-  public readonly devices: Record<string, ContainerDevice> = {};
   public readonly basis: number = DefaultBasis;
   static readonly MaxItems = 20;
 
-  public constructor() {
+  public constructor(public collectionId?: string) {
     this.id = uuid();
   }
 
-   get length() {
-     return Object.keys(this.devices).length;
-   }
+  get length() {
+    return this.devices.length;
+  }
 
-   add(device: Device) {
-     if(!(device.id in this.devices)) {
-      if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
-       this.devices[device.id] = device;
-     }
-   }
+  get devices() {
+    return values(model.devices).filter(d => d.busId === this.id);
+  }
 
-   addType(type: DeviceType) {
+  add(device: Device) {
+    console.log('add', device);
+    if(!(device.id in model.devices)) {
     if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
-     const device = deviceFactory({ type });
-     this.add(device);
-   }
+      device.busId = this.id;
+      model.devices[device.id] = device;
+    }
+  }
+
+  addType(type: DeviceType) {
+  if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+    const device = deviceFactory({ type });
+    this.add(device);
+  }
 
   delete(id: string) {
-    delete this.devices[id];
+    delete model.devices[id];
   }
 
   reset() {
-    (this.devices as any) = {};
+    for(const d of this.devices) {
+      delete model.devices[d.id];
+    }
   }
 
   toExportObject() {
     return {
       basis: this.basis,
-      devices: Object.values(this.devices).map(d => d.toExportObject()),
+      devices: this.devices.map(d => d.toExportObject()),
     };
   }
  }
