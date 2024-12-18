@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import { Bus } from '@/model';
+import { BaseDevice } from '@/model';
 import AddDeviceActionList from './AddDeviceActionList.vue';
 import BusDeviceList from './DeviceList.vue';
-import { jsonStringify } from '@/model/importlib';
-import { ref } from 'vue';
+import { jsonStringify, jsonParse } from '@/model/importlib';
+import { ref, useTemplateRef } from 'vue';
+import { ValidationError } from '@/errors';
 
 const { bus } = defineProps<{ bus: Bus }>();
+
+const deviceFileInput = useTemplateRef<HTMLInputElement>('deviceFileInput');
 
 const blobUrl = ref('');
 function exportModel() {
   const data = jsonStringify(bus.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
   blobUrl.value = URL.createObjectURL(blob);
-  // window.location.href = blobUrl;
 }
 
 function importDevice() {
+  const files = deviceFileInput.value ? deviceFileInput.value.files : [undefined];
+  if (files && files[0]) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+        const device = jsonParse(reader.result);
+        if (!(device instanceof BaseDevice)) throw new ValidationError();
+        bus.add(device.clone());
+      },
+      false,
+    );
+    reader.readAsText(files[0]);
+  }
 }
 
 </script>
@@ -42,9 +57,17 @@ function importDevice() {
       <v-divider />
       <v-list-item
         prepend-icon="mdi-application-import"
-        @click="importDevice()"
       >
-        Import Device
+        <v-list-item-title>
+          <label for="device-file">Import Device</label>
+        </v-list-item-title>
+        <input
+          id="device-file"
+          ref="deviceFileInput"
+          type="file"
+          style="display: none"
+          @change="importDevice"
+        >
       </v-list-item>
       <v-list-item
         prepend-icon="mdi-play-box"
@@ -82,5 +105,10 @@ function importDevice() {
     min-width: 1em;
     padding: 0;
     margin: 0;
+  }
+
+  label:hover {
+    cursor: inherit;
+    text-decoration: underline;
   }
 </style>

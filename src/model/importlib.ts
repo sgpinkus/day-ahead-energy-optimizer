@@ -23,7 +23,26 @@ import Collection from './collection';
 import Bus from './bus';
 import { Messages } from './messages';
 import { Model } from './index';
+import { ValidationError } from '@/errors';
 
+// Whitelist allowed classes. These custom json replacer/revivers are now used from explort/import.
+// Even though app is local only, user could attempt to load export from untrusted source.
+const allowedClassNames = [
+  'RunSpec',
+  'NumberRunSpec',
+  'BoundsRunSpec',
+  'FixedBoundsRunSpec',
+  'DeviceCosts',
+  'BaseDevice',
+  'LoadDevice',
+  'StorageDevice',
+  'SupplyDevice',
+  'FixedLoadDevice',
+  'Collection',
+  'Bus',
+  'Messages',
+  'Model',
+];
 
 function replacer(k: string, v: any) {
   if (v instanceof Object && ![Function, Object, Array, String, Number, BigInt].includes(v.constructor)) {
@@ -34,6 +53,7 @@ function replacer(k: string, v: any) {
 
 function reviver(k: string, v: any) {
   if (v?.__CLASS__) {
+    if (!allowedClassNames.includes(v.__CLASS__)) throw new ValidationError();
     const _class = eval(v.__CLASS__);
     let o;
     if (_class['fromObject']) {

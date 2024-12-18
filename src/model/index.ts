@@ -8,8 +8,9 @@ import messages from './messages';
 import Bus from './bus';
 import { MyName } from './constant';
 import Collection from './collection';
-import type { BaseDevice } from './device';
+import { BaseDevice } from './device';
 
+export { BaseDevice } from './device';
 export { default as Bus } from './bus';
 export { default as Collection } from './collection';
 

@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import model from '@/model';
 import { DefaultBasis } from './constant';
-import { deviceFactory, type Device, type DeviceType } from './device';
+import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 
 export default class Bus {
@@ -21,8 +21,7 @@ export default class Bus {
     return values(model.devices).filter(d => d.busId === this.id);
   }
 
-  add(device: Device) {
-    console.log('add', device);
+  add(device: BaseDevice) {
     if (!(device.id in model.devices)) {
     if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
       device.busId = this.id;

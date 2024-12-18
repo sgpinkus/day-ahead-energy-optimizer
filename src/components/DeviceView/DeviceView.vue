@@ -23,7 +23,7 @@ if (!device) throw new NotFoundError();
 
 const blobUrl = ref('');
 function exportModel() {
-  const data = jsonStringify(device.toExportObject());
+  const data = jsonStringify(device);
   const blob = new Blob([data], { type: 'application/json' });
   blobUrl.value = URL.createObjectURL(blob);
   // window.location.href = blobUrl;
@@ -64,17 +64,16 @@ function costStatusIcon(type: keyof ICosts) {
         <a
           :href="blobUrl"
           :download="`device-${device.id}.json`"
-        >Export Bus</a>
+        >Export Device</a>
       </v-list-item>
-      <template>
-        <v-list-item
-          prepend-icon="mdi-text-box-edit"
-          @click="tab = 'descriptors'"
-        >
-          Descriptors
-        </v-list-item>
-        <v-divider />
-      </template>
+      <v-divider />
+      <v-list-item
+        prepend-icon="mdi-text-box-edit"
+        @click="tab = 'descriptors'"
+      >
+        Descriptors
+      </v-list-item>
+      <v-divider />
       <template v-if="!device.attrs.hideBounds">
         <v-list-item
           prepend-icon="mdi-minus-box"

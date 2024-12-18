@@ -102,6 +102,12 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
   return new BoundsRunSpec(DefaultBasis, [l, h] as [number, number], hb);
 }
 
+// Slightly mixing concerns but just put these linkage fields on the base device.
+// export type ContainerDevice = Device & {
+//   readonly id: string,
+//   readonly busId?: string,
+// };
+
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
   busId?: string;
@@ -132,6 +138,14 @@ export abstract class BaseDevice implements IBaseDevice {
     return cloneDeep({ ...pick(this, ['title', 'description', 'shape', 'color', 'tags']) });
   }
 
+  softBounds(type: 'bounds' | 'cumulative_bounds') {
+    if (this[type]) {
+      const values = this[type]?.toRanges().map(([v]) => v).flat();
+      return [Math.min(...(values as number[])), Math.max(...(values as number[]))];
+    }
+    return this.hardBounds;
+  }
+
   toExportObject() {
     return {
       id: this.id,
@@ -145,18 +159,16 @@ export abstract class BaseDevice implements IBaseDevice {
     };
   }
 
-  softBounds(type: 'bounds' | 'cumulative_bounds') {
-    if (this[type]) {
-      const values = this[type]?.toRanges().map(([v]) => v).flat();
-      return [Math.min(...(values as number[])), Math.max(...(values as number[]))];
-    }
-    return this.hardBounds;
+  clone() {
+    const _clone = cloneDeep(this);
+    (_clone.id as any) = uuid();
+    return _clone;
   }
 
   static fromObject(data: any) {
-    // @ts-expect-error 2511 "Cannot create an instance of an abstract class" so by definition "this" refers to a subclass?!
+    // @ts-expect-error 2511 "Cannot create an instance of an abstract class". Since it's abstract by definition "this" refers to a subclass?!
     const o = new this(data);
-    Object.assign(o, data);
+    Object.assign(o, pick(data, ['id', 'type', 'basis', 'bounds', 'cummulative_bounds', 'costs', 'parameters', 'descriptors']));
     return o;
   }
 }
@@ -267,10 +279,6 @@ export class StorageDevice extends BaseDevice {
 // }
 
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
-export type ContainerDevice = Device & {
-  readonly id: string,
-  readonly busId?: string,
-};
 
 export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
   switch (data.type) {
