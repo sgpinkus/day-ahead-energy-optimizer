@@ -21,7 +21,7 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
     :id="`list-item-${item.id}`"
     :prepend-icon="icon"
     :class="{ focused: focused }"
-    @dblclick.stop="$emit(&quot;edit&quot;)"
+    @dblclick.stop="$emit('edit')"
   >
     <div class="d-flex flex-nowrap flex-row">
       <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
@@ -30,7 +30,7 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
         flat
         density="compact"
         :block="false"
-        @click.stop="$emit(&quot;edit&quot;)"
+        @click.stop="$emit('edit')"
       >
         <v-icon>mdi-pencil</v-icon>
       </v-btn>&nbsp;
@@ -38,7 +38,7 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
         flat
         density="compact"
         :block="false"
-        @click.stop="$emit(&quot;delete&quot;)"
+        @click.stop="$emit('delete')"
       >
         <v-icon>mdi-delete</v-icon>
       </v-btn>

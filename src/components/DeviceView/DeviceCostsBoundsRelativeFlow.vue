@@ -53,7 +53,7 @@ watch(selectedRange, () => {
       <h3>
         {{ title }}<v-icon
           size="18"
-          @click="setDialog(&quot;FlowBoundsRelative&quot;)"
+          @click="setDialog('FlowBoundsRelative')"
         >
           mdi-information
         </v-icon>

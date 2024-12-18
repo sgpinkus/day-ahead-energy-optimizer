@@ -47,7 +47,7 @@ function clickOutsideClear() {
     </template>
     <template #append>
       <v-divider />
-      <v-list-item v-if="connectionOk === &quot;pending&quot;">
+      <v-list-item v-if="connectionOk === 'pending'">
         <template #prepend>
           <v-icon class="loading">
             mdi-loading
@@ -64,7 +64,7 @@ function clickOutsideClear() {
         </template>
         Offline Mode
       </v-list-item>
-      <v-list-item v-else-if="authOk === &quot;pending&quot;">
+      <v-list-item v-else-if="authOk === 'pending'">
         <template #prepend>
           <v-icon class="loading">
             mdi-loading

@@ -13,7 +13,7 @@ const showObjectList = ref(false);
   >
     <v-list-item
       prepend-icon="mdi-chart-box-outline"
-      :append-icon="showObjectList ? &quot;mdi-chevron-up&quot; : &quot;mdi-chevron-down&quot;"
+      :append-icon="showObjectList ? 'mdi-chevron-up' : 'mdi-chevron-down'"
       @click="showObjectList = !showObjectList"
     >
       <v-list-item-title>Data ({{ datums.length || 0 }})</v-list-item-title>

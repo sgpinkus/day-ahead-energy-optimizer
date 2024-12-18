@@ -50,7 +50,7 @@ function costStatusIcon(type: keyof ICosts) {
       <template v-if="true">
         <v-list-item
           prepend-icon="mdi-text-box-edit"
-          @click="tab = &quot;descriptors&quot;"
+          @click="tab = 'descriptors'"
         >
           Descriptors
         </v-list-item>
@@ -59,7 +59,7 @@ function costStatusIcon(type: keyof ICosts) {
       <template v-if="!device.attrs.hideBounds">
         <v-list-item
           prepend-icon="mdi-minus-box"
-          @click="tab = &quot;bounds&quot;"
+          @click="tab = 'bounds'"
         >
           Flow Bounds
         </v-list-item>
@@ -68,7 +68,7 @@ function costStatusIcon(type: keyof ICosts) {
       <template v-if="!device.attrs.hideCBounds">
         <v-list-item
           prepend-icon="mdi-equal-box"
-          @click="tab = &quot;cbounds&quot;"
+          @click="tab = 'cbounds'"
         >
           Cumulative Flow Bounds
         </v-list-item>
@@ -77,7 +77,7 @@ function costStatusIcon(type: keyof ICosts) {
       <template v-if="device.attrs.hasParameters">
         <v-list-item
           prepend-icon="mdi-code-braces"
-          @click="tab = &quot;params&quot;"
+          @click="tab = 'params'"
         >
           Parameters
         </v-list-item>
@@ -94,36 +94,36 @@ function costStatusIcon(type: keyof ICosts) {
           </template>
           <v-list-item
             prepend-icon="mdi-function"
-            :append-icon="costStatusIcon(&quot;flow&quot;)"
-            @click="tab = &quot;costs&quot;"
+            :append-icon="costStatusIcon('flow')"
+            @click="tab = 'costs'"
           >
             Flow Cost
           </v-list-item>
           <v-list-item
             prepend-icon="mdi-function"
-            :append-icon="costStatusIcon(&quot;flow_bounds_relative&quot;)"
-            @click="tab = &quot;brcosts&quot;"
+            :append-icon="costStatusIcon('flow_bounds_relative')"
+            @click="tab = 'brcosts'"
           >
             Bounds Relative Flow Cost
           </v-list-item>
           <v-list-item
             prepend-icon="mdi-function"
-            :append-icon="costStatusIcon(&quot;cumulative_flow&quot;)"
-            @click="tab = &quot;ccosts&quot;"
+            :append-icon="costStatusIcon('cumulative_flow')"
+            @click="tab = 'ccosts'"
           >
             Cumulative Flow Cost
           </v-list-item>
           <v-list-item
             prepend-icon="mdi-function"
-            :append-icon="costStatusIcon(&quot;cumulative_flow_bounds_relative&quot;)"
-            @click="tab = &quot;brccosts&quot;"
+            :append-icon="costStatusIcon('cumulative_flow_bounds_relative')"
+            @click="tab = 'brccosts'"
           >
             Cumulative Bounds Relative Flow Cost
           </v-list-item>
           <v-list-item
             prepend-icon="mdi-function"
-            :append-icon="costStatusIcon(&quot;peak_flow&quot;)"
-            @click="tab = &quot;pcosts&quot;"
+            :append-icon="costStatusIcon('peak_flow')"
+            @click="tab = 'pcosts'"
           >
             Peak Flow Cost
           </v-list-item>
@@ -136,40 +136,40 @@ function costStatusIcon(type: keyof ICosts) {
     <v-container class="container">
       <h2>{{ device.title }}</h2>
       <DeviceDescriptorsView
-        v-if="tab === &quot;descriptors&quot;"
+        v-if="tab === 'descriptors'"
         :device="device"
       />
       <component
         :is="boundsView()"
-        v-if="tab === &quot;bounds&quot; && !device.attrs.hideBounds"
+        v-if="tab === 'bounds' && !device.attrs.hideBounds"
         :device="device"
       />
       <DeviceCBoundsView
-        v-if="tab === &quot;cbounds&quot; && !device.attrs.hideCBounds"
+        v-if="tab === 'cbounds' && !device.attrs.hideCBounds"
         :device="device"
       />
       <DeviceParametersView
-        v-if="tab === &quot;params&quot; && device.attrs.hasParameters"
+        v-if="tab === 'params' && device.attrs.hasParameters"
         :device="device"
       />
       <DeviceFlowCostsView
-        v-if="tab === &quot;costs&quot; && !device.attrs.hideCosts"
+        v-if="tab === 'costs' && !device.attrs.hideCosts"
         :device="device"
       />
       <DeviceCostsBoundsRelativeFlow
-        v-if="tab === &quot;brcosts&quot; && !device.attrs.hideCosts"
+        v-if="tab === 'brcosts' && !device.attrs.hideCosts"
         :device="device"
       />
       <DeviceCostsCBoundsRelativeFlow
-        v-if="tab === &quot;brccosts&quot; && !device.attrs.hideCosts"
+        v-if="tab === 'brccosts' && !device.attrs.hideCosts"
         :device="device"
       />
       <DeviceCFlowCostsView
-        v-if="tab === &quot;ccosts&quot; && !device.attrs.hideCosts"
+        v-if="tab === 'ccosts' && !device.attrs.hideCosts"
         :device="device"
       />
       <DevicePFlowCostsView
-        v-if="tab === &quot;pcosts&quot; && !device.attrs.hideCosts"
+        v-if="tab === 'pcosts' && !device.attrs.hideCosts"
         :device="device"
       />
     </v-container>

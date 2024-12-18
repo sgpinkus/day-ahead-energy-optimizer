@@ -31,7 +31,7 @@ async function change() { // change(changeKey: string)
       <v-label>Capacity</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StorageCapacity&quot;)"
+        @click="setDialog('StorageCapacity')"
       >
         mdi-information
       </v-icon>
@@ -50,7 +50,7 @@ async function change() { // change(changeKey: string)
       <v-label>Efficiency Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StorageEfficiencyFactor&quot;)"
+        @click="setDialog('StorageEfficiencyFactor')"
       >
         mdi-information
       </v-icon>
@@ -69,7 +69,7 @@ async function change() { // change(changeKey: string)
       <v-label>Reserve Ratio</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;ReserveRatio&quot;)"
+        @click="setDialog('ReserveRatio')"
       >
         mdi-information
       </v-icon>
@@ -88,7 +88,7 @@ async function change() { // change(changeKey: string)
       <v-label>Starting Ratio</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StartingRatio&quot;)"
+        @click="setDialog('StartingRatio')"
       >
         mdi-information
       </v-icon>
@@ -107,7 +107,7 @@ async function change() { // change(changeKey: string)
       <v-label>Fast Charge/Discharge Cost Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;FastChargeCostFactor&quot;)"
+        @click="setDialog('FastChargeCostFactor')"
       >
         mdi-information
       </v-icon>
@@ -126,7 +126,7 @@ async function change() { // change(changeKey: string)
       <v-label>Flip Flip Cost Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StorageCycleCostFactor&quot;)"
+        @click="setDialog('StorageCycleCostFactor')"
       >
         mdi-information
       </v-icon>
@@ -145,7 +145,7 @@ async function change() { // change(changeKey: string)
       <v-label>Deep Discharge Cost Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StorageDepthCostFactor&quot;)"
+        @click="setDialog('StorageDepthCostFactor')"
       >
         mdi-information
       </v-icon>
@@ -164,7 +164,7 @@ async function change() { // change(changeKey: string)
       <v-label>Deep Depth</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;StorageDeepDepthRatio&quot;)"
+        @click="setDialog('StorageDeepDepthRatio')"
       >
         mdi-information
       </v-icon>
@@ -183,7 +183,7 @@ async function change() { // change(changeKey: string)
       <v-label>Charge Rate Clipping Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;ChargeRateClippingFactor&quot;)"
+        @click="setDialog('ChargeRateClippingFactor')"
       >
         mdi-information
       </v-icon>
@@ -202,7 +202,7 @@ async function change() { // change(changeKey: string)
       <v-label>Discharge Rate Clipping Factor</v-label>
       <v-icon
         size="18"
-        @click="setDialog(&quot;DischargeRateClippingFactor&quot;)"
+        @click="setDialog('DischargeRateClippingFactor')"
       >
         mdi-information
       </v-icon>

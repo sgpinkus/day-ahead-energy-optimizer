@@ -30,18 +30,18 @@ function removeAction(id: string) {
           >
             {{ message }}&nbsp;<span style="flex: 1" />
             <v-icon
-              v-if="state === &quot;started&quot;"
+              v-if="state === 'started'"
               class="boot"
             >
               mdi-shoe-sneaker
             </v-icon>
-            <v-icon v-else-if="state === &quot;success&quot;">
+            <v-icon v-else-if="state === 'success'">
               mdi-check-circle
             </v-icon>
-            <v-icon v-else-if="state === &quot;warning&quot;">
+            <v-icon v-else-if="state === 'warning'">
               mdi-sign-caution
             </v-icon>
-            <v-icon v-else-if="state === &quot;error&quot;">
+            <v-icon v-else-if="state === 'error'">
               mdi-alert-circle
             </v-icon>
           </p>

@@ -26,7 +26,7 @@ function onDoubleClick(id: string) {
     v-if="bus"
     :device-nodes="deviceNodes"
     :focused-node-id="focusedNodeId"
-    :hub-node="{ title: &quot;Network&quot; }"
+    :hub-node="{ title: 'Network' }"
     @click="onClick"
     @dblclick="onDoubleClick"
   />
