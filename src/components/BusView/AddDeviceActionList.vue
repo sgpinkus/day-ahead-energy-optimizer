@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Bus } from '@/model';
 import type { DeviceType } from '@/model/device';
+import CellPlus from '@/components/icons/cellphone-plus';
 
 const { bus } = defineProps<{ bus: Bus }>();
 
@@ -13,22 +14,22 @@ type TypeSpec = {
 const addTypes: TypeSpec[] = [
   {
     title: 'Load Device',
-    icon: 'mdi-vector-polyline-plus',
+    icon: CellPlus,
     type: 'load'
   },
   {
     title: 'Supply Device',
-    icon: 'mdi-vector-polyline-plus',
+    icon: CellPlus,
     type: 'supply'
   },
   {
     title: 'Storage Device',
-    icon: 'mdi-vector-polyline-plus',
+    icon: CellPlus,
     type: 'storage'
   },
   {
     title: 'Fixed Load Device',
-    icon: 'mdi-vector-polyline-plus',
+    icon: CellPlus,
     type: 'fixed_load'
   },
 ];
@@ -40,16 +41,26 @@ const addTypes: TypeSpec[] = [
       <template v-slot:activator="{ props }">
         <v-list-item
           v-bind="props"
-          prepend-icon='mdi-vector-polyline-plus'
+          :prepend-icon=CellPlus
           title="Add Device"
         ></v-list-item>
       </template>
-      <v-list-item v-for='spec in addTypes' :key='spec.type'
-        :title=spec.title
-        :prepend-icon=spec.icon
-        @click=bus.addType(spec.type);
-      >
-      </v-list-item>
+      <v-list class='item-list'>
+        <v-list-item v-for='spec in addTypes' :key='spec.type'
+          :title=spec.title
+          :prepend-icon=spec.icon
+          @click=bus.addType(spec.type);
+        >
+        </v-list-item>
+      </v-list>
     </v-list-group>
   </v-list>
 </template>
+
+<style scoped>
+  .item-list {
+    overflow-y: scroll !important;
+    font-size: smaller;
+    padding-left: 0.5em;
+  }
+</style>

@@ -21,34 +21,34 @@ const icons = {
 
 <template>
   <v-list class='flex-shrink-0'>
-    <v-list-item
-      prepend-icon='mdi-cellphone-settings'
-      :append-icon='showObjectList ? "mdi-chevron-up" : "mdi-chevron-down"'
-      @click='showObjectList = !showObjectList'
-    >
-        <v-list-item-title>Devices ({{ items.length || 0 }})</v-list-item-title>
-    </v-list-item>
+    <v-list-group>
+      <template v-slot:activator="{ props }">
+        <v-list-item
+          v-bind="props"
+          prepend-icon='mdi-cellphone-settings'
+        >
+          <v-list-item-title>Devices ({{ items.length || 0 }})</v-list-item-title>
+        </v-list-item>
+      </template>
+      <v-list class='item-list'>
+        <DeviceListItem v-for='item in items' :key='item.id'
+          :item=item
+          :focused='model.focusedDeviceId === item.id'
+          :icon='icons[item.type]'
+          @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
+          @delete='() => bus.delete(item.id)'
+          @click.stop='model.focusedDeviceId = item.id'
+        >
+        </DeviceListItem>
+      </v-list>
+    </v-list-group>
   </v-list>
-  <v-divider></v-divider>
-  <template v-if='showObjectList && items.length'>
-    <v-list class='item-list'>
-      <DeviceListItem v-for='item in items' :key='item.id'
-        :item=item
-        :focused='model.focusedDeviceId === item.id'
-        :icon='icons[item.type]'
-        @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
-        @delete='() => bus.delete(item.id)'
-        @click.stop='model.focusedDeviceId = item.id'
-      >
-      </DeviceListItem>
-    </v-list>
-  </template>
-
 </template>
 
 <style scoped>
   .item-list {
     overflow-y: scroll !important;
     font-size: smaller;
+    padding-left: 0.5em;
   }
 </style>

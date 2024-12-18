@@ -16,6 +16,9 @@ function exportModel() {
   // window.location.href = blobUrl;
 }
 
+function importDevice() {
+}
+
 </script>
 
 <template>
@@ -30,9 +33,16 @@ function exportModel() {
       <v-divider></v-divider>
       <v-list-item
         @click='exportModel()'
-        prepend-icon="mdi-export"
+        prepend-icon="mdi-application-export"
       >
-      <a :href='blobUrl' download='model.json'>Export Bus Data</a>
+      <a :href='blobUrl' :download='`bus-${bus.id}.json`'>Export Bus</a>
+        </v-list-item>
+      <v-divider></v-divider>
+      <v-list-item
+          @click='importDevice()'
+          prepend-icon="mdi-application-import"
+        >
+        Import Device
       </v-list-item>
       <v-list-item
         prepend-icon="mdi-play-box"
