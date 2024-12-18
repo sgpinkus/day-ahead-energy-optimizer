@@ -16,6 +16,13 @@ function MyIcon() {
 
 <template>
   <v-list-item
+    @click='collection.reset()'
+    prepend-icon="mdi-refresh"
+  >
+    Reset DB
+  </v-list-item>
+  <v-divider></v-divider>
+  <v-list-item
     title="Add Bus"
     :prepend-icon="MyIcon"
     @click='collection.addNew()'
