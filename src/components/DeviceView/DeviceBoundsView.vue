@@ -16,7 +16,7 @@ watch(device.bounds, () => {
   numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[0], (y, i) => [y, device.bounds.get(i)[1]] as [number, number]);
   numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[1], (y, i) => [device.bounds.get(i)[0], y] as [number, number]);
 }, {
-  immediate: true
+  immediate: true,
 });
 
 const tableValueSpec = [
@@ -29,15 +29,24 @@ const tableValueSpec = [
 <template>
   <v-card>
     <h3>Bounds</h3>
-    <RunSpecTableView :runSpec=device.bounds :value-spec='tableValueSpec'></RunSpecTableView>
+    <RunSpecTableView
+      :run-spec="device.bounds"
+      :value-spec="tableValueSpec"
+    />
   </v-card>
   <v-card>
     <h3>Upper bounds</h3>
-    <RunSpecGraphView :run-spec='numberRunSpecHigh!' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+    <RunSpecGraphView
+      :run-spec="numberRunSpecHigh!"
+      :options="{ hEditable: true, vEditable: true }"
+    />
   </v-card>
   <v-card>
     <h3>Lower bounds</h3>
-    <RunSpecGraphView :run-spec='numberRunSpecLow!' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+    <RunSpecGraphView
+      :run-spec="numberRunSpecLow!"
+      :options="{ hEditable: true, vEditable: true }"
+    />
   </v-card>
 </template>
 

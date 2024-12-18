@@ -5,10 +5,10 @@ import { info, dialog, showDialog } from '@/model/infos';
 
 <template>
   <v-dialog
-    v-model='showDialog'
+    v-model="showDialog"
   >
-    <v-container class='ma-auto'>
-      <v-card class='pa-4'>
+    <v-container class="ma-auto">
+      <v-card class="pa-4">
         {{ info[dialog] }}
       </v-card>
     </v-container>

@@ -23,15 +23,15 @@ export default class Bus {
 
   add(device: Device) {
     console.log('add', device);
-    if(!(device.id in model.devices)) {
-    if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+    if (!(device.id in model.devices)) {
+    if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
       device.busId = this.id;
       model.devices[device.id] = device;
     }
   }
 
   addType(type: DeviceType) {
-  if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+  if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
     const device = deviceFactory({ type });
     this.add(device);
   }
@@ -41,7 +41,7 @@ export default class Bus {
   }
 
   reset() {
-    for(const d of this.devices) {
+    for (const d of this.devices) {
       delete model.devices[d.id];
     }
   }

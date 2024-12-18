@@ -7,9 +7,9 @@ export function randomUUID() {
 
 export function *_deepKeyIterator(a: Record<string, unknown>, _p = ''): Generator<[string, any]> {
   const _k = (k: string) => `${_p}${_p ? '.' : ''}${k}`;
-  for(const [k, v] of Object.entries(a)) {
-    if(isObject(v) && !isArray(v) ) {
-      for(const x of _deepKeyIterator(v as Record<string, unknown>, _k(k))) {
+  for (const [k, v] of Object.entries(a)) {
+    if (isObject(v) && !isArray(v) ) {
+      for (const x of _deepKeyIterator(v as Record<string, unknown>, _k(k))) {
         yield x;
       }
     } else {
@@ -23,8 +23,8 @@ export function *_deepKeyIterator(a: Record<string, unknown>, _p = ''): Generato
  */
 export function deepDiffObjects(a: Record<string, unknown>, b: Record<string, unknown>): any {
   const res = {};
-  for(const [k, v] of _deepKeyIterator(a)) {
-    if(!isEqual(get(b, k), v)) {
+  for (const [k, v] of _deepKeyIterator(a)) {
+    if (!isEqual(get(b, k), v)) {
       set(res, k, v);
     }
   }
@@ -36,8 +36,8 @@ export function deepDiffObjects(a: Record<string, unknown>, b: Record<string, un
  */
 export function deepDiffObjects2(a: Record<string, unknown>, b: Record<string, unknown>): null | Record<string, any> {
   const res: Record<string, any> = {};
-  for(const [k, v] of _deepKeyIterator(a)) {
-    if(!isEqual(get(b, k), v)) {
+  for (const [k, v] of _deepKeyIterator(a)) {
+    if (!isEqual(get(b, k), v)) {
       res[k] = v;
     }
   }
@@ -45,7 +45,7 @@ export function deepDiffObjects2(a: Record<string, unknown>, b: Record<string, u
 }
 
 export function latlngToString(latlng: any) {
-  if(latlng?.lat !== undefined && latlng?.lng !== undefined) {
+  if (latlng?.lat !== undefined && latlng?.lng !== undefined) {
     return JSON.stringify({ lat: Math.round(latlng.lat*1e6)/1e6, lng: Math.round(latlng.lng*1e6)/1e6 });
   }
   return JSON.stringify(latlng);
@@ -58,10 +58,10 @@ export function setIntersection(a: unknown[] | undefined, b: unknown[] | undefin
 
 export function linspace(a: number, b: number, n = 50) {
   // If a === b we get a repeated n times.
-  if(!n) return [];
+  if (!n) return [];
   const delta = (b - a);
   const domain = [];
-  for(let i = 0; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     domain.push(a + (i/n)*delta);
   }
   return domain;

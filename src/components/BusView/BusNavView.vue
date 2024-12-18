@@ -22,38 +22,46 @@ function importDevice() {
 </script>
 
 <template>
-  <v-list class='flex-shrink-0 details-content' >
-    <v-list class='flex-shrink-0'>
+  <v-list class="flex-shrink-0 details-content">
+    <v-list class="flex-shrink-0">
       <v-list-item
-        @click='bus.reset()'
         prepend-icon="mdi-refresh"
+        @click="bus.reset()"
       >
         Reset Bus Data
       </v-list-item>
-      <v-divider></v-divider>
+      <v-divider />
       <v-list-item
-        @click='exportModel()'
         prepend-icon="mdi-application-export"
+        @click="exportModel()"
       >
-      <a :href='blobUrl' :download='`bus-${bus.id}.json`'>Export Bus</a>
-        </v-list-item>
-      <v-divider></v-divider>
+        <a
+          :href="blobUrl"
+          :download="`bus-${bus.id}.json`"
+        >Export Bus</a>
+      </v-list-item>
+      <v-divider />
       <v-list-item
-          @click='importDevice()'
-          prepend-icon="mdi-application-import"
-        >
+        prepend-icon="mdi-application-import"
+        @click="importDevice()"
+      >
         Import Device
       </v-list-item>
       <v-list-item
         prepend-icon="mdi-play-box"
       >
-      <route-name name='run' :params="{ id: bus.id }">Run Optimization</route-name>
+        <route-name
+          name="run"
+          :params="{ id: bus.id }"
+        >
+          Run Optimization
+        </route-name>
       </v-list-item>
     </v-list>
-    <v-divider></v-divider>
-    <AddDeviceActionList :bus=bus></AddDeviceActionList>
-    <v-divider></v-divider>
-    <BusDeviceList :bus=bus></BusDeviceList>
+    <v-divider />
+    <AddDeviceActionList :bus="bus" />
+    <v-divider />
+    <BusDeviceList :bus="bus" />
     <!-- <v-divider></v-divider>
     <AddDataActionList></AddDataActionList>
     <v-divider></v-divider>

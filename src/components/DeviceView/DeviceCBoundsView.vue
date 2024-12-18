@@ -27,7 +27,7 @@ function set() {
 
 // This should fire when ever device.cbounds is mutated but doesn't
 watch(ref(device.cumulative_bounds), () => {
-  if(device.cumulative_bounds) {
+  if (device.cumulative_bounds) {
     numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.cumulative_bounds, (x) => x[0], (y, i) => [y, device.cumulative_bounds!.get(i)[1]] as [number, number]);
     numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.cumulative_bounds, (x) => x[1], (y, i) => [device.cumulative_bounds!.get(i)[0], y] as [number, number]);
   } else {
@@ -35,7 +35,7 @@ watch(ref(device.cumulative_bounds), () => {
     numberRunSpecHigh.value = null;
   }
 }, {
-  immediate: true
+  immediate: true,
 });
 
 const tableValueSpec = [
@@ -46,27 +46,47 @@ const tableValueSpec = [
 </script>
 
 <template>
-  <template v-if='device.cumulative_bounds'>
+  <template v-if="device.cumulative_bounds">
     <v-card>
       <h3>Cumulative Bounds</h3>
-      <RunSpecTableView :run-spec=device.cumulative_bounds :value-spec='tableValueSpec'>
-        <template v-slot:globals>
-          <v-btn flat size="small" @click='unSet' title='delete bounds entirely'><v-icon>mdi-delete</v-icon></v-btn>
+      <RunSpecTableView
+        :run-spec="device.cumulative_bounds"
+        :value-spec="tableValueSpec"
+      >
+        <template #globals>
+          <v-btn
+            flat
+            size="small"
+            title="delete bounds entirely"
+            @click="unSet"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </template>
       </RunSpecTableView>
     </v-card>
     <v-card>
       <h3>Cumulative upper bounds</h3>
-      <RunSpecGraphView v-if='numberRunSpecHigh' :run-spec='numberRunSpecHigh' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+      <RunSpecGraphView
+        v-if="numberRunSpecHigh"
+        :run-spec="numberRunSpecHigh"
+        :options="{ hEditable: true, vEditable: true }"
+      />
     </v-card>
     <v-card>
       <h3>Cumulative lower bounds</h3>
-      <RunSpecGraphView v-if='numberRunSpecLow' :run-spec='numberRunSpecLow' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+      <RunSpecGraphView
+        v-if="numberRunSpecLow"
+        :run-spec="numberRunSpecLow"
+        :options="{ hEditable: true, vEditable: true }"
+      />
     </v-card>
   </template>
   <template v-else>
-    <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Cumulative Bounds</v-btn>
+    <v-card class="ma-auto">
+      <v-btn @click="set">
+        Set Cumulative Bounds
+      </v-btn>
     </v-card>
   </template>
 </template>

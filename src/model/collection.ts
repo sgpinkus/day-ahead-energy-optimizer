@@ -20,8 +20,8 @@ export default class Collection {
   }
 
   add(bus: Bus) {
-    if(!(bus.id in this.busses)) {
-      if(this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+    if (!(bus.id in this.busses)) {
+      if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
       bus.collectionId = this.id;
       model.busses[bus.id] = bus;
     }
@@ -37,7 +37,7 @@ export default class Collection {
   }
 
   reset() {
-    for(const d of this.busses) {
+    for (const d of this.busses) {
       delete model.busses[d.id];
     }
   }

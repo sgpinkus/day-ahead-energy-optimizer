@@ -8,19 +8,18 @@ import HubPlus from '@/components/icons/hub-plus';
 
 <template>
   <v-list-item
-    @click='collection.reset()'
     prepend-icon="mdi-refresh"
+    @click="collection.reset()"
   >
     Reset DB
   </v-list-item>
-  <v-divider></v-divider>
+  <v-divider />
   <v-list-item
     title="Add Bus"
     :prepend-icon="HubPlus"
-    @click='collection.addNew()'
-  >
-  </v-list-item>
-  <v-divider></v-divider>
+    @click="collection.addNew()"
+  />
+  <v-divider />
   <BusList :collection="collection" />
 </template>
 

@@ -13,7 +13,7 @@ const collection = model.collection;
     <CollectionNavView :collection="collection" />
   </AppNavDrawer>
   <v-main>
-    <v-container class='container'>
+    <v-container class="container">
       <CollectionMainBusGraphView :bus="model.focusedBus" />
     </v-container>
   </v-main>

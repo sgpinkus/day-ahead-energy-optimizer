@@ -9,12 +9,12 @@ const addTypes: TypeSpec[] = [
   {
     title: 'Profile',
     icon: 'mdi-chart-bar',
-    type: 'profile'
+    type: 'profile',
   },
   {
     title: 'Meter Data',
     icon: 'mdi-chart-bar-stacked',
-    type: 'meter_data'
+    type: 'meter_data',
   },
 ];
 
@@ -24,21 +24,25 @@ function addDataType(type: string) {
 
 </script>
 <template>
-  <v-list disabled class='flex-shrink-0'>
+  <v-list
+    disabled
+    class="flex-shrink-0"
+  >
     <v-list-group>
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-list-item
           v-bind="props"
-          prepend-icon='mdi-chart-box-plus-outline'
+          prepend-icon="mdi-chart-box-plus-outline"
           title="Add Data"
-        ></v-list-item>
+        />
       </template>
-      <v-list-item v-for='spec in addTypes' :key='spec.type'
-        :title=spec.title
-        :prepend-icon=spec.icon
-        @click=addDataType(spec.type);
-      >
-      </v-list-item>
+      <v-list-item
+        v-for="spec in addTypes"
+        :key="spec.type"
+        :title="spec.title"
+        :prepend-icon="spec.icon"
+        @click="addDataType(spec.type);"
+      />
     </v-list-group>
   </v-list>
 </template>

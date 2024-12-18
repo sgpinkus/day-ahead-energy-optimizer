@@ -79,7 +79,7 @@ export class Model {
 export function fromLocalStorage() {
   testLocalStorage();
   const data = window.localStorage.getItem(MyName);
-  if(data) return jsonParse(data);
+  if (data) return jsonParse(data);
   return new Model();
 }
 
@@ -89,7 +89,7 @@ function testLocalStorage() {
   window.localStorage.setItem(v, v);
   const success = window.localStorage.getItem(v) === v;
   window.localStorage.removeItem(v);
-  if(success) {
+  if (success) {
     messages.actionSuccess(a, 'Local storage access OK');
   } else {
     messages.actionError(a, 'Can\'t access local storage');

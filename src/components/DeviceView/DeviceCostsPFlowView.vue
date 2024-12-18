@@ -15,11 +15,11 @@ const { device } = defineProps<{
 }>();
 
 function unSet() {
-  device.costs.setPeakFlowCost(undefined); // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlowCost(undefined);  
 }
 
 function set() {
-  device.costs.setPeakFlowCost([0,0,0]); // eslint-disable-line vue/no-mutating-props
+  device.costs.setPeakFlowCost([0,0,0]);  
 }
 
 const tableValueSpec = [
@@ -56,34 +56,46 @@ watch(() => device.costs[costKey], () => {
 </script>
 
 <template>
-  <template v-if='device.costs[costKey]'>
+  <template v-if="device.costs[costKey]">
     <v-card>
       <h3>{{ title }}</h3>
       <v-table>
         <thead>
           <tr>
-            <th v-for='h in tableKeys' :key='h'>
-            {{ h }}
+            <th
+              v-for="h in tableKeys"
+              :key="h"
+            >
+              {{ h }}
             </th>
-            <th style='text-align: right'><slot name="globals"></slot></th>
+            <th style="text-align: right">
+              <slot name="globals" />
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <template v-for='(spec, i) in tableValueSpec' :key=i>
+            <template
+              v-for="(spec, i) in tableValueSpec"
+              :key="i"
+            >
               <td>
                 <MyNumberTextField
-                    :min='spec.min ?? null'
-                    :max='spec.max ?? null'
-                    :step='spec.step ?? null'
-                    :model-value='device.costs[costKey]![i]'
-                    @update:modelValue='(newValue: number) => setNumber(i as any, newValue)'
-                  >
-                </MyNumberTextField>
+                  :min="spec.min ?? null"
+                  :max="spec.max ?? null"
+                  :step="spec.step ?? null"
+                  :model-value="device.costs[costKey]![i]"
+                  @update:model-value="(newValue: number) => setNumber(i as any, newValue)"
+                />
               </td>
             </template>
-            <td style='text-align: right'>
-              <v-btn title='delete' flat size="small" @click='unSet'>
+            <td style="text-align: right">
+              <v-btn
+                title="delete"
+                flat
+                size="small"
+                @click="unSet"
+              >
                 <v-icon>mdi-delete-circle</v-icon>
               </v-btn>
             </td>
@@ -92,12 +104,17 @@ watch(() => device.costs[costKey], () => {
       </v-table>
     </v-card>
     <v-card>
-      <PlotView v-if='data' :data='data'></PlotView>
+      <PlotView
+        v-if="data"
+        :data="data"
+      />
     </v-card>
   </template>
   <template v-else>
-    <v-card class='ma-auto'>
-      <v-btn @click='set'>Set {{ title }}</v-btn>
+    <v-card class="ma-auto">
+      <v-btn @click="set">
+        Set {{ title }}
+      </v-btn>
     </v-card>
   </template>
 </template>

@@ -1,5 +1,5 @@
 import { loadPyodide } from 'pyodide';
-import { basePath } from'@/config';
+import { basePath } from '@/config';
 
 const venvRequirementsTxt = `
 async-timeout==4.0.3
@@ -35,7 +35,7 @@ export const PyodideLoadStates = {
 // }
 
 export async function setupPyodide(
-  onStateChange: (newStateCode: number, newStateName: string) => any
+  onStateChange: (newStateCode: number, newStateName: string) => any,
 ): Promise<Pyodide> {
   onStateChange(0, PyodideLoadStates[0]);
   const pyodide = await loadPyodide({ indexURL: `${basePath}pyodide` });

@@ -17,7 +17,7 @@ watch(device.bounds, () => {
   numberRunSpecLow.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[0], (y) => [y, y] as [number, number]);
   numberRunSpecHigh.value = new NumberRunSpecAdaptor<[number, number]>(device.bounds, (x) => x[1], (y) => [y, y] as [number, number]);
 }, {
-  immediate: true
+  immediate: true,
 });
 
 const tableValueSpec = [
@@ -30,9 +30,15 @@ const tableValueSpec = [
 <template>
   <v-card>
     <h3>Device Load Profile</h3>
-    <RunSpecTableView :runSpec=device.bounds :value-spec='tableValueSpec'></RunSpecTableView>
+    <RunSpecTableView
+      :run-spec="device.bounds"
+      :value-spec="tableValueSpec"
+    />
     <br>
-    <RunSpecGraphView :run-spec='numberRunSpecHigh!' :options='{ hEditable: true, vEditable: true }' ></RunSpecGraphView>
+    <RunSpecGraphView
+      :run-spec="numberRunSpecHigh!"
+      :options="{ hEditable: true, vEditable: true }"
+    />
   </v-card>
 </template>
 

@@ -19,18 +19,18 @@ const doLocalStorageNotice = ref(false);
 
 <template>
   <v-app
-    @keyup.escape='stagedClearAll'
-    @keyup.ctrl.stop='undo'
+    @keyup.escape="stagedClearAll"
+    @keyup.ctrl.stop="undo"
   >
-  <v-dialog
-    v-model='doLocalStorageNotice'
-  >
-    <local-storage-notice></local-storage-notice>
-  </v-dialog>
-  <InfoDialogs></InfoDialogs>
-  <SystemBar></SystemBar>
-  <RouteView></RouteView>
-  <ActionBar></ActionBar>
+    <v-dialog
+      v-model="doLocalStorageNotice"
+    >
+      <local-storage-notice />
+    </v-dialog>
+    <InfoDialogs />
+    <SystemBar />
+    <RouteView />
+    <ActionBar />
   </v-app>
 </template>
 

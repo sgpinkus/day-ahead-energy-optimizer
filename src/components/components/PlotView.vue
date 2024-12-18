@@ -12,8 +12,8 @@ const { data, width = 1280, height = 480 } = defineProps<{
 const plot = useTemplateRef('plot');
 
 function _draw() {
-  if(!plot.value) return console.debug('Not drawing because plot container ref is null!');
-  if(!data) return console.debug('Not drawing because data is null!');
+  if (!plot.value) return console.debug('Not drawing because plot container ref is null!');
+  if (!data) return console.debug('Not drawing because data is null!');
   d3.select(plot.value).selectAll('*').remove();
   draw(plot.value, data);
 }
@@ -21,9 +21,9 @@ function _draw() {
 const viewBox = computed(() => `0 0 ${width} ${height}`);
 
 watch(() => data, () => {
-  if(data) _draw();
+  if (data) _draw();
 }, {
-  immediate: true
+  immediate: true,
 });
 
 watch(plot, () => _draw());
@@ -32,9 +32,8 @@ watch(plot, () => _draw());
 
 <template>
   <svg
-    ref='plot'
-    :viewBox=viewBox
+    ref="plot"
+    :viewBox="viewBox"
     preserveAspectRatio="xMidYMid meet"
-  >
-  </svg>
+  />
 </template>

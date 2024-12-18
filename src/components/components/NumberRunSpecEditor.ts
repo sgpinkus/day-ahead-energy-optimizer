@@ -66,7 +66,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     lineGroup.attr('opacity', 0);
     try {
       data.set(range[0], domainValue);
-    } catch(e: any) {
+    } catch (e: any) {
       console.error(e?.message);
     }
     changed();
@@ -79,7 +79,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
 
   function hStopped(this: Element, event: DragEvent, [_v, range]: Range) {
     const newStartIndex = scaleBandInvert(xScale)(xScale(range[0])! + event.x);
-    if(selectedIndex !== undefined && newStartIndex !== undefined) {
+    if (selectedIndex !== undefined && newStartIndex !== undefined) {
       data.move(selectedIndex, newStartIndex);
       changed();
     }
@@ -93,11 +93,11 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     const absTicksBound = options.ticks*1/10**options.precision;
     function getMin() {
       let v = -1;
-      if(options.range && options.range[0] !== undefined) {
+      if (options.range && options.range[0] !== undefined) {
         v = options.range[0];
-      } else if(spread) {
+      } else if (spread) {
         v = min - options.autoPaddingFactor[0] * spread;
-      } else if(min !== 0) {
+      } else if (min !== 0) {
         v = (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
       }
       v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
@@ -105,11 +105,11 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     }
     function getMax() {
       let v = 1;
-      if(options.range && options.range[1] !== undefined) {
+      if (options.range && options.range[1] !== undefined) {
         v = options.range[1];
-      } else if(spread) {
+      } else if (spread) {
         v = max + options.autoPaddingFactor[1] * spread;
-      } else if(max !== 0) {
+      } else if (max !== 0) {
         v = (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
       }
       v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
@@ -200,7 +200,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     .attr('fill', 'black')
     .attr('stroke', 'black')
     .attr('opacity', '0');
-  if(options.hEditable) {
+  if (options.hEditable) {
     barTops.append('polygon')
       .attr('points', '0,0 30,0 15,15 0,0')
       .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 7.5}, -7.5)`)

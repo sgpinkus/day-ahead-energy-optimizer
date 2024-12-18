@@ -20,7 +20,7 @@ function getRange(data: number[]) {
 export function draw(
   container: SVGSVGElement,
   data: Record<string | number, number>,
-  _options: Partial<Options> = {}
+  _options: Partial<Options> = {},
 ) {
   const domain: number[] = Object.keys(data).map(v => +v);
   const options: Options = { ...defaultOptions, ..._options };
@@ -67,6 +67,6 @@ export function draw(
     .attr('stroke-width', 1.5)
     .attr('d', (d3.line() as any)
       .x((d: number) => x(d))
-      .y((d: any) => y(data[d]))
+      .y((d: any) => y(data[d])),
     );
 }

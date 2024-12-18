@@ -29,13 +29,13 @@ const ranges = computed(() =>  runSpec.toRanges());
 watch(ranges, () => _draw());
 
 function _draw() {
-  if(!container.value) return;
+  if (!container.value) return;
   d3.select(container.value).selectAll('*').remove();
   draw(
     container.value,
     runSpec,
     onDataChange,
-    _options
+    _options,
   );
 }
 
@@ -52,11 +52,10 @@ onMounted(() => {
 <template>
   <div>
     <svg
-      ref='container'
-      :viewBox=viewBox
+      ref="container"
+      :viewBox="viewBox"
       preserveAspectRatio="xMidYMid meet"
-    >
-    </svg>
+    />
   </div>
 </template>
 

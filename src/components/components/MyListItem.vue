@@ -17,20 +17,34 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
 </script>
 
 <template>
-    <v-list-item
-      :prepend-icon='icon'
-      :class='{ focused: focused }'
-      :id="`list-item-${item.id}`"
-      @dblclick.stop='$emit("edit")'
-    >
-      <div class='d-flex flex-nowrap flex-row'>
-        <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
-        <span style="flex: 1"></span>
-        <v-btn flat density="compact" :block="false" @click.stop='$emit("edit")'><v-icon>mdi-pencil</v-icon></v-btn>&nbsp;
-        <v-btn flat density="compact" :block="false" @click.stop='$emit("delete")'><v-icon>mdi-delete</v-icon></v-btn>
-        <slot />
-      </div>
-    </v-list-item>
+  <v-list-item
+    :id="`list-item-${item.id}`"
+    :prepend-icon="icon"
+    :class="{ focused: focused }"
+    @dblclick.stop="$emit(&quot;edit&quot;)"
+  >
+    <div class="d-flex flex-nowrap flex-row">
+      <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
+      <span style="flex: 1" />
+      <v-btn
+        flat
+        density="compact"
+        :block="false"
+        @click.stop="$emit(&quot;edit&quot;)"
+      >
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>&nbsp;
+      <v-btn
+        flat
+        density="compact"
+        :block="false"
+        @click.stop="$emit(&quot;delete&quot;)"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+      <slot />
+    </div>
+  </v-list-item>
 </template>
 
 <style scoped>

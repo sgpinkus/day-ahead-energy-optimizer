@@ -10,14 +10,14 @@ class UndoActionStack {
   private blockPush = false;
 
   pushAction(action: ReversibleAction) {
-    if(!this.blockPush) {
+    if (!this.blockPush) {
       this.actions.push(action);
     }
   }
 
   undoAction() {
     const action = this.actions.pop();
-    if(action) {
+    if (action) {
       this.blockPush = true;
       action.undo();
       this.blockPush = false;

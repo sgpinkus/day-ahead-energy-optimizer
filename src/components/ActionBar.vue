@@ -14,22 +14,37 @@ function removeAction(id: string) {
 <template>
   <template v-if="show">
     <v-snackbar
-      :timeout='-1'
-      :model-value='show'
-      :multi-line='true'
-      location='bottom'
+      :timeout="-1"
+      :model-value="show"
+      :multi-line="true"
+      location="bottom"
     >
-      <div class='my-snacks'>
-        <template v-for='({ state, message, id }) in model.messages.actions' :key='id'>
-            <p
-              class='alert-message'
-              @click="() => removeAction(id)"
-            >{{ message }}&nbsp;<span style='flex: 1'></span>
-              <v-icon class='boot' v-if='state === "started"'>mdi-shoe-sneaker</v-icon>
-              <v-icon v-else-if='state === "success"'>mdi-check-circle</v-icon>
-              <v-icon v-else-if='state === "warning"'>mdi-sign-caution</v-icon>
-              <v-icon v-else-if='state === "error"'>mdi-alert-circle</v-icon>
-            </p>
+      <div class="my-snacks">
+        <template
+          v-for="({ state, message, id }) in model.messages.actions"
+          :key="id"
+        >
+          <p
+            class="alert-message"
+            @click="() => removeAction(id)"
+          >
+            {{ message }}&nbsp;<span style="flex: 1" />
+            <v-icon
+              v-if="state === &quot;started&quot;"
+              class="boot"
+            >
+              mdi-shoe-sneaker
+            </v-icon>
+            <v-icon v-else-if="state === &quot;success&quot;">
+              mdi-check-circle
+            </v-icon>
+            <v-icon v-else-if="state === &quot;warning&quot;">
+              mdi-sign-caution
+            </v-icon>
+            <v-icon v-else-if="state === &quot;error&quot;">
+              mdi-alert-circle
+            </v-icon>
+          </p>
         </template>
       </div>
     </v-snackbar>

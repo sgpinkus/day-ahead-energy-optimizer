@@ -146,7 +146,7 @@ export abstract class BaseDevice implements IBaseDevice {
   }
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {
-    if(this[type]) {
+    if (this[type]) {
       const values = this[type]?.toRanges().map(([v]) => v).flat();
       return [Math.min(...(values as number[])), Math.max(...(values as number[]))];
     }
@@ -273,7 +273,7 @@ export type ContainerDevice = Device & {
 };
 
 export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
-  switch(data.type) {
+  switch (data.type) {
     case 'load': return new LoadDevice(data);
     case 'supply': return new SupplyDevice(data);
     case 'fixed_load': return new FixedLoadDevice(data);

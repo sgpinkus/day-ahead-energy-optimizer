@@ -7,21 +7,23 @@ import { NotFoundError } from '@/errors';
 
 const { id } = defineProps<{ id: string }>();
 const bus = model.busses[id];
-if(!bus) throw new NotFoundError();
+if (!bus) throw new NotFoundError();
 
 </script>
 
 <template>
   <AppNavDrawer>
-    <route-path path='/'>
-      <v-list-item prepend-icon='mdi-arrow-left'>Collection</v-list-item>
+    <route-path path="/">
+      <v-list-item prepend-icon="mdi-arrow-left">
+        Collection
+      </v-list-item>
     </route-path>
-    <v-divider></v-divider>
-    <BusNavView :bus=bus></BusNavView>
+    <v-divider />
+    <BusNavView :bus="bus" />
   </AppNavDrawer>
   <v-main>
-    <v-container class='container'>
-      <BusMainGraphView :bus=bus></BusMainGraphView>
+    <v-container class="container">
+      <BusMainGraphView :bus="bus" />
     </v-container>
   </v-main>
 </template>

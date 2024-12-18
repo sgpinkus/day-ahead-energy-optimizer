@@ -25,7 +25,7 @@ export type Options = {
 const defaultOptions: Options = {
   margin: { top: 40, right: 40, bottom: 40, left: 40},
   focusedNodeId: -1,
-  hubNode: { id: 'hub', title: 'Bus', ...nodeDefaults }
+  hubNode: { id: 'hub', title: 'Bus', ...nodeDefaults },
 };
 
 export function draw(
@@ -33,7 +33,7 @@ export function draw(
   nodes: Node[],
   _options: Partial<Options> = {},
   click?: (id: string, index: number) => void,
-  dblclick?: (id: string, index: number) => void
+  dblclick?: (id: string, index: number) => void,
 ) {
   function nodeEffects(nodes:  d3.Selection<SVGGElement, any, any, any>, data?: Node) {
     nodes.on('mouseover', function () {

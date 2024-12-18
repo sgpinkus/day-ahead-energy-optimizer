@@ -7,7 +7,7 @@ const { bus = undefined } = defineProps<{ bus?: Bus }>();
 </script>
 
 <template>
-  <template v-if=bus>
-    <BusMainGraphView :bus=bus />
+  <template v-if="bus">
+    <BusMainGraphView :bus="bus" />
   </template>
 </template>

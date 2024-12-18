@@ -5,7 +5,7 @@ import model from '@/model';
 
 const rail = computed({
   get() { return model.rail; },
-  set(v) { model.rail = v; }
+  set(v) { model.rail = v; },
 });
 
 provide('rail', rail);
@@ -35,34 +35,48 @@ function clickOutsideClear() {
 
 <template>
   <v-navigation-drawer
-    v-bind='navDrawerProps'
-    @click='clickOutsideClear'
+    v-bind="navDrawerProps"
+    @click="clickOutsideClear"
   >
-    <template v-slot:prepend>
-      <v-list-item @click='rail = !rail' prepend-icon="mdi-menu"></v-list-item>
-      <v-divider></v-divider>
+    <template #prepend>
+      <v-list-item
+        prepend-icon="mdi-menu"
+        @click="rail = !rail"
+      />
+      <v-divider />
     </template>
-    <template v-slot:append>
-      <v-divider></v-divider>
-      <v-list-item v-if='connectionOk === "pending"'>
-        <template v-slot:prepend>
-          <v-icon class='loading'>mdi-loading</v-icon>
+    <template #append>
+      <v-divider />
+      <v-list-item v-if="connectionOk === &quot;pending&quot;">
+        <template #prepend>
+          <v-icon class="loading">
+            mdi-loading
+          </v-icon>
         </template>
         Checking Connection
       </v-list-item>
-      <v-list-item v-else-if='connectionOk === false' @click='() => {}'>
-        <template v-slot:prepend>
+      <v-list-item
+        v-else-if="connectionOk === false"
+        @click="() => {}"
+      >
+        <template #prepend>
           <v-icon>mdi-api-off</v-icon>
         </template>
         Offline Mode
       </v-list-item>
-      <v-list-item v-else-if='authOk === "pending"'>
-        <template v-slot:prepend>
-          <v-icon class='loading'>mdi-loading</v-icon>
+      <v-list-item v-else-if="authOk === &quot;pending&quot;">
+        <template #prepend>
+          <v-icon class="loading">
+            mdi-loading
+          </v-icon>
         </template>
         Checking Auth
       </v-list-item>
-      <v-list-item v-else-if='authOk === false' prepend-icon="mdi-login-variant" @click='login'>
+      <v-list-item
+        v-else-if="authOk === false"
+        prepend-icon="mdi-login-variant"
+        @click="login"
+      >
         Login / Signup
       </v-list-item>
       <!-- <template v-else>
@@ -88,8 +102,8 @@ function clickOutsideClear() {
         </v-menu>
       </template> -->
     </template>
-    <template v-slot:default>
-      <slot></slot>
+    <template #default>
+      <slot />
     </template>
   </v-navigation-drawer>
 </template>

@@ -21,7 +21,7 @@ const options: Ref<Partial<Options>> = ref({
 });
 
 function _draw() {
-  if(!container.value) return;
+  if (!container.value) return;
   d3.select(container.value).selectAll('*').remove();
   draw(
     container.value!,
@@ -55,9 +55,9 @@ onMounted(() => {
 
 <template>
   <svg
-    id='container'
-    ref='container'
-    :viewBox=viewBox
-    preserveAspectRatio="xMidYMid meet">
-  </svg>
+    id="container"
+    ref="container"
+    :viewBox="viewBox"
+    preserveAspectRatio="xMidYMid meet"
+  />
 </template>

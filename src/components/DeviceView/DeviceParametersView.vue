@@ -8,7 +8,7 @@ const { device } = defineProps<{
 }>();
 
 const component = computed(() => {
-  switch(device.type) {
+  switch (device.type) {
     case 'storage': return StorageDeviceParametersForm;
     default: return '';
   }
@@ -16,5 +16,8 @@ const component = computed(() => {
 </script>
 
 <template>
-  <component :is="component" :device="device"></component>
+  <component
+    :is="component"
+    :device="device"
+  />
 </template>

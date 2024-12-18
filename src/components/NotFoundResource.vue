@@ -16,17 +16,28 @@ function back() {
 </script>
 
 <template>
-    <v-container>
-      <v-row justify='space-around' class='main'>
-        <v-col md='6' xs='12'>
-          <h1>Resource Not Found</h1>
-          <h3 class='path'><i>{{ resource }}</i></h3>
-          <br>
-          <i><a href="#" @click.stop="back">Go Back</a></i>&nbsp;|&nbsp;
-          <i><a href="/">Go Home</a></i>
-        </v-col>
-      </v-row>
-    </v-container>
+  <v-container>
+    <v-row
+      justify="space-around"
+      class="main"
+    >
+      <v-col
+        md="6"
+        xs="12"
+      >
+        <h1>Resource Not Found</h1>
+        <h3 class="path">
+          <i>{{ resource }}</i>
+        </h3>
+        <br>
+        <i><a
+          href="#"
+          @click.stop="back"
+        >Go Back</a></i>&nbsp;|&nbsp;
+        <i><a href="/">Go Home</a></i>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped>

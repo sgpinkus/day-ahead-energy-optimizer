@@ -15,43 +15,44 @@ const addTypes: TypeSpec[] = [
   {
     title: 'Load Device',
     icon: CellPlus,
-    type: 'load'
+    type: 'load',
   },
   {
     title: 'Supply Device',
     icon: CellPlus,
-    type: 'supply'
+    type: 'supply',
   },
   {
     title: 'Storage Device',
     icon: CellPlus,
-    type: 'storage'
+    type: 'storage',
   },
   {
     title: 'Fixed Load Device',
     icon: CellPlus,
-    type: 'fixed_load'
+    type: 'fixed_load',
   },
 ];
 
 </script>
 <template>
-  <v-list class='flex-shrink-0'>
+  <v-list class="flex-shrink-0">
     <v-list-group>
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-list-item
           v-bind="props"
-          :prepend-icon=CellPlus
+          :prepend-icon="CellPlus"
           title="Add Device"
-        ></v-list-item>
+        />
       </template>
-      <v-list class='item-list'>
-        <v-list-item v-for='spec in addTypes' :key='spec.type'
-          :title=spec.title
-          :prepend-icon=spec.icon
-          @click=bus.addType(spec.type);
-        >
-        </v-list-item>
+      <v-list class="item-list">
+        <v-list-item
+          v-for="spec in addTypes"
+          :key="spec.type"
+          :title="spec.title"
+          :prepend-icon="spec.icon"
+          @click="bus.addType(spec.type);"
+        />
       </v-list>
     </v-list-group>
   </v-list>

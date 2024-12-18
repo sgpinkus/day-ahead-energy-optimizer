@@ -76,7 +76,7 @@ export class Messages {
     const _action = {
       ...action,
       id: randomUUID(),
-      removalTimerId: setTimeout(() => this.removeAction(_action.id), timeout)
+      removalTimerId: setTimeout(() => this.removeAction(_action.id), timeout),
     };
     this.actions = [...this.actions, _action].slice(-5);
     return _action;

@@ -104,7 +104,7 @@ declare class PyProxy {
 	 * @param options
 	 * @return The JavaScript object resulting from the conversion.
 	 */
-	toJs({ depth, pyproxies, create_pyproxies, dict_converter, default_converter, }?: {
+	toJs({ depth, pyproxies, create_pyproxies, dict_converter, default_converter }?: {
 		/** How many layers deep to perform the conversion. Defaults to infinite */
 		depth?: number;
 		/**
@@ -724,7 +724,7 @@ declare class PyCallableMethods {
 	 * @param jsargs Arguments to the Python function.
 	 * @returns
 	 */
-	callWithOptions({ relaxed, kwargs, promising, }: {
+	callWithOptions({ relaxed, kwargs, promising }: {
 		relaxed?: boolean;
 		kwargs?: boolean;
 		promising?: boolean;
@@ -977,7 +977,7 @@ declare class PyBufferView {
 	 */
 	release(): void;
 }
-type PackageType = "package" | "cpython_module" | "shared_library" | "static_library";
+type PackageType = 'package' | 'cpython_module' | 'shared_library' | 'static_library';
 interface PackageData {
 	name: string;
 	version: string;
@@ -1270,7 +1270,7 @@ declare class PyodideAPI {
 	 * @param options
 	 * @returns The object converted to Python.
 	 */
-	static toPy(obj: any, { depth, defaultConverter, }?: {
+	static toPy(obj: any, { depth, defaultConverter }?: {
 		/**
 		 *  Optional argument to limit the depth of the conversion.
 		 */

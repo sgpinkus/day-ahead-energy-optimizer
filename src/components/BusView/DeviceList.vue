@@ -20,26 +20,27 @@ const icons = {
 </script>
 
 <template>
-  <v-list class='flex-shrink-0'>
+  <v-list class="flex-shrink-0">
     <v-list-group>
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-list-item
           v-bind="props"
-          prepend-icon='mdi-cellphone-settings'
+          prepend-icon="mdi-cellphone-settings"
         >
           <v-list-item-title>Devices ({{ items.length || 0 }})</v-list-item-title>
         </v-list-item>
       </template>
-      <v-list class='item-list'>
-        <DeviceListItem v-for='item in items' :key='item.id'
-          :item=item
-          :focused='model.focusedDeviceId === item.id'
-          :icon='icons[item.type]'
-          @edit='() => router.dispatch({ name: "device", params: { id: item.id } })'
-          @delete='() => bus.delete(item.id)'
-          @click.stop='model.focusedDeviceId = item.id'
-        >
-        </DeviceListItem>
+      <v-list class="item-list">
+        <DeviceListItem
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :focused="model.focusedDeviceId === item.id"
+          :icon="icons[item.type]"
+          @edit="() => router.dispatch({ name: &quot;device&quot;, params: { id: item.id } })"
+          @delete="() => bus.delete(item.id)"
+          @click.stop="model.focusedDeviceId = item.id"
+        />
       </v-list>
     </v-list-group>
   </v-list>

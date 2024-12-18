@@ -24,7 +24,7 @@ async function main() {
 
   app.config.errorHandler = async (err: any = {}) => {
     console.debug('Hit global error handler', err);
-    if(err?.name === 'NotFoundError') {
+    if (err?.name === 'NotFoundError') {
       router.dispatch({ name: 'resource-not-found' });
     } else {
       model.messages.addAlertFromError(err);
@@ -39,7 +39,7 @@ async function main() {
 }
 
 function shutdown() {
-  if(inShutDown) return;
+  if (inShutDown) return;
   inShutDown = true;
   console.log('Main: App shutting down');
   model?.shutdown();

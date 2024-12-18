@@ -52,13 +52,13 @@ function setNumber(i: number, oldValue: number[], j: number, v: number) {
 }
 
 function setFocused(i: number | null) {
-  if(!focusable) return;
+  if (!focusable) return;
   focusedRow.value = i;
   emit('rowSelected', i);
 }
 
 onMounted(() => {
-  if(focusable && initialRowSelected) {
+  if (focusable && initialRowSelected) {
     setFocused(0);
   }
 });
@@ -66,61 +66,82 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- @keyup.escape='setFocused(null)' -->
-    <v-table
-
-    >
-      <thead>
-        <tr>
-          <th v-for='h in tableKeys' :key='h'>
+  <!-- @keyup.escape='setFocused(null)' -->
+  <v-table>
+    <thead>
+      <tr>
+        <th
+          v-for="h in tableKeys"
+          :key="h"
+        >
           {{ h }}
-          </th>
-          <th style='text-align: right'><slot name="globals"></slot></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for='(row, i) in ranges' :key='i' @click='setFocused(i)' :class='{ focused: i === focusedRow }'>
+        </th>
+        <th style="text-align: right">
+          <slot name="globals" />
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="(row, i) in ranges"
+        :key="i"
+        :class="{ focused: i === focusedRow }"
+        @click="setFocused(i)"
+      >
+        <td>
+          <MyNumberTextField
+            min="1"
+            :max="runSpec.length-1"
+            step="1"
+            :disabled="i === 0"
+            :hide-spin-buttons="i ===0"
+            :model-value="row.range[0]"
+            @update:model-value="(newValue: number) => move(row.range[0], newValue)"
+          />
+        </td>
+        <td>
+          <MyNumberTextField
+            disabled
+            :model-value="row.range[1]"
+          />
+        </td>
+        <template
+          v-for="(spec, i) in valueSpec"
+          :key="i"
+        >
           <td>
             <MyNumberTextField
-              min=1
-              :max='runSpec.length-1'
-              step=1
-              :disabled='i === 0'
-              :hide-spin-buttons='i ===0'
-              :model-value='row.range[0]'
-              @update:modelValue='(newValue: number) => move(row.range[0], newValue)'
-            >
-            </MyNumberTextField>
+              :min="spec.min ?? null"
+              :max="spec.max ?? null"
+              :step="spec.step ?? null"
+              :model-value="row.value[i]"
+              @update:model-value="(newValue: number) => setNumber(row.range[0], row.value, i, newValue)"
+            />
           </td>
-          <td>
-            <MyNumberTextField
-              disabled
-              :model-value='row.range[1]'
-            ></MyNumberTextField>
-          </td>
-          <template v-for='(spec, i) in valueSpec' :key=i>
-            <td>
-              <MyNumberTextField
-                  :min='spec.min ?? null'
-                  :max='spec.max ?? null'
-                  :step='spec.step ?? null'
-                  :model-value='row.value[i]'
-                  @update:modelValue='(newValue: number) => setNumber(row.range[0], row.value, i, newValue)'
-                >
-              </MyNumberTextField>
-            </td>
-          </template>
-          <td style='text-align: right'>
-            <v-btn title='delete' v-if='i' flat size="small" @click='() => unsetIndex(i)'>
-              <v-icon>mdi-delete-circle</v-icon>
-            </v-btn>
-            <v-btn title='split' v-if='row.range[1] > row.range[0] + 1' flat size="small" @click='() => splitIndex(i)'>
-              <v-icon>mdi-table-split-cell</v-icon>
-            </v-btn>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+        </template>
+        <td style="text-align: right">
+          <v-btn
+            v-if="i"
+            title="delete"
+            flat
+            size="small"
+            @click="() => unsetIndex(i)"
+          >
+            <v-icon>mdi-delete-circle</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="row.range[1] > row.range[0] + 1"
+            title="split"
+            flat
+            size="small"
+            @click="() => splitIndex(i)"
+          >
+            <v-icon>mdi-table-split-cell</v-icon>
+          </v-btn>
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
 </template>
 
 <style scoped>

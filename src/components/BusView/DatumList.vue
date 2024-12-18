@@ -7,15 +7,18 @@ const showObjectList = ref(false);
 </script>
 
 <template>
-  <v-list class='flex-shrink-0' disabled>
+  <v-list
+    class="flex-shrink-0"
+    disabled
+  >
     <v-list-item
-      prepend-icon='mdi-chart-box-outline'
-      :append-icon='showObjectList ? "mdi-chevron-up" : "mdi-chevron-down"'
-      @click='showObjectList = !showObjectList'
+      prepend-icon="mdi-chart-box-outline"
+      :append-icon="showObjectList ? &quot;mdi-chevron-up&quot; : &quot;mdi-chevron-down&quot;"
+      @click="showObjectList = !showObjectList"
     >
-        <v-list-item-title>Data ({{ datums.length || 0 }})</v-list-item-title>
+      <v-list-item-title>Data ({{ datums.length || 0 }})</v-list-item-title>
     </v-list-item>
-    <v-divider></v-divider>
+    <v-divider />
     <!-- <template v-if='showObjectList && datums.length'>
     </template> -->
   </v-list>

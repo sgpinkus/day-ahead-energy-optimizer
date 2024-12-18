@@ -40,33 +40,45 @@ watch(selectedRange, () => {
   const f: (...a: any[]) => number = params ? quadratic(params[0], params[1], 0, params[2]) : () => 0;
   data.value = Object.fromEntries(domain.value.map(v => [v, f(v)]));
 }, {
-  immediate: true
+  immediate: true,
 });
 
 </script>
 
 <template>
-  <template v-if='device.costs.cumulative_flow'>
+  <template v-if="device.costs.cumulative_flow">
     <v-card>
       <h3>Cumulative Flow Cost</h3>
       <RunSpecTableView
-        :run-spec='device.costs.cumulative_flow'
-        :value-spec='tableValueSpec'
-        :focusable='true'
-        @row-selected='(i: number | null) => selectedRow = i'
+        :run-spec="device.costs.cumulative_flow"
+        :value-spec="tableValueSpec"
+        :focusable="true"
+        @row-selected="(i: number | null) => selectedRow = i"
       >
-        <template v-slot:globals>
-          <v-btn flat size="small" @click='unSet' title='delete cost entirely'><v-icon>mdi-delete</v-icon></v-btn>
+        <template #globals>
+          <v-btn
+            flat
+            size="small"
+            title="delete cost entirely"
+            @click="unSet"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </template>
       </RunSpecTableView>
     </v-card>
     <v-card>
-      <PlotView v-if='data' :data='data'></PlotView>
+      <PlotView
+        v-if="data"
+        :data="data"
+      />
     </v-card>
   </template>
   <template v-else>
-    <v-card class='ma-auto'>
-      <v-btn @click='set'>Set Cumulative Flow Costs</v-btn>
+    <v-card class="ma-auto">
+      <v-btn @click="set">
+        Set Cumulative Flow Costs
+      </v-btn>
     </v-card>
   </template>
 </template>

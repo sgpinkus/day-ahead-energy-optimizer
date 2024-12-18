@@ -25,7 +25,7 @@ async function change() { // change(changeKey: string)
   const { valid } = await form.value!.validate();
   const changes = deepDiffObjects2(work.value, initialValue);
   console.log('changes', changes);
-  if(changes && valid) {
+  if (changes && valid) {
     device.updateDescriptors(changes);
   }
 }
@@ -36,7 +36,7 @@ async function change() { // change(changeKey: string)
 <template>
   <v-form
     ref="form"
-    v-model='valid'
+    v-model="valid"
   >
     <v-card>
       <v-label>Title</v-label>
@@ -44,29 +44,29 @@ async function change() { // change(changeKey: string)
         v-model="work.title"
         :counter="titleMaxLength"
         :rules="titleRules"
-        @change='change'
-      ></v-text-field>
+        @change="change"
+      />
       <v-label>Description / Notes</v-label>
       <v-textarea
         v-model="work.description"
         :counter="descriptionMaxLength"
         :rules="descriptionRules"
-        @change='change'
-      ></v-textarea>
+        @change="change"
+      />
       <v-label>Shape</v-label>
       <v-select
         v-model="work.shape"
         :items="shapeTypes"
-        @update:model-value='change'
-      ></v-select>
+        @update:model-value="change"
+      />
       <v-label>Color</v-label>
       <v-color-picker
         v-model="work.color"
-        @update:model-value='change'
         hide-inputs
         hide-canvas
         show-swatches
-      ></v-color-picker>
+        @update:model-value="change"
+      />
     </v-card>
   </v-form>
 </template>

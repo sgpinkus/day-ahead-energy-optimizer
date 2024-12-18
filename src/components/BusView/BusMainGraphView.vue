@@ -11,24 +11,25 @@ const deviceNodes = computed(() => values(bus?.devices || {}));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
 
 function onClick(id: string) {
-  if(id !== undefined && id !== 'hub')
+  if (id !== undefined && id !== 'hub')
   model.focusedDeviceId = id;
 }
 
 function onDoubleClick(id: string) {
-  if(id !== undefined) router.dispatch({ name: 'device', params: { id } });
+  if (id !== undefined) router.dispatch({ name: 'device', params: { id } });
 }
 
 </script>
 
 <template>
-  <NetworkHubView v-if='bus'
-    :deviceNodes=deviceNodes
-    :focusedNodeId='focusedNodeId'
-    :hubNode='{ title: "Network" }'
-    @click='onClick'
-    @dblclick='onDoubleClick'
-  ></NetworkHubView>
+  <NetworkHubView
+    v-if="bus"
+    :device-nodes="deviceNodes"
+    :focused-node-id="focusedNodeId"
+    :hub-node="{ title: &quot;Network&quot; }"
+    @click="onClick"
+    @dblclick="onDoubleClick"
+  />
 </template>
 
 <style scoped>

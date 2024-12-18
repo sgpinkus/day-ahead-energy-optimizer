@@ -8,10 +8,10 @@ import { pick, set } from 'lodash';
  */
 export function mergeArgs(a: Record<string, any>, b: Record<string, any>) {
   const existingKeys = new Set(Object.keys(a));
-  for(const [k, v] of Object.entries(b)) {
+  for (const [k, v] of Object.entries(b)) {
     const [keyPrefix, ...keyRest] = k.split('.');
     // console.log(k, keyPrefix, keyRest, a[keyPrefix]);
-    if(existingKeys.has(keyPrefix) && keyRest.length) {
+    if (existingKeys.has(keyPrefix) && keyRest.length) {
       set(a, k, v);
     } else {
       a[k] = v;

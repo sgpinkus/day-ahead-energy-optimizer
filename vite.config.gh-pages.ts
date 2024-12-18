@@ -16,12 +16,12 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    vuePyodide('dist-gh/assets')
+    vuePyodide('dist-gh/assets'),
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   build: {
     outDir: 'dist-gh',
@@ -30,7 +30,7 @@ export default defineConfig({
       keep_classnames: true,
       keep_fnames: true,
       mangle: false,
-    }
+    },
   },
   base: basePath,
 });
