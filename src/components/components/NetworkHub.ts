@@ -49,11 +49,11 @@ export function draw(
       })
       .on('click', function(_e, d) {
         const i = Number(index.get(this));
-        click && click(d ? d.id : data ? data.id : undefined, i);
+        if (click) click(d ? d.id : data ? data.id : undefined, i);
       })
       .on('dblclick', function(_e, d) {
         const i = Number(index.get(this));
-        dblclick && dblclick(d ? d.id : data ? data.id : undefined, i);
+        if (dblclick) dblclick(d ? d.id : data ? data.id : undefined, i);
       });
   }
 
@@ -90,7 +90,7 @@ export function draw(
     .attr('fill', (d) => d.color || 'pink')
     .attr('stroke', 'yellow');
   rimNodes.append('text')
-    .text((d) => d.title)
+    .text((d) => d.title || null)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('textLength', function(_d, i, g) {
@@ -113,7 +113,7 @@ export function draw(
     .attr('fill', _hubNode.color || 'pink')
     .attr('stroke', 'yellow');
   hubNode.append('text')
-      .text(_hubNode.title)
+      .text(_hubNode.title || null)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle');
   nodeEffects(hubNode, _hubNode);

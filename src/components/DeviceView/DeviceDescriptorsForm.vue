@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { Device } from '@/model/device';
+import { BaseDevice } from '@/model/device';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
-import { ref, useTemplateRef, type Ref } from 'vue';
+import { ref, useTemplateRef, type Ref  } from 'vue';
 
-const { device } = defineProps<{ device: Device }>();
+
+const { device } = defineProps<{ device: BaseDevice }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
 const work = ref(device.getDescriptors());
 const initialValue = cloneDeep(work.value);
@@ -24,7 +25,6 @@ async function change() { // change(changeKey: string)
   form.value!.resetValidation();
   const { valid } = await form.value!.validate();
   const changes = deepDiffObjects2(work.value, initialValue);
-  console.log('changes', changes);
   if (changes && valid) {
     device.updateDescriptors(changes);
   }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Device } from '@/model/device';
+import { BaseDevice } from '@/model/device';
 import StorageDeviceParametersForm from './StorageDeviceParametersForm.vue';
 
 const { device } = defineProps<{
-  device: Device,
+  device: BaseDevice,
 }>();
 
 const component = computed(() => {
