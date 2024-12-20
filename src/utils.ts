@@ -1,4 +1,5 @@
 import { get, set, isEqual, isArray, isObject } from 'lodash';
+import type { TypeGuardError } from 'typia';
 import { v4 } from 'uuid';
 
 export function randomUUID() {
@@ -82,4 +83,9 @@ export function boundsRelativeQuadratic(pL: number, pH: number, xL: number, xH: 
   const c = a === 0 ? 0 : quadratic(a, b, 0 , 0)(-b/(2*a)); // f'(x) = 2ax + b; f'(x) = 0 -> x* = -b/2a.
   const f = quadratic(a, b, 0, 0);
   return (x: number) => (xH - xL)*f((x - xL)/(xH - xL)) - c;
+}
+
+export function typeGuardErrorToString(err: TypeGuardError) {
+  const actual = String(err.value);
+  return `Input validation error at ${err.path}: expected ${err.expected} but got '${actual.slice(0,100).padEnd(Math.min(100, actual.length), '.')}'`;
 }

@@ -6,10 +6,12 @@ import BusDeviceList from './DeviceList.vue';
 import { jsonStringify, jsonParse } from '@/model/importlib';
 import { ref, useTemplateRef } from 'vue';
 import { ValidationError } from '@/errors';
+import { TypeGuardError } from 'typia';
+import { typeGuardErrorToString } from '@/utils';
 
 const { bus } = defineProps<{ bus: Bus }>();
 
-const deviceFileInput = useTemplateRef<HTMLInputElement>('deviceFileInput');
+const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput');
 
 const blobUrl = ref('');
 function exportModel() {
@@ -19,13 +21,22 @@ function exportModel() {
 }
 
 function importDevice() {
-  const files = deviceFileInput.value ? deviceFileInput.value.files : [undefined];
+  const files = importFileInput.value ? importFileInput.value.files : [undefined];
   if (files && files[0]) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-        const device = jsonParse(reader.result);
-        if (!(device instanceof BaseDevice)) throw new ValidationError();
-        bus.add(device.clone());
+        try {
+          const device = jsonParse(reader.result); // is ~sanitized via Device.reviver.
+          if (!(device instanceof BaseDevice)) throw new ValidationError();
+          bus.add(device.clone());
+        } catch (e) {
+          if (e instanceof TypeGuardError) {
+            throw new ValidationError(typeGuardErrorToString(e));
+          }
+          else {
+            throw e;
+          }
+        }
       },
       false,
     );
@@ -63,7 +74,7 @@ function importDevice() {
         </v-list-item-title>
         <input
           id="device-file"
-          ref="deviceFileInput"
+          ref="importFileInput"
           type="file"
           style="display: none"
           @change="importDevice"

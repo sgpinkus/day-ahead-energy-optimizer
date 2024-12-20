@@ -16,7 +16,7 @@ export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 // This is just a scrappt adhoc collection of meta data for things -
 // mostly hints to render the given device type in generic device views.
 type IAttributes = {
-  isLoad?: boolean, // Assuming optimization model reps loads as -ve flow, this is useful for require conversion..
+  isSupply?: boolean, // Assuming optimization model reps supply as -ve flow, this is useful for require conversion..
   hasParameters?: boolean,
   hideBounds?: boolean,
   hideCBounds?: boolean,
@@ -210,7 +210,7 @@ export class SupplyDevice extends BaseDevice {
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
   attrs: IAttributes = {
-    isLoad: true,
+    isSupply: true,
   };
 }
 
