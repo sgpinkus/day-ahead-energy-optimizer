@@ -32,12 +32,6 @@ export class Model {
   focusedCollectionId?: string = undefined;
   basis = 48;
 
-  /**
-   * Syncronously initialize state restoring from local storage if any.
-   */
-  constructor() {
-  }
-
   get focusedBus() {
     return this.focusedBusId ? this.busses[this.focusedBusId] : undefined;
   }
@@ -58,15 +52,6 @@ export class Model {
   }
 
   /**
-   * Async init phase.
-   * TODO: Auth can take a long time (~10s) if server is down. Better to init model then react to auth state past init.
-   */
-  async init() {
-    if (this.doneInit) return;
-    this.doneInit = true;
-  }
-
-  /**
    * Attempt to serialize state to local storage on page unload.
    * TODO: Accoujnt for multiple accounts.
    */
@@ -77,10 +62,16 @@ export class Model {
   }
 }
 
-export function fromLocalStorage() {
+function fromLocalStorage() {
   testLocalStorage();
   const data = window.localStorage.getItem(MyName);
-  if (data) return jsonParse(data);
+  if (data) {
+    try {
+      return jsonParse(data);
+    } catch (e) {
+      console.log('Error parsing model stashed in local storage. No salvage is attempted. Starting new model.', e);
+    }
+  }
   return new Model();
 }
 

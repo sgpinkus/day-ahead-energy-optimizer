@@ -1,4 +1,5 @@
 import { cloneDeep, mapValues } from 'lodash';
+import { assertEquals } from 'typia';
 
 type RunRange<X> = [X, [number, number]]
 
@@ -18,6 +19,13 @@ export interface IRunSpec<X> {
   toArray(): X[];
   toRanges(): RunRange<X>[];
   copy(): IRunSpec<X>;
+}
+
+export interface IAllRunSpec {
+  basis: number,
+  runs: Record<number, unknown>,
+  hardBounds?: [number, number],
+  coerce?: boolean,
 }
 
 /**
@@ -138,6 +146,13 @@ export class RunSpec<X> implements IRunSpec<X> {
     const y = new this(1, 1);
     Object.assign(this, cloneDeep(x));
     return y;
+  }
+
+  static reviver(data: unknown) {
+    const _data = assertEquals<IAllRunSpec>(data);
+    const o = new this(_data.basis, 0);
+    Object.assign(o, data);
+    return o;
   }
 }
 

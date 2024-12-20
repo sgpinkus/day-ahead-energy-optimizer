@@ -3,14 +3,19 @@ import model from '@/model';
 import { DefaultBasis } from './constant';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
+import { assertEquals } from 'typia';
+
+export interface IBus {
+  id: string,
+  collectionId?: string,
+  basis: number,
+}
 
 export default class Bus {
-  readonly id: string;
   public readonly basis: number = DefaultBasis;
   static readonly MaxItems = 20;
 
-  public constructor(public collectionId?: string) {
-    this.id = uuid();
+  public constructor(public collectionId?: string, public readonly id = uuid()) {
   }
 
   get length() {
@@ -48,7 +53,14 @@ export default class Bus {
   toExportObject() {
     return {
       basis: this.basis,
-      devices: this.devices.map(d => d.toExportObject()),
+      devices: this.devices.map(d => d.replacer()),
     };
+  }
+
+  static reviver(data: unknown) {
+    const _data = assertEquals<IBus>(data);
+    const o = new this();
+    Object.assign(o, _data);
+    return o;
   }
  }

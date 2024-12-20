@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constant';
 import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
 import { cloneDeep, pick } from 'lodash';
+import { assertEquals } from 'typia';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
 
@@ -22,9 +23,17 @@ type IAttributes = {
   hideCosts?: boolean,
 }
 
+// type IDescriptors = {
+//   title: string,
+//   description: string,
+//   color: string,
+//   shape: string,
+//   tags: Record<string, boolean | number | string>,
+// }
+
 // NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
 type Bounds = BoundsRunSpec;
-type CumulativeBounds = BoundsRunSpec | undefined;
+type CumulativeBounds = BoundsRunSpec;
 // type CostType = keyof Costs;
 export type ICosts = {
   flow?: RunSpec<[number, number, number]>,
@@ -49,31 +58,15 @@ export class DeviceCosts implements ICosts {
     this.cumulative_flow_bounds_relative = v ? [...v] : undefined;
   }
 
-  toExportObject() {
-    return {
-      flow: this.flow?.toArray() || undefined,
-      cumulative_flow: this.cumulative_flow?.toArray() || undefined,
-      flow_bounds_relative: this.flow_bounds_relative?.toArray() || undefined,
-      cumulative_flow_bounds_relative: this.cumulative_flow_bounds_relative,
-      peak_flow: this.peak_flow,
-    };
+  static reviver(data: unknown) {
+    assertEquals<DeviceCosts>(data);
+    const o = new this();
+    Object.assign(o, data);
+    return o;
   }
 }
 
-export interface  IBaseDevice {
-  type: DeviceType,
-  basis: number,
-  hardBounds: [number, number],
-  attrs: IAttributes,
-  title?: string,
-  description?: string,
-  color?: string,
-  shape?: string,
-  tags?: Record<string, boolean | number | string>,
-  bounds: Bounds,
-  cumulative_bounds: CumulativeBounds,
-  costs: DeviceCosts,
-}
+
 
 export interface ILoadDevice extends IBaseDevice {
   type: 'load',
@@ -102,11 +95,28 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
   return new BoundsRunSpec(DefaultBasis, [l, h] as [number, number], hb);
 }
 
-// Slightly mixing concerns but just put these linkage fields on the base device.
-// export type ContainerDevice = Device & {
-//   readonly id: string,
-//   readonly busId?: string,
-// };
+// TODO: put descriptor in descriptors field.
+// TODO: Why is attrs in here? Coz they are readonly descriptors? Freakin ontology is unsolvable.
+const BaseDeviceDescriptors = ['title', 'description', 'shape', 'color', 'tags'];
+
+
+export interface IBaseDevice {
+  readonly id: string;
+  busId?: string;
+  readonly type: DeviceType,
+  readonly attrs: IAttributes,
+  readonly basis: number,
+  readonly hardBounds: [number, number],
+  bounds: Bounds,
+  cumulative_bounds?: CumulativeBounds,
+  costs: DeviceCosts,
+  title?: string,
+  description?: string,
+  tags?: Record<string, boolean | number | string>,
+  color?: string,
+  shape?: string,
+  parameters?: Record<string, boolean | number | string | (boolean | number | string)[]>,
+}
 
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
@@ -116,7 +126,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly basis: number = DefaultBasis;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   readonly bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
-  cumulative_bounds: CumulativeBounds = undefined;
+  cumulative_bounds?: CumulativeBounds;
   costs: DeviceCosts = new DeviceCosts();
   readonly title?: string;
   readonly description?: string;
@@ -125,17 +135,16 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly shape?: string;
   readonly parameters: Record<string, boolean | number | string | (boolean | number | string)[]> = {};
 
-  protected constructor() {
+  constructor() {
     this.id = uuid();
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
-    Object.assign(this, pick(o, ['title', 'description', 'shape', 'color', 'tags']));
+    Object.assign(this, pick(o, BaseDeviceDescriptors));
   }
 
   getDescriptors(this: BaseDevice): Partial<IDevice> {
-    // TODO: put descriptor in descriptors field. TODO: Why is attrs in here? Coz they are readonly descriptors??
-    return cloneDeep({ ...pick(this, ['title', 'description', 'shape', 'color', 'tags']) });
+    return cloneDeep({ ...pick(this, BaseDeviceDescriptors) });
   }
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {
@@ -146,29 +155,21 @@ export abstract class BaseDevice implements IBaseDevice {
     return this.hardBounds;
   }
 
-  toExportObject() {
-    return {
-      id: this.id,
-      type: this.type,
-      basis: this.basis,
-      bounds: this.bounds.toArray(),
-      cumulative_bounds: this.cumulative_bounds?.toRanges() || undefined,
-      costs: this.costs.toExportObject(),
-      parameters: this.parameters,
-      descriptors: this.getDescriptors(),
-    };
-  }
-
   clone() {
     const _clone = cloneDeep(this);
     (_clone.id as any) = uuid();
     return _clone;
   }
 
-  static fromObject(data: any) {
-    // @ts-expect-error 2511 "Cannot create an instance of an abstract class". Since it's abstract by definition "this" refers to a subclass?!
-    const o = new this(data);
-    Object.assign(o, pick(data, ['id', 'type', 'basis', 'bounds', 'cummulative_bounds', 'costs', 'parameters', 'descriptors']));
+  replacer() {
+    return this;
+  }
+
+  static reviver(data: unknown) {
+    // @ts-expect-error 2511 "Cannot create an instance of an abstract class" Yeah, but that's not what this does.
+    const o = new this();
+    assertEquals<IBaseDevice>(data);
+    Object.assign(o, data);
     return o;
   }
 }
@@ -182,15 +183,10 @@ export class FixedLoadDevice extends BaseDevice {
   color = '#A9A9A9';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = new FixedBoundsRunSpec(DefaultBasis, [0,0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
-  cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
     hideCosts: true,
     hideCBounds: true,
   };
-  constructor(data?: Partial<IFixedLoadDevice>) {
-    super();
-    Object.assign(this, data);
-  }
 }
 
 export class LoadDevice extends BaseDevice {
@@ -202,12 +198,6 @@ export class LoadDevice extends BaseDevice {
   color = '#0000FF';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  cumulative_bounds: CumulativeBounds = undefined;
-
-  constructor(data?: Partial<ILoadDevice>) {
-    super();
-    Object.assign(this, data);
-  }
 }
 
 export class SupplyDevice extends BaseDevice {
@@ -219,14 +209,9 @@ export class SupplyDevice extends BaseDevice {
   color = '#FF0000';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
     isLoad: true,
   };
-  constructor(data?: Partial<ISupplyDevice>) {
-    super();
-    Object.assign(this, data);
-  }
 }
 
 type IStorageDeviceParameters = {
@@ -251,7 +236,6 @@ export class StorageDevice extends BaseDevice {
   color = '#FFD700';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
-  cumulative_bounds: CumulativeBounds = undefined;
   attrs: IAttributes = {
     // hideBounds: true, // Currently this is how Max RoC/RoD is set.
     hideCBounds: true,
@@ -268,10 +252,6 @@ export class StorageDevice extends BaseDevice {
     deepDischargeCostFactor: 0.0,
     deepDepthRatio: 0.2,
   };
-  constructor(data?: Partial<IStorageDevice>) {
-    super();
-    Object.assign(this, data);
-  }
 }
 
 // export class ThermalDevice extends BaseDevice {
@@ -280,12 +260,12 @@ export class StorageDevice extends BaseDevice {
 
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
 
-export function deviceFactory(data: Partial<IDevice> & { type: DeviceType }): Device {
+export function deviceFactory(data: { type: DeviceType }): Device {
   switch (data.type) {
-    case 'load': return new LoadDevice(data);
-    case 'supply': return new SupplyDevice(data);
-    case 'fixed_load': return new FixedLoadDevice(data);
-    case 'storage': return new StorageDevice(data);
+    case 'load': return new LoadDevice();
+    case 'supply': return new SupplyDevice();
+    case 'fixed_load': return new FixedLoadDevice();
+    case 'storage': return new StorageDevice();
     default: throw new Error(`Unknown device type [data=${data}]`);
   }
 }

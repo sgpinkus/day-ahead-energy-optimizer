@@ -3,8 +3,8 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import vuePyodide from './vite-plugin-pyodide';
+import unpluginTypia from '@ryoppippi/unplugin-typia/vite';
 import { basePath } from './src/config';
-
 
 // https://vitejs.dev/config/
 export const config = {
@@ -13,6 +13,7 @@ export const config = {
     vue(),
     vueJsx(),
     vuePyodide(),
+    unpluginTypia({}),
   ],
   resolve: {
     alias: {

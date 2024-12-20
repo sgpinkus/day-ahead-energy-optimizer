@@ -45,24 +45,31 @@ const allowedClassNames = [
 ];
 
 function replacer(k: string, v: any) {
-  if (v instanceof Object && ![Function, Object, Array, String, Number, BigInt].includes(v.constructor)) {
+  if (v instanceof Object && allowedClassNames.includes(v.constructor.name)) {
     v.__CLASS__ = v.constructor.name;
+    const _class = eval(v.__CLASS__);
+    if (_class['replacer']) {
+      return _class['replacer'];
+    }
   }
   return v;
 }
 
 function reviver(k: string, v: any) {
   if (v?.__CLASS__) {
-    if (!allowedClassNames.includes(v.__CLASS__)) throw new ValidationError();
-    const _class = eval(v.__CLASS__);
+    const className = v.__CLASS__;
+    delete v.__CLASS__;
+    if (!allowedClassNames.includes(className)) throw new ValidationError();
+    const _class = eval(className);
     let o;
-    if (_class['fromObject']) {
-      o = _class['fromObject'](v);
+    if (_class['reviver']) {
+      o = _class['reviver'](v);
     } else {
       o = new _class();
+      // TODO: Should always require an explicit reviver.
+      console.debug('reviver using default constructor on', o.constructor.name, v);
       Object.assign(o, v);
     }
-    delete o.__CLASS__;
     return o;
   }
   return v;

@@ -12,7 +12,6 @@ import './index.scss';
 let inShutDown = false;
 
 async function main() {
-  await model.init();
   const app = createApp(App);
   app.use(router);
   app.use(createVuetify({

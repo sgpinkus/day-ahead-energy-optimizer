@@ -2,13 +2,12 @@ import { v4 as uuid } from 'uuid';
 import model from '@/model';
 import Bus from './bus';
 import { values } from 'lodash';
+import { assertEquals } from 'typia';
 
 export default class Collection {
-  readonly id: string;
   static readonly MaxItems = 100;
 
-  public constructor() {
-    this.id = uuid();
+  public constructor(public readonly id = uuid()) {
   }
 
   get length() {
@@ -40,5 +39,10 @@ export default class Collection {
     for (const d of this.busses) {
       delete model.busses[d.id];
     }
+  }
+
+  static reviver(data: unknown) {
+    const _data = assertEquals<{ id: string }>(data);
+    return new this(_data.id);
   }
 }
