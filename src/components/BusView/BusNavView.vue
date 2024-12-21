@@ -3,6 +3,7 @@ import { Bus } from '@/model';
 import { BaseDevice } from '@/model';
 import AddDeviceActionList from './AddDeviceActionList.vue';
 import BusDeviceList from './DeviceList.vue';
+import BusEditForm from './BusEditForm.vue';
 import { jsonStringify, jsonParse } from '@/model/importlib';
 import { ref, useTemplateRef } from 'vue';
 import { ValidationError } from '@/errors';
@@ -49,6 +50,39 @@ function importDevice() {
 <template>
   <v-list class="flex-shrink-0 details-content">
     <v-list class="flex-shrink-0">
+      <v-dialog>
+        <template #activator="{ props }">
+          <v-list-item
+            prepend-icon="mdi-cog"
+            v-bind="props"
+          >
+            Bus Settings
+          </v-list-item>
+        </template>
+        <template #default="{ isActive }">
+          <v-container fluid>
+            <v-row>
+              <v-col
+                xs="12"
+                md="6"
+                offset-md="3"
+              >
+                <v-card>
+                  <BusEditForm :bus="bus" />
+                  <template #actions>
+                    <v-btn
+                      density="compact"
+                      class="ml-auto"
+                      text="Close"
+                      @click="isActive.value = false"
+                    />
+                  </template>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
+      </v-dialog>
       <v-list-item
         prepend-icon="mdi-refresh"
         @click="bus.reset()"

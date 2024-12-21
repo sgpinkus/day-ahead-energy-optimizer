@@ -1,32 +1,41 @@
 import { v4 as uuid } from 'uuid';
 import model from '@/model';
-import { DefaultBasis } from './constant';
-import { deviceFactory, BaseDevice, type DeviceType, type IBaseDevice } from './device';
+import { DefaultBasis, DefaultIntervalMinutes } from './constant';
+import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
-import { assertEquals, TypeGuardError } from 'typia';
 import { jsonParse } from './importlib';
 import { typeGuardErrorToString } from '@/utils';
+import typia, { TypeGuardError } from 'typia';
 import { ValidationError } from '@/errors';
+
+type IntervalTime = 1 | 2 | 3 | 4 | 5 | 6 | 10 | 15 | 20 | 30 | 60;
 
 export interface IBus {
   id: string,
   collectionId?: string,
   basis: number,
+  interval: IntervalTime,
+  startInterval: number,
+  startHour: number
+  title?: string;
 }
 
-export interface IBusExport {
+export interface IBusExport extends Partial<IBus> {
   basis: number,
   devices?: BaseDevice[];
 }
 
-export default class Bus {
+export default class Bus implements IBus {
   static readonly MaxItems = 20;
+  id: string = uuid();
+  collectionId?: string | undefined;
+  basis: number = DefaultBasis;
+  interval: IntervalTime = DefaultIntervalMinutes;
+  startInterval: number = 0;
+  startHour: number = 0;
 
-  public constructor(
-    public collectionId?: string,
-    public readonly id = uuid(),
-    public readonly basis: number = DefaultBasis,
-  ) {
+  private constructor(init: Partial<IBus>) {
+    Object.assign(this, init);
   }
 
   get length() {
@@ -35,6 +44,10 @@ export default class Bus {
 
   get devices() {
     return values(model.devices).filter(d => d.busId === this.id);
+  }
+
+  get startTime() {
+    return `${String(this.startHour%24).padStart(2, '0')}:${String((this.startInterval*this.interval)%60).padStart(2, '0')}`;
   }
 
   add(device: BaseDevice) {
@@ -73,31 +86,26 @@ export default class Bus {
     };
   }
 
+  static newBus(data: Partial<IBus>) {
+    return new Bus(data);
+  }
+
   /**
    * @see toExportObject.
    */
   static fromExportObject(data: unknown): Bus {
-    try {
-      const o = assertEquals<IBusExport>(jsonParse(data));
-      const bus = new Bus(undefined, undefined, o.basis);
-      (o.devices || []).forEach((device) => {
-        (device as any).id = uuid();
-        bus.add(device);
-      });
-      return bus;
-    } catch (e) {
-      if (e instanceof TypeGuardError) {
-        throw new ValidationError(typeGuardErrorToString(e));
-      }
-      throw e;
-    }
+    const o = typia.assertEquals<IBusExport>(jsonParse(data));
+    const bus = new Bus(o);
+    (o.devices || []).forEach((device) => {
+      (device as any).id = uuid();
+      bus.add(device);
+    });
+    return bus;
   }
 
-
   static reviver(data: unknown) {
-    const _data = assertEquals<IBus>(data);
-    const o = new this(undefined, undefined, _data.basis);
-    Object.assign(o, _data);
-    return o;
+    const _data = typia.assertEquals<IBus>(data);
+    const bus = new this(_data);
+    return bus;
   }
  }

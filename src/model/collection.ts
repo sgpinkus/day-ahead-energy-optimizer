@@ -27,7 +27,7 @@ export default class Collection {
   }
 
   addNew() {
-    const bus = new Bus(this.id);
+    const bus = Bus.newBus({ collectionId: this.id });
     model.busses[bus.id] = bus;
   }
 

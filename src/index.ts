@@ -8,6 +8,9 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import './index.scss';
+import * as errors from '@/errors';
+import { TypeGuardError } from 'typia';
+import { typeGuardErrorToString } from './utils';
 
 let inShutDown = false;
 
@@ -24,9 +27,12 @@ async function main() {
 
   app.config.errorHandler = async (err: any = {}) => {
     console.debug('Hit global error handler', err);
-    if (err?.name === 'NotFoundError') {
+    if (err instanceof errors.NotFoundError) {
       router.dispatch({ name: 'resource-not-found' });
-    } else {
+    } else if (err instanceof TypeGuardError) {
+      model.messages.addAlert({ message: typeGuardErrorToString(err), type: 'error' });
+    }
+    else {
       model.messages.addAlertFromError(err);
     }
   };
