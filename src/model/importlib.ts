@@ -67,7 +67,7 @@ function reviver(k: string, v: any) {
     } else {
       o = new _class();
       // TODO: Should always require an explicit reviver.
-      console.debug('reviver using default constructor on', o.constructor.name, v);
+      console.debug('reviver using default constructor on', o.constructor.name);
       Object.assign(o, v);
     }
     return o;

@@ -7,4 +7,5 @@ export const SpaceMapPollRemoteIntervalMember = 15000;
 export const DateFormatISO8601 = 'YYYY-MM-DDTHH:mm:ssZ[Z]';
 export const SpaceMapPollRemoteIntervalOwner = 60000;
 export const DefaultBasis = 48;
+export const DefaultIntervalMinutes = 30;
 export const BigNumber = 1e3;
