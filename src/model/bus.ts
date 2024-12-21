@@ -4,9 +4,7 @@ import { DefaultBasis, DefaultIntervalMinutes } from './constant';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 import { jsonParse } from './importlib';
-import { typeGuardErrorToString } from '@/utils';
-import typia, { TypeGuardError } from 'typia';
-import { ValidationError } from '@/errors';
+import typia from 'typia';
 
 type IntervalTime = 1 | 2 | 3 | 4 | 5 | 6 | 10 | 15 | 20 | 30 | 60;
 

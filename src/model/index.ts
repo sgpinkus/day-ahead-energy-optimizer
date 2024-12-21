@@ -9,7 +9,6 @@ import Bus from './bus';
 import { MyName } from './constant';
 import Collection from './collection';
 import { BaseDevice } from './device';
-import { ValidationError } from '@/errors';
 
 export { BaseDevice } from './device';
 export { default as Bus } from './bus';
