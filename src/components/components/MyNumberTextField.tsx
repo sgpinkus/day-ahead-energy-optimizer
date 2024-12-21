@@ -13,6 +13,6 @@ export default defineComponent({
         density='compact'
         flat
         {...attrs}
-      >{slots.default && slots.default()}</VTextField>;
+      >{slots.default && slots.default()}</VTextField>
   },
 });

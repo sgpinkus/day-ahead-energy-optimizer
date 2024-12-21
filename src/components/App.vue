@@ -6,11 +6,11 @@ import SystemBar from './SystemBar.vue';
 import ActionBar from './ActionBar.vue';
 
 function stagedClearAll() {
-  null;
+  // null;
 }
 
 function undo() {
-  null;
+  // null;
 }
 
 const doLocalStorageNotice = ref(false);

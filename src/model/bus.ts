@@ -59,7 +59,7 @@ export default class Bus implements IBus {
   }
 
   addType(type: DeviceType) {
-  if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+    if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
     const device = deviceFactory({ type });
     this.add(device);
   }
