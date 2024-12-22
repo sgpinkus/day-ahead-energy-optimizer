@@ -14,9 +14,6 @@ export { BaseDevice } from './device';
 export { default as Bus } from './bus';
 export { default as Collection } from './collection';
 
-
-
-
 export class Model {
   doneInit = false;
   hasRouted = false;
@@ -68,10 +65,12 @@ function fromLocalStorage() {
   if (data) {
     try {
       return jsonParse(data);
-    } catch (e) {
-      console.log('Error parsing model stashed in local storage. No salvage is attempted. Starting new model.', e);
+    } catch {
+      // null;
     }
   }
+  const model = new Model();
+  if (data) model.messages.addAlert({ message: 'Error parsing model stashed in local storage. No salvage is attempted. Resting data!', type: 'error' });
   return new Model();
 }
 

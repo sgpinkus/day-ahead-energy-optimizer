@@ -9,7 +9,7 @@ scipy
 pandas
 matplotlib
 numdifftools==0.9.41
-device_kit==1.0.6
+device_kit==1.0.7
 `;
 export type Pyodide = any;
 

@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import vuePyodide from './vite-plugin-pyodide';
 import { basePath } from './src/config';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 
 // https://vitejs.dev/config/
@@ -17,6 +18,12 @@ export default defineConfig({
     vue(),
     vueJsx(),
     vuePyodide('dist-gh/assets'),
+    viteStaticCopy({
+      targets: [
+        { src: 'screenshot.png', dest: '.' },
+        { src: 'README.md', dest: '.' },
+      ],
+    }),
   ],
   resolve: {
     alias: {

@@ -1,1 +1,1 @@
-<a href="https://sgpinkus.github.io/day-ahead-energy-planner/"><img src='./public/screenshot.png' /></a>
+<a href="https://sgpinkus.github.io/day-ahead-energy-planner/"><img src='./screenshot.png' /></a>
