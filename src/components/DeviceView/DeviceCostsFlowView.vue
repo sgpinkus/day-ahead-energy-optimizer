@@ -3,6 +3,7 @@ import { computed, defineProps, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import { RunSpec } from '@/model/runspec';
+import { setDialog } from '@/model/infos';
 import RunSpecTableView from './RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
 import { cloneDeep } from 'lodash';
@@ -47,7 +48,14 @@ watch(selectedRange, () => {
 <template>
   <template v-if="device.costs.flow">
     <v-card>
-      <h3>Flow Cost</h3>
+      <h3>
+        Flow Cost<v-icon
+          size="18"
+          @click="setDialog('CostsFlow')"
+        >
+          mdi-information
+        </v-icon>
+      </h3>
       <RunSpecTableView
         :run-spec="device.costs.flow"
         :value-spec="tableValueSpec"

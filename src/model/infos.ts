@@ -13,8 +13,11 @@ export const info = {
   StorageCycleCostFactor: 'Every flip flop from charging to discharging and vice versa is penalized by this amount.',
   StorageDepthCostFactor: 'When charge reaches a certain threshold, start applying this cost factor to further discharging.',
   StorageDeepDepthRatio: 'At what ratio of charge remaining does depth damage factor kick. Has no effect if depth damage is zero.',
-  FlowBoundsRelative: `The price of flow is "price at min" at minimum flow of device and "price at max" at maximum flow.
-    For a demand response load device, you generally want prices to be *negative*.`,
+  CostsFlow: 'Applies at each time independently. Form is a*(x+o)**2 + b*(x+o). Use o parameter to make cost decreasing or increasing over the valid flow bounds depending on the type of device.',
+  CostsCFlow: 'Same as flow costs but applies to the cumulative flow.',
+  CostsBoundsRelativeFlow: `The price of flow is *price at min* at minimum flow, and *price at max* at maximum flow.
+    For a demand response *load*, you typically want cost to decrease to a minimum (typically zero) at max-flow and both prices to be *negative* or at least non-positive.
+    This is because "price" represents marginal utility cost.`,
   ChargeRateClippingFactor: `Linear clipping factor. Battery max charge rate tends to decrease as state of charge approaches capacity. ${clippingFactor}.`,
   DischargeRateClippingFactor: `Linear clipping factor. Battery max discharge rate tends to decrease as state of charge approaches 0. ${clippingFactor}.`,
   '': '',

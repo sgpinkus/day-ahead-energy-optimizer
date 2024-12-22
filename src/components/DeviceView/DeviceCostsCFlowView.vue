@@ -3,6 +3,7 @@ import { computed, defineProps, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import { RunSpec } from '@/model/runspec';
+import { setDialog } from '@/model/infos';
 // import RunSpecGraphView from './RunSpecGraphView.vue';
 import RunSpecTableView from './RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
@@ -48,7 +49,14 @@ watch(selectedRange, () => {
 <template>
   <template v-if="device.costs.cumulative_flow">
     <v-card>
-      <h3>Cumulative Flow Cost</h3>
+      <h3>
+        Cumulative Flow Cost<v-icon
+          size="18"
+          @click="setDialog('CostsCFlow')"
+        >
+          mdi-information
+        </v-icon>
+      </h3>
       <RunSpecTableView
         :run-spec="device.costs.cumulative_flow"
         :value-spec="tableValueSpec"
