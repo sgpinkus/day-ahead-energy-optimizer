@@ -27,6 +27,12 @@ function importBus() {
 </script>
 
 <template>
+  <route-path path="/docs">
+    <v-list-item prepend-icon="mdi-text-box">
+      Docs
+    </v-list-item>
+  </route-path>
+  <v-divider />
   <v-list-item
     prepend-icon="mdi-refresh"
     @click="collection.reset()"

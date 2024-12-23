@@ -5,6 +5,7 @@ import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
 import BusRunView from '@/components/BusRunView/BusRunView.vue';
+import DocsView from '@/components/DocsView/DocsView.vue';
 import { basePath } from '@/config';
 
 const router = createRouter([
@@ -12,6 +13,11 @@ const router = createRouter([
     path: '/',
     name: 'root',
     component: CollectionView,
+  },
+  {
+    path: '/docs',
+    name: 'docs',
+    component: DocsView,
   },
   {
     path: '/bus/:id',
