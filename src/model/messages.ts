@@ -71,7 +71,7 @@ export class Messages {
     return [...this.actions];
   }
 
-  addAction(action: ActionDescription, timeout = 10500) {
+  addAction(action: ActionDescription, timeout = 10500): Action {
     log(action);
     const _action = {
       ...action,

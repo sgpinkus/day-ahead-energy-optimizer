@@ -73,7 +73,8 @@ function fromLocalStorage() {
     }
   }
   const model = new Model();
-  if (data) model.messages.addAlert({ message: 'Error parsing model stashed in local storage. No salvage is attempted. Resting data!', type: 'error' });
+  if (data) model.messages.addAlert({ message: 'Error parsing model stashed in local storage. No salvage is attempted. Resetting data!', type: 'error' });
+  console.log(data);
   return new Model();
 }
 

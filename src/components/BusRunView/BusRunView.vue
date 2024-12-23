@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, type Ref } from 'vue';
+import { onMounted, ref, computed, type Ref, watch } from 'vue';
 import { getPyodide, pyodideLoadingStateCode, pyodideLoadingStateMessage } from '@/pyodide';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import RunList from './RunList.vue';
@@ -10,6 +10,7 @@ import plotsScript from '@/python-scripts/plots.py?raw';
 import { NotFoundError } from '@/errors';
 import model, { type OptimizationResult, Bus } from '@/model';
 import md5 from 'md5';
+import { jsonStringify } from '@/model/importlib';
 
 const { id } = defineProps<{ id: string }>();
 const bus = model.busses[id];
@@ -20,7 +21,14 @@ const busHash = md5(busExport);
 const focusedId = ref(busHash);
 const currentResult: Ref<OptimizationResult | undefined> = computed(() => model.optimizationResults[focusedId.value]);
 
-const optimizationStateCode: Ref<'initial' | 'running' | 'done' | 'error'> = ref('initial');
+const blobUrl = ref('');
+function exportModel() {
+  const data = jsonStringify(bus.toExportObject());
+  const blob = new Blob([data], { type: 'application/json' });
+  blobUrl.value = URL.createObjectURL(blob);
+}
+
+const optimizationStateCode: Ref<'initial' | 'running' | 'success' | 'error'> = ref('initial');
 const optimizationStateMessage = ref('');
 const solverMessage = ref('');
 const showLoading: Ref<boolean> = computed(() => {
@@ -63,7 +71,6 @@ async function _run() {
     const [plot1Image, plot2Image] = plots(deviceset, x);
     newOptimizationResult(bus,  { flowData, totalFlowsData, totalCostsData, flowDerivsData, plot1Image, plot2Image });
   }
-  // console.log(imageString.value);
 }
 
 function run() {
@@ -73,7 +80,7 @@ function run() {
   setTimeout(() => {
       _run().then(() => {
       optimizationStateMessage.value = 'Finished: ' + solverMessage.value;
-      optimizationStateCode.value = 'done';
+      optimizationStateCode.value = 'success';
     })
     .catch((e: any) => {
       optimizationStateMessage.value = 'Error: ' + e?.message;
@@ -86,16 +93,18 @@ onMounted(() => {
   getPyodide();
 });
 
-
 </script>
 
 <template>
   <AppNavDrawer>
-    <route-path path="/">
+    <route-name
+      name="bus"
+      :params="{ id: bus.id }"
+    >
       <v-list-item prepend-icon="mdi-arrow-left">
         Bus
       </v-list-item>
-    </route-path>
+    </route-name>
     <v-divider />
     <v-list-item
       prepend-icon="mdi-play-box"
@@ -111,16 +120,41 @@ onMounted(() => {
   </AppNavDrawer>
   <v-main>
     <v-container class="container">
-      <div class="d-flex justify-center">
-        {{ stateMessage }}&nbsp;
-        <v-progress-circular
-          v-if="showLoading"
-          :size="25"
-          color="primary"
-          indeterminate
-        />
+      <h2>Overview</h2>
+      <div>
+        <v-list>
+          <v-list-item
+            title="Optimization Status"
+          >
+            <v-list-item-subtitle>
+              {{ stateMessage }}&nbsp;
+              <v-progress-circular
+                v-if="showLoading"
+                :size="25"
+                color="primary"
+                indeterminate
+              />
+            </v-list-item-subtitle>
+          </v-list-item>
+          <v-list-item
+            title="Title"
+            :subtitle="bus.title || bus.id"
+          />
+          <v-list-item
+            v-if="currentResult"
+            title="Version"
+          >
+            <v-list-item-subtitle>
+              <a
+                :href="blobUrl"
+                :download="`bus-${bus.id}.json`"
+                @click="exportModel()"
+              >{{ currentResult?.id || '-' }} </a>
+            </v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
       </div>
-      <hr>
+      <h2>Optimization Results</h2>
       <div class="image-container">
         <template v-if="currentResult">
           <img :src="plot1Src">
@@ -129,26 +163,32 @@ onMounted(() => {
           -
         </template>
       </div>
-      <hr>
       <div v-if="currentResult">
-        <h3>Device Flows:</h3>
-        <div class="table-data">
-          {{ currentResult.data.flowData }}
-        </div>
-        <h3>Supply Device Flow Derivatives (Marginal Cost):</h3>
-        <div class="table-data">
-          {{ currentResult.data.flowDerivsData }}
-        </div>
-        <h3>Total Device Flows:</h3>
-        <div class="table-data">
-          {{ currentResult.data.totalFlowsData }}
-        </div>
-        <h3>Total Supply Device Costs:</h3>
-        <div class="table-data">
-          {{ currentResult.data.totalCostsData }}
-        </div>
+        <v-list-item>
+          <v-list-item-title>Device Flows:</v-list-item-title>
+          <v-list-item-subtitle>
+            <pre class="table-data">{{ currentResult.data.flowData }}</pre>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Supply Device Flow Derivatives (Marginal Cost):</v-list-item-title>
+          <v-list-item-subtitle>
+            <pre class="table-data">{{ currentResult.data.flowDerivsData }}</pre>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Total Device Flows:</v-list-item-title>
+          <v-list-item-subtitle>
+            <pre class="table-data">{{ currentResult.data.totalFlowsData }}</pre>
+          </v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Total Supply Device Costs:</v-list-item-title>
+          <v-list-item-subtitle>
+            <pre class="table-data">{{ currentResult.data.totalCostsData }}</pre>
+          </v-list-item-subtitle>
+        </v-list-item>
       </div>
-      <hr>
     </v-container>
   </v-main>
 </template>

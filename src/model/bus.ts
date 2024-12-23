@@ -31,6 +31,7 @@ export default class Bus implements IBus {
   interval: IntervalTime = DefaultIntervalMinutes;
   startInterval: number = 0;
   startHour: number = 0;
+  title?: string;
 
   private constructor(init: Partial<IBus>) {
     Object.assign(this, init);

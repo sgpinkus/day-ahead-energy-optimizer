@@ -55,6 +55,11 @@ function removeAction(id: string) {
     /* font-size: smaller; */
   }
 
+  .v-snackbar {
+    opacity: 1;
+    background-color: white;
+  }
+
   .my-snacks p:last-child {
     margin-bottom: 0;
   }
