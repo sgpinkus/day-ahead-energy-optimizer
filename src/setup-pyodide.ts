@@ -12,11 +12,13 @@ numdifftools==0.9.41
 device_kit==1.0.7
 `;
 export type Pyodide = any;
+export type SetupPyodideState = 'initial' | 'loading' | 'installing' | 'ready';
 
-export const PyodideLoadStates = {
-  0: 'Loading Pyodide',
-  1: 'Installing dependencies',
-  2: 'Ready',
+export const PyodideLoadStates: Record<SetupPyodideState, string> = {
+  'initial': 'Haven\'t started',
+  'loading': 'Loading Pyodide',
+  'installing': 'Installing dependencies',
+  'ready': 'Pyodide Ready',
 };
 
 // async function loadPyodide(): Promise<Pyodide> {
@@ -35,12 +37,12 @@ export const PyodideLoadStates = {
 // }
 
 export async function setupPyodide(
-  onStateChange: (newStateCode: number, newStateName: string) => any,
+  onStateChange: (newStateCode: SetupPyodideState, newStateName: string) => any,
 ): Promise<Pyodide> {
-  onStateChange(0, PyodideLoadStates[0]);
+  onStateChange('loading', PyodideLoadStates['loading']);
   const pyodide = await loadPyodide({ indexURL: `${basePath}pyodide` });
 
-  onStateChange(1, PyodideLoadStates[1]);
+  onStateChange('installing', PyodideLoadStates['installing']);
   await pyodide.loadPackage('micropip');
   const micropip = pyodide.pyimport('micropip');
 
@@ -61,7 +63,7 @@ export async function setupPyodide(
   // Dev
   // await micropip.install('http://127.0.0.1:8080/device_kit-1.0.5-py3-none-any.whl');
 
-  onStateChange(2, PyodideLoadStates[2]);
+  onStateChange('ready', PyodideLoadStates['ready']);
 
   return pyodide;
 }

@@ -11,9 +11,19 @@ interface props {
   focused?: boolean,
   item: Item,
   icon?: string,
+  title?: string,
+  hasDelete?: boolean,
+  hasEdit?: boolean,
 }
 
-const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
+const {
+  item,
+  focused = false,
+  icon = 'mdi-folder',
+  title,
+  hasDelete = true,
+  hasEdit = true,
+} = defineProps<props>();
 </script>
 
 <template>
@@ -24,9 +34,10 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
     @dblclick.stop="$emit('edit')"
   >
     <div class="d-flex flex-nowrap flex-row">
-      <v-list-item-title>{{ item.title || item.id }}</v-list-item-title>
+      <v-list-item-title>{{ title || item.title || item.id }}</v-list-item-title>
       <span style="flex: 1" />
       <v-btn
+        v-if="hasEdit"
         flat
         density="compact"
         :block="false"
@@ -35,6 +46,7 @@ const { item, focused = false, icon = 'mdi-folder' } = defineProps<props>();
         <v-icon>mdi-pencil</v-icon>
       </v-btn>&nbsp;
       <v-btn
+        v-if="hasDelete"
         flat
         density="compact"
         :block="false"

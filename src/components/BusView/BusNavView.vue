@@ -121,7 +121,7 @@ function importDevice() {
           name="run"
           :params="{ id: bus.id }"
         >
-          Run Optimization
+          Optimization
         </route-name>
       </v-list-item>
     </v-list>

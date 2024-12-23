@@ -9,9 +9,11 @@ import Bus from './bus';
 import { MyName } from './constant';
 import Collection from './collection';
 import { BaseDevice } from './device';
+import type { OptimizationResult } from './optimizationResult';
 
 export { BaseDevice } from './device';
 export { default as Bus } from './bus';
+export { type OptimizationResult } from './optimizationResult';
 export { default as Collection } from './collection';
 
 export class Model {
@@ -22,6 +24,7 @@ export class Model {
   collection: Collection = new Collection();
   collections: Record<string, Collection> = {};
   busses: Record<string, Bus> = {};
+  optimizationResults: Record<string, OptimizationResult> = {};
   devices: Record<string, BaseDevice> = {};
   rail = false;
   focusedDeviceId?: string = undefined;

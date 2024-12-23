@@ -4,7 +4,7 @@ import BusView from '@/components/BusView/BusView.vue';
 import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
-import BusRunView from '@/components/BusRunView.vue';
+import BusRunView from '@/components/BusRunView/BusRunView.vue';
 import { basePath } from '@/config';
 
 const router = createRouter([

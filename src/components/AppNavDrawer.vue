@@ -18,7 +18,7 @@ const navDrawerProps = computed(() => ({
 }));
 
 function login() {
-  null;
+  // null;
 }
 
 // const authUser = computed(() => null);
@@ -29,13 +29,14 @@ function clickOutsideClear() {
   // Hack: Mobile can't press ESC key to deactivate active object. This give them a break out.
   // Means need to carefully stop propagation buttons in the nav we dont want this to happen on -
   // example focus and activate buttons!
-  null;
+  // null;
 }
 </script>
 
 <template>
   <v-navigation-drawer
     v-bind="navDrawerProps"
+    width="300"
     @click="clickOutsideClear"
   >
     <template #prepend>
