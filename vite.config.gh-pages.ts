@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import vuePyodide from './vite-plugin-pyodide';
+import unpluginTypia from '@ryoppippi/unplugin-typia/vite';
 import { basePath } from './src/config';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -18,6 +19,7 @@ export default defineConfig({
     vue(),
     vueJsx(),
     vuePyodide('dist-gh/assets'),
+    unpluginTypia({}),
     viteStaticCopy({
       targets: [
         { src: 'screenshot.png', dest: '.' },
