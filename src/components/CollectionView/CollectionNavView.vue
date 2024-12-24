@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Bus, Collection } from '@/model';
+import model, { Bus, Collection } from '@/model';
 import BusList from './BusList.vue';
 import HubPlus from '@/components/icons/hub-plus';
 import AddDataActionList from '@/components/AddDataActionList.vue';
@@ -26,6 +26,13 @@ function importBus() {
   }
 }
 
+/**
+ * TODO: This resets everything since collections aren't implemented yet.
+ */
+function reset() {
+  model.reset();
+}
+
 </script>
 
 <template>
@@ -37,7 +44,7 @@ function importBus() {
   <v-divider />
   <v-list-item
     prepend-icon="mdi-refresh"
-    @click="collection.reset()"
+    @click="reset"
   >
     Reset DB
   </v-list-item>
