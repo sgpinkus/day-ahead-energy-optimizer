@@ -16,11 +16,11 @@ const showObjectList = ref(false);
       :append-icon="showObjectList ? 'mdi-chevron-up' : 'mdi-chevron-down'"
       @click="showObjectList = !showObjectList"
     >
-      <v-list-item-title>Data ({{ datums.length || 0 }})</v-list-item-title>
+      <v-list-item-title>
+        Datasets ({{ datums.length || 0 }})
+      </v-list-item-title>
     </v-list-item>
     <v-divider />
-    <!-- <template v-if='showObjectList && datums.length'>
-    </template> -->
   </v-list>
 </template>
 

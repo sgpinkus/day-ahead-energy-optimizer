@@ -53,6 +53,12 @@ const addTypes: TypeSpec[] = [
           :prepend-icon="spec.icon"
           @click="bus.addType(spec.type);"
         />
+        <v-list-item
+          v-tooltip="'not implemented yet'"
+          title="Thermal Load Device"
+          disabled
+          :prepend-icon="CellPlus"
+        />
       </v-list>
     </v-list-group>
   </v-list>

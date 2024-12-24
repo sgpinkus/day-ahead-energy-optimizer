@@ -129,10 +129,6 @@ function importDevice() {
     <AddDeviceActionList :bus="bus" />
     <v-divider />
     <BusDeviceList :bus="bus" />
-    <!-- <v-divider></v-divider>
-    <AddDataActionList></AddDataActionList>
-    <v-divider></v-divider>
-    <DatumList></DatumList> -->
   </v-list>
 </template>
 

@@ -2,6 +2,8 @@
 import { Bus, Collection } from '@/model';
 import BusList from './BusList.vue';
 import HubPlus from '@/components/icons/hub-plus';
+import AddDataActionList from '@/components/AddDataActionList.vue';
+import DatumList from '@/components/DatumList.vue';
 import { useTemplateRef } from 'vue';
 import { ValidationError } from '@/errors';
 
@@ -62,6 +64,10 @@ function importBus() {
   />
   <v-divider />
   <BusList :collection="collection" />
+  <v-divider />
+  <AddDataActionList />
+  <v-divider />
+  <DatumList />
 </template>
 
 <style scoped>
