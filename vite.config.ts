@@ -22,6 +22,13 @@ export const config = {
     },
   },
   base: basePath,
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      keep_classnames: true,
+      keep_fnames: true,
+    },
+  },
 };
 
 export default defineConfig(config);

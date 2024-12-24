@@ -40,11 +40,13 @@ const allowedClassNames = [
   'FixedLoadDevice',
   'Collection',
   'Bus',
+  '_Bus', // Compiler refuses not to change this name even with minify off. But Bus.constructor.name is still 'Bus' so can't use that either ..
   'Messages',
   'Model',
 ];
 
 function replacer(k: string, v: any) {
+  // if (v instanceof Object) { console.log(k, v.constructor.name, allowedClassNames.includes(v.constructor.name), toRaw(v)); }
   if (v instanceof Object && allowedClassNames.includes(v.constructor.name)) {
     v.__CLASS__ = v.constructor.name;
     const _class = eval(v.__CLASS__);
