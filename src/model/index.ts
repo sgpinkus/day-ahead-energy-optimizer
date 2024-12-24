@@ -68,12 +68,14 @@ function fromLocalStorage() {
   if (data) {
     try {
       return jsonParse(data);
-    } catch {
-      // null;
+    } catch (e) {
+      console.error(e);
     }
   }
   const model = new Model();
-  if (data) model.messages.addAlert({ message: 'Error parsing model stashed in local storage. No salvage is attempted. Resetting data!', type: 'error' });
+  if (data) { // If here with data means couldn't parse it.
+    model.messages.addAlert({ message: 'Error parsing model stashed in local storage. No salvage is attempted. Resetting data!', type: 'error' });
+  }
   console.log(data);
   return new Model();
 }
