@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import model, { Bus, Collection } from '@/model';
 import BusList from './BusList.vue';
 import HubPlus from '@/components/icons/hub-plus';

@@ -1,11 +1,10 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import { computed, defineProps, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';
 import MyNumberTextField from '@/components/components/MyNumberTextField';
-
 
 const costKey = 'peak_flow';
 const title = 'Peak Flow Cost';
@@ -15,11 +14,11 @@ const { device } = defineProps<{
 }>();
 
 function unSet() {
-  device.costs.setPeakFlowCost(undefined);  
+  device.costs.setPeakFlowCost(undefined);
 }
 
 function set() {
-  device.costs.setPeakFlowCost([0,0,0]);  
+  device.costs.setPeakFlowCost([0,0,0]);
 }
 
 const tableValueSpec = [
@@ -49,9 +48,6 @@ watch(() => device.costs[costKey], () => {
 }, {
   immediate: true,
 });
-
-
-
 
 </script>
 

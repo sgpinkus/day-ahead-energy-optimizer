@@ -35,7 +35,6 @@
     "vuetify": "^3.7.6"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.8.0",
     "@ryoppippi/unplugin-typia": "^1.1.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/d3": "^7.4.3",

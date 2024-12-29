@@ -6,7 +6,6 @@ import PlotView from '@/components/components/PlotView.vue';
 import { boundsRelativeQuadratic, linspace } from '@/utils';
 import MyNumberTextField from '@/components/components/MyNumberTextField';
 
-
 const costKey = 'cumulative_flow_bounds_relative';
 const title = 'Cumulative Bounds Relative Flow Costs';
 
@@ -15,11 +14,11 @@ const { device } = defineProps<{
 }>();
 
 function unSet() {
-  device.costs.setPeakCumulativeFlowBoundsRelativeCost(undefined);  
+  device.costs.setPeakCumulativeFlowBoundsRelativeCost(undefined);
 }
 
 function set() {
-  device.costs.setPeakCumulativeFlowBoundsRelativeCost([0,0]);  
+  device.costs.setPeakCumulativeFlowBoundsRelativeCost([0,0]);
 }
 
 const tableValueSpec = [
