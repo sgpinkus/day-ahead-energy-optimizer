@@ -3,8 +3,12 @@ import { assertEquals } from 'typia';
 
 type RunRange<X> = [X, [number, number]]
 
-export interface IRunSpec<X> {
+export interface IRunSpecData<X> {
+  readonly runs: Record<number, X>;
   readonly basis: number;
+}
+
+export interface IRunSpec<X> extends IRunSpecData<X> {
   get length(): number;
   get ranges(): RunRange<X>[];
   set(i: number, v: X): void;
@@ -34,12 +38,18 @@ export interface IAllRunSpec {
  */
 export class RunSpec<X> implements IRunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
-  runs: Record<number, X> = {};
+  public readonly runs: Record<number, X> = {};
   constructor(
     public readonly basis: number,
     zerothValue: X,
+    options = { fill: false },
   ) {
     this.runs[0] = zerothValue;
+    if (options.fill) {
+      for (let i = 1; i < this.basis; i++) {
+      this.runs[i] = zerothValue;
+      }
+    }
   }
 
   get length() {
@@ -98,10 +108,10 @@ export class RunSpec<X> implements IRunSpec<X> {
 
   split(i: number) {
     // eslint-disable-next-line prefer-const
-    let [a, b] = Object.keys(this.runs).map(i => +i).slice(i, i+2);
+    let [a, b] = Object.keys(this.runs).map(i => +i).slice(i, i + 2);
     b = b || this.basis - 1;
     if (a === undefined || b - a <= 1) return;
-    this.set(Math.floor(a + (b-a)/2), this.get(a));
+    this.set(Math.floor(a + (b - a) / 2), this.get(a));
   }
 
   /**
@@ -130,7 +140,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   toRanges(): RunRange<X>[] {
     const entries = Object.entries(this.runs);
     return entries.map(([k, v], i) => {
-      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i+1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
+      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i + 1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
     });
   }
 
@@ -180,13 +190,13 @@ export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunS
   set(i: number, v: number) {
     this.assertIndexBounds(i);
     if (this.hardBounds && (v < this.hardBounds[0])) {
-        if (!this.coerce) throw new RangeError('value out of bounds');
-        v = this.hardBounds[0];
-      }
-      if (this.hardBounds && v > this.hardBounds[1]) {
-        if (!this.coerce) throw new RangeError('value out of bounds');
-        v = this.hardBounds[1];
-      }
+      if (!this.coerce) throw new RangeError('value out of bounds');
+      v = this.hardBounds[0];
+    }
+    if (this.hardBounds && v > this.hardBounds[1]) {
+      if (!this.coerce) throw new RangeError('value out of bounds');
+      v = this.hardBounds[1];
+    }
     this.runs[i] = v;
   }
 
@@ -203,7 +213,7 @@ export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunS
 export class BoundsRunSpec extends RunSpec<[number, number]> implements IBoundedNumberRunSpec<[number, number]> {
   constructor(
     public readonly basis: number,
-    zerothValue: [number, number] = [0,0],
+    zerothValue: [number, number] = [0, 0],
     public readonly hardBounds?: [number, number],
     public readonly coerce = true,
   ) {
@@ -213,17 +223,17 @@ export class BoundsRunSpec extends RunSpec<[number, number]> implements IBounded
   set(i: number, v: [number, number]) {
     this.assertIndexBounds(i);
     if (this.hardBounds) {
-        if (v.some((_v) => (_v < this.hardBounds![0] || _v > this.hardBounds![1]))) {
-          if (!this.coerce) throw new RangeError('value out of bounds');
-          v = v.map(_v => Math.max(Math.min(_v, this.hardBounds![1]), this.hardBounds![0])) as [number, number];
-        }
-      }
-      if (v[1] < v[0]) {
-        // This results in asymmetric behaviour when only one of L, H is changed, but good enough.
+      if (v.some((_v) => (_v < this.hardBounds![0] || _v > this.hardBounds![1]))) {
         if (!this.coerce) throw new RangeError('value out of bounds');
-        v[0] = Math.min(...v);
-        v[1] = Math.max(...v);
+        v = v.map(_v => Math.max(Math.min(_v, this.hardBounds![1]), this.hardBounds![0])) as [number, number];
       }
+    }
+    if (v[1] < v[0]) {
+      // This results in asymmetric behaviour when only one of L, H is changed, but good enough.
+      if (!this.coerce) throw new RangeError('value out of bounds');
+      v[0] = Math.min(...v);
+      v[1] = Math.max(...v);
+    }
     this.runs[i] = v;
   }
 }
@@ -251,6 +261,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
     public readonly hardBounds?: [number, number],
   ) {
   }
+  readonly runs: Record<number, number> = {};
 
   get basis(): number {
     return this.runSpec.basis;
@@ -311,7 +322,7 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
   // TODO: This should be copy of self.
   copy(): IRunSpec<number> {
     const newRunSpec = new RunSpec<number>(this.basis, 0);
-    newRunSpec.runs = this.toRecord();
+    (newRunSpec.runs as any) = this.toRecord();
     return newRunSpec;
   }
 }
@@ -321,11 +332,11 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
  */
 export class PolyToNumberRunSpecAdaptor extends NumberRunSpecAdaptor<number[]> {
   polyToNumber(p: number[], x = 1): number {
-    return p.map((v, k) => v*(x**k)).reduce((a, b) => a + b, 0);
+    return p.map((v, k) => v * (x ** k)).reduce((a, b) => a + b, 0);
   }
 
   numberToPoly(x: number, order: number) {
-    return Array.from(Array(order)).map(() => x*0);
+    return Array.from(Array(order)).map(() => x * 0);
   }
 
   constructor(
@@ -337,7 +348,86 @@ export class PolyToNumberRunSpecAdaptor extends NumberRunSpecAdaptor<number[]> {
 
 export class NumberRunSpecInverter extends NumberRunSpecAdaptor<number> {
   constructor(runSpec: IRunSpec<number>) {
-    super(runSpec, (x: number) => -1*x, (x: number) => -1*x);
+    super(runSpec, (x: number) => -1 * x, (x: number) => -1 * x);
   }
 }
+
+/**
+ * Proxy exposing a IRunSpec<Y> given a IRunSpec<X>.
+ */
+export class XYRunSpecAdaptor<X, Y> implements IBoundedNumberRunSpec<Y> {
+
+  constructor(
+    public readonly runSpec: IRunSpec<X>,
+    public readonly xToY: (x: X) => Y,
+    public readonly ytoX: (y: Y, i: number) => X,
+    public readonly hardBounds?: [number, number],
+  ) {
+  }
+  readonly runs: Record<number, Y> = {};
+
+  get basis(): number {
+    return this.runSpec.basis;
+  }
+
+  get length(): number {
+    return this.runSpec.length;
+  }
+
+  get ranges() {
+    return this.toRanges();
+  }
+
+  set(i: number, v: Y) {
+    this.runSpec.set(i, this.ytoX(v, i));
+  }
+
+  unset(i: number) {
+    this.runSpec.unset(i);
+  }
+
+  unsetIndex(i: number): void {
+    this.runSpec.unsetIndex(i);
+  }
+
+  unsetRange(s: number, e: number) {
+    this.runSpec.unsetRange(s, e);
+  }
+
+  get(i: number) {
+    return this.xToY(this.runSpec.get(i));
+  }
+
+  getRun(i: number): [number, number] {
+    return this.runSpec.getRun(i);
+  }
+
+  split(i: number) {
+    return this.runSpec.split(i);
+  }
+
+  move(i: number, newStart: number) {
+    return this.runSpec.move(i, newStart);
+  }
+
+  toRecord(): Record<number, Y> {
+    return mapValues(this.runSpec.toRecord(), (v) => this.xToY(v));
+  }
+
+  toArray() {
+    return this.runSpec.toArray().map((v) => this.xToY(v));
+  }
+
+  toRanges(): RunRange<Y>[] {
+    return this.runSpec.toRanges().map(([v, range]) => ([this.xToY(v), range]));
+  }
+
+  // TODO: This should be copy of self.
+  copy(): IRunSpec<Y> {
+    const newRunSpec = new RunSpec<Y>(this.basis, this.get(0));
+    (newRunSpec.runs as any) = this.toRecord();
+    return newRunSpec;
+  }
+}
+
 

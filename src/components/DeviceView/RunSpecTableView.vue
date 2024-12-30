@@ -22,7 +22,7 @@ const { runSpec, valueSpec, focusable = false, initialRowSelected = true } = def
   initialRowSelected?: boolean,
 }>();
 
-const emit = defineEmits(['rowSelected']);
+const emit = defineEmits(['rowSelected', 'unset', 'split', 'move', 'set', 'change']);
 
 // Just edit directly instead of a copy..
 const ranges = computed(() =>  runSpec.toRanges().map(v => ({ value: v[0], range: v[1] })));
@@ -33,28 +33,37 @@ const tableKeys = computed(() => {
 
 const focusedRow: Ref<number | null> = ref(null);
 
-function unsetIndex(i: number) {
-  runSpec.unsetIndex(i);
-}
-
-function splitIndex(i: number) {
-  runSpec.split(i);
-}
-
-function move(i: number, newStart: any) {
-  runSpec.move(i, newStart);
-}
-
 function setNumber(i: number, oldValue: number[], j: number, v: number) {
   const newValue = [...oldValue];
   newValue[j] = Number(v);
   runSpec.set(i, newValue);
+  emit('set', i, newValue);
+  emit('change');
+}
+
+function unsetIndex(i: number) {
+  runSpec.unsetIndex(i);
+  emit('unset', i);
+  emit('change');
+}
+
+function splitIndex(i: number) {
+  runSpec.split(i);
+  emit('split', i);
+  emit('change');
+}
+
+function move(i: number, newStart: any) {
+  runSpec.move(i, newStart);
+  emit('move', i, newStart);
+  emit('change');
 }
 
 function setFocused(i: number | null) {
   if (!focusable) return;
   focusedRow.value = i;
   emit('rowSelected', i);
+  emit('change');
 }
 
 onMounted(() => {
