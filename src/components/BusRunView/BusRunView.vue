@@ -85,6 +85,7 @@ function run() {
     .catch((e: any) => {
       optimizationStateMessage.value = 'Error: ' + e?.message;
       optimizationStateCode.value = 'error';
+      console.error(e);
     });
   }, 100);
 }
