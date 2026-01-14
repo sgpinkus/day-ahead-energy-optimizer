@@ -14,10 +14,10 @@ export default defineComponent({
 <template>
   <v-container fluid>
     <h1>About</h1>
-    <ul>
+    <dl>
       <dt>web-version</dt><dd>{{ webVersion }}</dd><br>
       <!-- <dt>api-version</dt><dd>{{ model.connection.apiVersion?.version || 'unknown' }}</dd> -->
-    </ul>
+    </dl>
   </v-container>
 </template>
 

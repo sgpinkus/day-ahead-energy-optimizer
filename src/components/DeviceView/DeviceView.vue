@@ -10,7 +10,7 @@ import DeviceCFlowCostsView from './DeviceCostsCFlowView.vue';
 import DevicePFlowCostsView from './DeviceCostsPFlowView.vue';
 import DeviceCostsBoundsRelativeFlow from './DeviceCostsBoundsRelativeFlow.vue';
 import DeviceCostsCBoundsRelativeFlow from './DeviceCostsCBoundsRelativeFlow.vue';
-import DeviceParametersView from './DeviceParametersView.vue';
+import DeviceParametersView from './DeviceParametersView/DeviceParametersView.vue';
 import model from '@/model';
 import type { ICosts } from '@/model/device';
 import { NotFoundError } from '@/errors';

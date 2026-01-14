@@ -18,6 +18,11 @@ const addTypes: TypeSpec[] = [
     type: 'load',
   },
   {
+    title: 'Fixed Load Device',
+    icon: CellPlus,
+    type: 'fixed_load',
+  },
+  {
     title: 'Supply Device',
     icon: CellPlus,
     type: 'supply',
@@ -28,9 +33,9 @@ const addTypes: TypeSpec[] = [
     type: 'storage',
   },
   {
-    title: 'Fixed Load Device',
+    title: 'Thermal Load Device',
     icon: CellPlus,
-    type: 'fixed_load',
+    type: 'thermal_load',
   },
 ];
 
@@ -39,11 +44,20 @@ const addTypes: TypeSpec[] = [
   <v-list class="flex-shrink-0">
     <v-list-group>
       <template #activator="{ props }">
-        <v-list-item v-bind="props" :prepend-icon="CellPlus" title="Add Device" />
+        <v-list-item
+          v-bind="props"
+          :prepend-icon="CellPlus"
+          title="Add Device"
+        />
       </template>
       <v-list class="item-list">
-        <v-list-item v-for="spec in addTypes" :key="spec.type" :title="spec.title" :prepend-icon="spec.icon" @click="bus.addType(spec.type);" />
-        <v-list-item v-tooltip="'not implemented yet'" title="Thermal Load Device" disabled :prepend-icon="CellPlus" />
+        <v-list-item
+          v-for="spec in addTypes"
+          :key="spec.type"
+          :title="spec.title"
+          :prepend-icon="spec.icon"
+          @click="bus.addType(spec.type)"
+        />
       </v-list>
     </v-list-group>
   </v-list>

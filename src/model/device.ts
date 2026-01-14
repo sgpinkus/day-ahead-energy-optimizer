@@ -11,7 +11,7 @@ import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
 import { cloneDeep, pick } from 'lodash';
 import { assertEquals } from 'typia';
 
-export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage';
+export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage' | 'thermal_load';
 
 // This is just a scrappt adhoc collection of meta data for things -
 // mostly hints to render the given device type in generic device views.
@@ -66,8 +66,6 @@ export class DeviceCosts implements ICosts {
   }
 }
 
-
-
 export interface ILoadDevice extends IBaseDevice {
   type: 'load',
 }
@@ -87,7 +85,12 @@ export interface IFixedLoadDevice extends IBaseDevice {
   type: 'fixed_load';
 }
 
-export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice;
+export interface IThermalLoadDevice extends IBaseDevice {
+  type: 'thermal_load';
+}
+
+
+export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice | IThermalLoadDevice;
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
@@ -115,7 +118,7 @@ export interface IBaseDevice {
   tags?: Record<string, boolean | number | string>,
   color?: string,
   shape?: string,
-  parameters?: Record<string, boolean | number | string | (boolean | number | string)[]>,
+  parameters?: Record<string, any>;
 }
 
 export abstract class BaseDevice implements IBaseDevice {
@@ -133,7 +136,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly tags: Record<string, boolean | number | string> = {};
   readonly color?: string;
   readonly shape?: string;
-  readonly parameters: Record<string, boolean | number | string | (boolean | number | string)[]> = {};
+  readonly parameters: Record<string, any> = {};
 
   constructor() {
     this.id = uuid();
@@ -182,7 +185,7 @@ export class FixedLoadDevice extends BaseDevice {
   description = 'A fixed load device';
   color = '#A9A9A9';
   hardBounds: [number, number] = [0, BigNumber];
-  bounds = new FixedBoundsRunSpec(DefaultBasis, [0,0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
+  bounds = new FixedBoundsRunSpec(DefaultBasis, [0, 0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
   attrs: IAttributes = {
     hideCosts: true,
     hideCBounds: true,
@@ -254,10 +257,39 @@ export class StorageDevice extends BaseDevice {
   };
 }
 
-// export class ThermalDevice extends BaseDevice {
-// ...
-// }
+export interface IThemalLoadParameters {
+  desiredTemperature: number,
+  initialTemperature: number,
+  thermalSustainment: number,
+  efficiencyFactor: number,
+  externalTemperatureProfile: number[], // IRunSpecData<number>,
+  temperatureVariationCareFactor: RunSpec<number>, // IRunSpecData<number>,
+}
 
+
+export class ThermalLoadDevice extends BaseDevice {
+  type: DeviceType = 'thermal_load';
+  basis = DefaultBasis;
+  shape = 'circle';
+  title = 'Thermal Load';
+  description = 'A thermal load device';
+  color = '#00FFFF';
+  hardBounds: [number, number] = [0, BigNumber];
+  bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
+  attrs: IAttributes = {
+    hideCBounds: true,
+    hideCosts: true,
+    hasParameters: true,
+  };
+  parameters: IThemalLoadParameters = {
+    desiredTemperature: 23,
+    thermalSustainment: 0.95,
+    efficiencyFactor: 2.5,
+    initialTemperature: 10,
+    externalTemperatureProfile: Array.from(Array(DefaultBasis)).map(() => 23),
+    temperatureVariationCareFactor: new RunSpec<number>(DefaultBasis, 1),
+  };
+}
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
 
 export function deviceFactory(data: { type: DeviceType }): Device {
@@ -266,6 +298,7 @@ export function deviceFactory(data: { type: DeviceType }): Device {
     case 'supply': return new SupplyDevice();
     case 'fixed_load': return new FixedLoadDevice();
     case 'storage': return new StorageDevice();
+    case 'thermal_load': return new ThermalLoadDevice();
     default: throw new Error(`Unknown device type [data=${data}]`);
   }
 }

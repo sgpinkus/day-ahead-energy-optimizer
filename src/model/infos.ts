@@ -20,6 +20,11 @@ export const info = {
     This is because "price" represents marginal utility cost.`,
   ChargeRateClippingFactor: `Linear clipping factor. Battery max charge rate tends to decrease as state of charge approaches capacity. ${clippingFactor}.`,
   DischargeRateClippingFactor: `Linear clipping factor. Battery max discharge rate tends to decrease as state of charge approaches 0. ${clippingFactor}.`,
+  ThermalSustainmentFactor: 'How good a thermal mass is at retaining heat. 1 means perfect, 0 means internal temperature will match external temperature byt next time step.',
+  ThermalEfficiencyFactor: 'Same as Coefficient of Performance but this number is assumed to include the (assumed temperature constant) conversion rate to degrees Celcius (which will depend on the size of a thermal mass and the type of mass itself).',
+  InitiaTemperature: 'The temperature of the thermal mass at start time.',
+  TemperatureRangeCareFactor: 'The cost gradient (price) is 1 when the actual temperature is this number away from desired temperature. If you dont care about the temperature at a given time set this to a very high number (100 mean practically dont care.',
+  ExternalTemperature: 'The temperature outside',
   '': '',
 };
 

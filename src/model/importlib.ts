@@ -18,6 +18,7 @@ import {
   StorageDevice,
   SupplyDevice,
   FixedLoadDevice,
+  ThermalLoadDevice,
 } from './device';
 import Collection from './collection';
 import Bus from './bus';
@@ -38,6 +39,7 @@ const allowedClassNames = [
   'StorageDevice',
   'SupplyDevice',
   'FixedLoadDevice',
+  'ThermalLoadDevice',
   'Collection',
   'Bus',
   '_Bus', // Compiler refuses not to change this name even with minify off. But Bus.constructor.name is still 'Bus' so can't use that either ..
