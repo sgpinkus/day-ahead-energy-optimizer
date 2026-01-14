@@ -5,7 +5,7 @@ import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
 
 export default typescriptEslint.config(
-  { ignores: ['*.d.ts', '**/coverage', '**/dist'] },
+  { ignores: ['*.d.ts', '**/coverage', '**/dist', "dist*", "public/"] },
   {
     extends: [
       eslint.configs.recommended,
@@ -31,7 +31,7 @@ export default typescriptEslint.config(
       'no-console': 0,
       'linebreak-style': 0,
       'react/no-unescaped-entities': 0,
-      'quotes': [ 'error', 'single', { avoidEscape: true, allowTemplateLiterals: true } ],
+      'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
       'semi': ['error', 'always'],
       'semi-spacing': 'error',
       'spaced-comment': ['warn', 'always'],
