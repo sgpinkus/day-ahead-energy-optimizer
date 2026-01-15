@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, UserConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import vuePyodide from './vite-plugin-pyodide';
@@ -7,7 +7,7 @@ import unpluginTypia from '@ryoppippi/unplugin-typia/vite';
 import { basePath } from './src/config';
 
 // https://vitejs.dev/config/
-export const config = {
+export const config: UserConfig = {
   optimizeDeps: { exclude: ['pyodide'] },
   plugins: [
     vue(),

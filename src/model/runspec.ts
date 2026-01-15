@@ -47,7 +47,7 @@ export class RunSpec<X> implements IRunSpec<X> {
     this.runs[0] = zerothValue;
     if (options.fill) {
       for (let i = 1; i < this.basis; i++) {
-      this.runs[i] = zerothValue;
+        this.runs[i] = zerothValue;
       }
     }
   }
@@ -89,7 +89,7 @@ export class RunSpec<X> implements IRunSpec<X> {
       if (Number(k) <= i) v = x;
       if (Number(k) > i) break;
     }
-    return v;
+    return v!;
   }
 
   /**
@@ -140,7 +140,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   toRanges(): RunRange<X>[] {
     const entries = Object.entries(this.runs);
     return entries.map(([k, v], i) => {
-      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i + 1][0]) - 1]] : [v, [Number(k), this.basis - 1]];
+      return i < (entries.length - 1) ? [v, [Number(k), Number(entries[i + 1]![0]) - 1]] : [v, [Number(k), this.basis - 1]];
     });
   }
 
@@ -429,5 +429,3 @@ export class XYRunSpecAdaptor<X, Y> implements IBoundedNumberRunSpec<Y> {
     return newRunSpec;
   }
 }
-
-

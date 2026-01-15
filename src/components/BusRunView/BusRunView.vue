@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, type Ref, watch } from 'vue';
+import { onMounted, ref, computed, type Ref } from 'vue';
 import { getPyodide, pyodideLoadingStateCode, pyodideLoadingStateMessage } from '@/pyodide';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import RunList from './RunList.vue';
@@ -23,7 +23,7 @@ const currentResult: Ref<OptimizationResult | undefined> = computed(() => model.
 
 const blobUrl = ref('');
 function exportModel() {
-  const data = jsonStringify(bus.toExportObject());
+  const data = jsonStringify(bus!.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
   blobUrl.value = URL.createObjectURL(blob);
 }
@@ -57,7 +57,7 @@ function newOptimizationResult(bus: Bus, data: OptimizationResult['data']) {
 
 async function _run() {
   const pyodide = await getPyodide();
-  const modelExport = bus.toExportObject();
+  const modelExport = bus!.toExportObject();
   const load = pyodide.runPython(loadScript);
   const solve = pyodide.runPython(solveScript);
   const plots = pyodide.runPython(plotsScript);
@@ -69,7 +69,7 @@ async function _run() {
   if (solveMeta.success) {
     const [flowData, totalFlowsData, totalCostsData, flowDerivsData] = tables(deviceset, x);
     const [plot1Image, plot2Image] = plots(deviceset, x);
-    newOptimizationResult(bus,  { flowData, totalFlowsData, totalCostsData, flowDerivsData, plot1Image, plot2Image });
+    newOptimizationResult(bus!,  { flowData, totalFlowsData, totalCostsData, flowDerivsData, plot1Image, plot2Image });
   }
 }
 
@@ -213,5 +213,3 @@ onMounted(() => {
     margin: 1em auto;
   }
 </style>
-
-

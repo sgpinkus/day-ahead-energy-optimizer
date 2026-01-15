@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, defineProps } from 'vue';
+import { ref } from 'vue';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import DeviceDescriptorsView from './DeviceDescriptorsView.vue';
 import DeviceBoundsView from './DeviceBoundsView.vue';
@@ -30,7 +30,7 @@ function exportModel() {
 }
 
 function boundsView() {
-  switch (device.type) {
+  switch (device!.type) {
     case 'fixed_load':
       return FixedDeviceBoundsView;
     default:
@@ -39,7 +39,7 @@ function boundsView() {
 }
 
 function costStatusIcon(type: keyof ICosts) {
-  return device.costs[type] ? 'mdi-checkbox-outline' : '-';
+  return device!.costs[type] ? 'mdi-checkbox-outline' : '-';
 }
 
 </script>
@@ -48,7 +48,7 @@ function costStatusIcon(type: keyof ICosts) {
   <AppNavDrawer>
     <route-name
       name="bus"
-      :params="{ id: device.busId }"
+      :params="{ id: device.busId || '' }"
     >
       <v-list-item prepend-icon="mdi-arrow-left">
         Bus

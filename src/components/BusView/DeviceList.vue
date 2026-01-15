@@ -4,12 +4,13 @@ import { values } from 'lodash';
 import model, { Bus } from '@/model';
 import router from '@/router';
 import DeviceListItem from '../components/MyListItem.vue';
+import type { DeviceType } from '@/model/device';
 
 const { bus } = defineProps<{ bus: Bus }>();
 
 const items = computed(() => values(bus.devices));
 
-const icons = {
+const icons: Partial<Record<DeviceType, string>> = {
   load: 'mdi-cellphone-settings',
   supply: 'mdi-generator-stationary',
   storage: 'mdi-battery-charging',
