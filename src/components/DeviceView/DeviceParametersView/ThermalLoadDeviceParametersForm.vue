@@ -46,7 +46,7 @@ async function update() { // change(changeKey: string)
 }
 
 function externalTemperatureProfileUpdate(index: number, newValue: number) {
-  device.parameters.externalTemperatureProfile[index] = newValue; // eslint-disable-line vue/no-mutating-props
+  device.parameters.externalTemperatureProfile[index] = Number(newValue); // eslint-disable-line vue/no-mutating-props
 }
 
 onMounted(() => {
