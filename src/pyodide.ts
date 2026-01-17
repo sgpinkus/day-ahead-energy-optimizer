@@ -1,4 +1,8 @@
 
+/**
+ * Reactive wrapper over setup-pyodide.
+ */
+
 import { setupPyodide, type Pyodide, type SetupPyodideState } from '@/setup-pyodide';
 import { ref, type Ref } from 'vue';
 
