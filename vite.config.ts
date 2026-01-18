@@ -11,6 +11,10 @@ export default defineConfig(({ command }) => {
   const config = command === 'serve' ? './src/config.dev.ts' : './src/config.prod.ts';
   console.info(`Using config file ${config}`);
   return {
+    define: {
+      __APP_VERSION__: JSON.stringify('v0.0.1'),
+      __BUILD_COMMAND__: command,
+    },
     optimizeDeps: { exclude: ['pyodide'] },
     css: {
       preprocessorOptions: {

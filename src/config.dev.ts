@@ -1,4 +1,4 @@
-export const basePath = '/day-ahead-energy-planner/';
+export const basePath = '/day-ahead-energy-optimizer/';
 export const venvRequirementsTxt = `
 async-timeout==4.0.3
 coloredlogs==15.0.1

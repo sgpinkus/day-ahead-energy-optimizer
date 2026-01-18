@@ -1,14 +1,8 @@
-<script lang='ts'>
-import { defineComponent } from 'vue';
+<script lang='ts' setup>
 import { version as webVersion } from '@package';
 
-export default defineComponent({
-  data(): any {
-    return {
-      webVersion,
-    };
-  },
-});
+const build = import.meta.env.__BUILD_COMMAND__ || 'unknown';
+
 </script>
 
 <template>
@@ -16,6 +10,7 @@ export default defineComponent({
     <h1>About</h1>
     <dl>
       <dt>web-version</dt><dd>{{ webVersion }}</dd><br>
+      <dt>biuld</dt><dd>{{ build }}</dd><br>
       <!-- <dt>api-version</dt><dd>{{ model.connection.apiVersion?.version || 'unknown' }}</dd> -->
     </dl>
   </v-container>

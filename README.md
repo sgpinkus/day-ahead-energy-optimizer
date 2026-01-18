@@ -1,4 +1,3 @@
-# DAY AHEAD ENERGY PLANNER
+# DAY AHEAD ENERGY OPTIMIZER
 
-<a href="https://sgpinkus.github.io/day-ahead-energy-planner/"><img src='./screenshot.png' /></a>
-
+<a href="https://sgpinkus.github.io/day-ahead-energy-optimizer/"><img src='./screenshot.png' /></a>
