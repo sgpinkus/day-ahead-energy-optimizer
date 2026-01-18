@@ -1,5 +1,5 @@
 import { loadPyodide } from 'pyodide';
-import { basePath, venvRequirementsTxt, venvRequirementsUrls } from '@/config';
+import { basePath, venvRequirementsTxt, venvRequirementsUrls } from '@config';
 
 export type Pyodide = any;
 export type SetupPyodideState = 'initial' | 'loading' | 'installing' | 'ready' | 'error';

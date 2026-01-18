@@ -6,7 +6,7 @@ import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
 import BusRunView from '@/components/BusRunView/BusRunView.vue';
 import DocsView from '@/components/DocsView/DocsView.vue';
-import { basePath } from '@/config';
+import { basePath } from '@config';
 
 const router = createRouter([
   {

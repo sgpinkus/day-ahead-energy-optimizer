@@ -20,7 +20,10 @@
       ],
       "@package": [
         "./package.json"
-      ]
+      ],
+      "@config": [
+        "./src/config",
+      ],
     },
     "plugins": [
       {
