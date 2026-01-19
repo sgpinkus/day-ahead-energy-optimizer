@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constant';
 import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
 import { cloneDeep, pick } from 'lodash';
-import { assertEquals } from 'typia';
+import { assertEqualsDeviceCosts, assertEqualsIBaseDevice } from '@/typia';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage' | 'thermal_load';
 
@@ -59,7 +59,7 @@ export class DeviceCosts implements ICosts {
   }
 
   static reviver(data: unknown) {
-    assertEquals<DeviceCosts>(data);
+    assertEqualsDeviceCosts(data);
     const o = new this();
     Object.assign(o, data);
     return o;
@@ -171,7 +171,7 @@ export abstract class BaseDevice implements IBaseDevice {
   static reviver(data: unknown) {
     // @ts-expect-error 2511 "Cannot create an instance of an abstract class" Yeah, but that's not what this does.
     const o = new this();
-    assertEquals<IBaseDevice>(data);
+    assertEqualsIBaseDevice(data);
     Object.assign(o, data);
     return o;
   }

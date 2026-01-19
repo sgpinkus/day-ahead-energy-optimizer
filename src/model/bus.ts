@@ -4,7 +4,7 @@ import { DefaultBasis, DefaultIntervalMinutes } from './constant';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 import { jsonParse } from './importlib';
-import typia from 'typia';
+import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 
 type IntervalTime = 1 | 2 | 3 | 4 | 5 | 6 | 10 | 15 | 20 | 30 | 60;
 
@@ -46,7 +46,7 @@ export default class Bus implements IBus {
   }
 
   get startTime() {
-    return `${String(this.startHour%24).padStart(2, '0')}:${String((this.startInterval*this.interval)%60).padStart(2, '0')}`;
+    return `${String(this.startHour % 24).padStart(2, '0')}:${String((this.startInterval * this.interval) % 60).padStart(2, '0')}`;
   }
 
   add(device: BaseDevice) {
@@ -93,7 +93,7 @@ export default class Bus implements IBus {
    * @see toExportObject.
    */
   static fromExportObject(data: unknown): Bus {
-    const o = typia.assertEquals<IBusExport>(jsonParse(data));
+    const o = assertEqualsIBusExport(jsonParse(data));
     const bus = new Bus(o);
     (o.devices || []).forEach((device) => {
       (device as any).id = uuid();
@@ -103,8 +103,8 @@ export default class Bus implements IBus {
   }
 
   static reviver(data: unknown) {
-    const _data = typia.assertEquals<IBus>(data);
+    const _data = assertEqualsIBus(data);
     const bus = new this(_data);
     return bus;
   }
- }
+}

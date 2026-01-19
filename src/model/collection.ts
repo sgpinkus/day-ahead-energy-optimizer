@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import model from '@/model';
 import Bus from './bus';
 import { values } from 'lodash';
-import { assertEquals } from 'typia';
+import { assertEqualsIdentified } from '@/typia';
 
 export default class Collection {
   static readonly MaxItems = 100;
@@ -42,7 +42,7 @@ export default class Collection {
   }
 
   static reviver(data: unknown) {
-    const _data = assertEquals<{ id: string }>(data);
+    const _data = assertEqualsIdentified(data);
     return new this(_data.id);
   }
 }

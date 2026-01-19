@@ -8,7 +8,8 @@
   ],
   "exclude": [
     "src/**/test.ts",
-    "src/**mocha*.ts"
+    "src/**mocha*.ts",
+    // "src/typia_src/"
   ],
   "compilerOptions": {
     "composite": true,

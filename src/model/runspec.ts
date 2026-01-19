@@ -1,5 +1,5 @@
 import { cloneDeep, mapValues } from 'lodash';
-import { assertEquals } from 'typia';
+import { assertEqualsIAllRunSpec } from '@/typia';
 
 type RunRange<X> = [X, [number, number]]
 
@@ -159,7 +159,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 
   static reviver(data: unknown) {
-    const _data = assertEquals<IAllRunSpec>(data);
+    const _data = assertEqualsIAllRunSpec(data);
     const o = new this(_data.basis, 0);
     Object.assign(o, data);
     return o;

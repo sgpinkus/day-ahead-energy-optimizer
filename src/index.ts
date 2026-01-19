@@ -51,7 +51,6 @@ function shutdown() {
   model?.shutdown();
 }
 
-
 main()
   .then(() => console.log('Main: done'))
   .catch((e) => console.log('Main: failed', e));
