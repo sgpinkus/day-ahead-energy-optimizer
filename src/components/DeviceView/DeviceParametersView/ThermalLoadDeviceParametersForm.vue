@@ -193,7 +193,7 @@ onMounted(() => {
               :min="-273"
               :max="1000"
               :step="0.5"
-              @update:model-value="(v) => externalTemperatureProfileUpdate(i, v)"
+              @update:model-value="(v: number) => externalTemperatureProfileUpdate(i, v)"
             />
           </td>
         </tr>

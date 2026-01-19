@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref, useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import * as d3 from 'd3';
 import { draw } from '@/components/components/Plot';
 

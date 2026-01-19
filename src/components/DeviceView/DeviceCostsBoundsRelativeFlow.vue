@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // (x_h - x_l)*np.poly1d([(d0 - d1)/2, d1, 0])((x - x_l)/(x_h - x_l))
-import { computed, defineProps, ref, watch, type Ref } from 'vue';
+import { computed, ref, watch, type Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import { setDialog } from '@/model/infos';
 import { BoundsRunSpec } from '@/model/runspec';

@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import App from '@/components/App.vue';
 import router from '@/router';
 import model from '@/model';
+import { getPyodide } from '@/pyodide';
 import { createVuetify } from 'vuetify';
 //  import { VFileUpload } from 'vuetify/labs/VFileUpload';
 import * as components from 'vuetify/components';
@@ -42,6 +43,8 @@ async function main() {
   window.addEventListener('beforeunload', shutdown);
   // window.addEventListener('load', init); // Actually triggering this from App.beforeCreate for some reason.
   app.mount('#app');
+
+  getPyodide();
 }
 
 function shutdown() {

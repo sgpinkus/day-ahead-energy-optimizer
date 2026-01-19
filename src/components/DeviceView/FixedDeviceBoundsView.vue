@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, watch, type Ref } from 'vue';
+import { ref, watch, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/device';
 import { NumberRunSpecAdaptor } from '@/model/runspec';
 import RunSpecTableView from './RunSpecTableView.vue';

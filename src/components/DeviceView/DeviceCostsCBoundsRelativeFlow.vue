@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { computed, defineProps, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import PlotView from '@/components/components/PlotView.vue';

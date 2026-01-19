@@ -3,7 +3,7 @@
  * Takes a RunSpec whose value is a number[] and renders it as an editable table
  * with value editor specified by ValueSpec prop.
  */
-import { computed, defineProps, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import type { IRunSpec } from '@/model/runspec';
 import MyNumberTextField from '@/components/components/MyNumberTextField';
