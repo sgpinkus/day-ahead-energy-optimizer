@@ -18,9 +18,9 @@ function resolveConfigFile(mode: string): string {
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
-  const configFile = new URL(resolveConfigFile(mode), import.meta.url);
-  console.info(`Using config file ${configFile.href} [command=${command}, mode=${mode}]`);
-  const config = await import(configFile.href);
+  const configFile = fileURLToPath(new URL(resolveConfigFile(mode), import.meta.url));
+  console.info(`Using config file ${configFile} [command=${command}, mode=${mode}]`);
+  const config = await import(configFile);
   return {
 
     optimizeDeps: { exclude: ['pyodide'] },
@@ -41,7 +41,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '@package': fileURLToPath(new URL('./package.json', import.meta.url)),
-        '@config': fileURLToPath(new URL('./src/config.prod.ts', import.meta.url)),
+        '@config': configFile,
       },
     },
     base: config.basePath,
