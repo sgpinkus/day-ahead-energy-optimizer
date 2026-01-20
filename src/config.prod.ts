@@ -5,6 +5,7 @@ coloredlogs==15.0.1
 humanfriendly==10.0
 pandas
 matplotlib
+scipy<=1.15
 numdifftools==0.9.41
 device_kit==1.0.10
 `;

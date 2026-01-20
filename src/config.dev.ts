@@ -5,6 +5,7 @@ coloredlogs==15.0.1
 humanfriendly==10.0
 pandas
 matplotlib
+scipy<=1.15
 numdifftools==0.9.41
 `;
 // For local device_kit dev: python -m http.server -d .
