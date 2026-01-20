@@ -9,7 +9,6 @@
     "format": "prettier --write src/",
     "generate": "typia generate --input src/typia_src --output src/typia --project tsconfig.app.json",
     "lint": "eslint .",
-    "prepare": "ts-patch install",
     "start": "node server.cjs",
     "test": "vitest",
     "ts-node": "TS_NODE_PROJECT=tsconfig.node.json ts-node",
