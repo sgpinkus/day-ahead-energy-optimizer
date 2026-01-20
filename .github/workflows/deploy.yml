@@ -22,14 +22,12 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm ci
-      - name: Typia setup
-        run:  npm exec typia setup -- --manager npm --project tsconfig.app.json
       - name: Build
         run: npm run build
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: docs
   deploy:
     needs: build
     runs-on: ubuntu-latest
