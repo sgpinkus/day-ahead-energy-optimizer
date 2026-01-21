@@ -36,45 +36,49 @@ function reset() {
 </script>
 
 <template>
-  <RouterLink to="/docs">
-    <v-list-item prepend-icon="mdi-text-box">
-      Docs
-    </v-list-item>
-  </RouterLink>
-  <v-divider />
-  <v-list-item
-    prepend-icon="mdi-refresh"
-    @click="reset"
-  >
-    Reset DB
-  </v-list-item>
-  <v-divider />
-  <v-list-item
-    prepend-icon="mdi-application-import"
-  >
-    <v-list-item-title>
-      <label for="bus-file">Import Bus</label>
-    </v-list-item-title>
-    <input
-      id="bus-file"
-      ref="importFileInput"
-      type="file"
-      style="display: none"
-      @change="importBus"
+  <div class="nav-container">
+    <v-divider />
+    <v-list-item
+      prepend-icon="mdi-refresh"
+      @click="reset"
     >
-  </v-list-item>
-  <v-divider />
-  <v-list-item
-    title="Add Bus"
-    :prepend-icon="HubPlus"
-    @click="collection.addNew()"
-  />
-  <v-divider />
-  <BusList :collection="collection" />
-  <v-divider />
-  <AddDataActionList />
-  <v-divider />
-  <DatumList />
+      Reset DB
+    </v-list-item>
+    <v-divider />
+    <v-list-item
+      prepend-icon="mdi-application-import"
+    >
+      <v-list-item-title>
+        <label for="bus-file">Import Bus</label>
+      </v-list-item-title>
+      <input
+        id="bus-file"
+        ref="importFileInput"
+        type="file"
+        style="display: none"
+        @change="importBus"
+      >
+    </v-list-item>
+    <v-divider />
+    <v-list-item
+      title="Add Bus"
+      :prepend-icon="HubPlus"
+      @click="collection.addNew()"
+    />
+    <v-divider />
+    <BusList :collection="collection" />
+    <v-divider />
+    <AddDataActionList />
+    <v-divider />
+    <DatumList />
+    <v-spacer style="flex-grow: 1;" />
+    <v-divider />
+    <RouterLink to="/docs">
+      <v-list-item prepend-icon="mdi-text-box">
+        Docs
+      </v-list-item>
+    </RouterLink>
+  </div>
 </template>
 
 <style scoped>
@@ -96,5 +100,12 @@ function reset() {
   label:hover {
     cursor: inherit;
     text-decoration: underline;
+  }
+
+  .nav-container {
+    height: 100%;
+    flex-flow: nowrap;
+    display: flex;
+    flex-direction: column;
   }
 </style>

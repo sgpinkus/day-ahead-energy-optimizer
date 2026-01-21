@@ -22,7 +22,7 @@ export class Model {
   doneLocalStorageNotice = false;
   messages = messages;
   collection: Collection = new Collection();
-  collections: Record<string, Collection> = {};
+  // collections: Record<string, Collection> = {}; // WIP.
   busses: Record<string, Bus> = {};
   optimizationResults: Record<string, OptimizationResult> = {};
   devices: Record<string, BaseDevice> = {};
@@ -46,7 +46,7 @@ export class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
-    this.collections = {};
+    // this.collections = {};
     this.busses = {};
     this.devices = {};
   }
