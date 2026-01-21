@@ -13,11 +13,11 @@ if (!bus) throw new NotFoundError();
 
 <template>
   <AppNavDrawer>
-    <route-path path="/">
+    <RouterLink to="/">
       <v-list-item prepend-icon="mdi-arrow-left">
         Collection
       </v-list-item>
-    </route-path>
+    </RouterLink>
     <v-divider />
     <BusNavView :bus="bus" />
   </AppNavDrawer>

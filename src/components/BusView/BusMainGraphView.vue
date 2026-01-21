@@ -16,7 +16,7 @@ function onClick(id: string) {
 }
 
 function onDoubleClick(id: string) {
-  if (id !== undefined) router.dispatch({ name: 'device', params: { id } });
+  if (id !== undefined) router.push({ name: 'device', params: { id } });
 }
 
 </script>

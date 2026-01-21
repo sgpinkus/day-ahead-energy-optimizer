@@ -31,7 +31,7 @@ const type = 'Busses';
         :item="item"
         :focused="model.focusedBusId === item.id"
         icon="mdi-hub"
-        @edit="() => router.dispatch({ name: 'bus', params: { id: item.id } })"
+        @edit="() => router.push({ name: 'bus', params: { id: item.id } })"
         @click.stop="model.focusedBusId = item.id"
         @delete="() => collection.delete(item.id)"
       />

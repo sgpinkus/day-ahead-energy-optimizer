@@ -46,14 +46,13 @@ function costStatusIcon(type: keyof ICosts) {
 
 <template>
   <AppNavDrawer>
-    <route-name
-      name="bus"
-      :params="{ id: device.busId || '' }"
+    <RouterLink
+      :to="{ name: 'bus', params: { id: device.busId || '' } }"
     >
       <v-list-item prepend-icon="mdi-arrow-left">
         Bus
       </v-list-item>
-    </route-name>
+    </RouterLink>
     <v-divider />
     <v-list class="flex-shrink-0 device-components">
       <v-divider />

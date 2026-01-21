@@ -29,7 +29,7 @@ async function main() {
   app.config.errorHandler = async (err: any = {}) => {
     console.debug('Hit global error handler', err);
     if (err instanceof errors.NotFoundError) {
-      router.dispatch({ name: 'resource-not-found' });
+      router.push({ name: 'resource-not-found' });
     } else if (err instanceof TypeGuardError) {
       model.messages.addAlert({ message: typeGuardErrorToString(err), type: 'error' });
     }

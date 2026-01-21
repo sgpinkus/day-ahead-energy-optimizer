@@ -29,7 +29,7 @@ const doLocalStorageNotice = ref(false);
     </v-dialog>
     <InfoDialogs />
     <SystemBar />
-    <RouteView />
+    <RouterView />
     <ActionBar />
   </v-app>
 </template>

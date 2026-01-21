@@ -117,12 +117,9 @@ function importDevice() {
       <v-list-item
         prepend-icon="mdi-play-box"
       >
-        <route-name
-          name="run"
-          :params="{ id: bus.id }"
-        >
+        <RouterLink :to="{ name: 'run', params: { id: bus.id } }">
           Optimization
-        </route-name>
+        </RouterLink>
       </v-list-item>
     </v-list>
     <v-divider />

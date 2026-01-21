@@ -6,9 +6,9 @@ import About from './About.vue';
 
 <template>
   <AppNavDrawer>
-    <route-path path="/">
+    <RouterLink to="/">
       <v-list-item prepend-icon="mdi-arrow-left" />
-    </route-path>
+    </RouterLink>
     <v-divider />
   </AppNavDrawer>
   <v-main>

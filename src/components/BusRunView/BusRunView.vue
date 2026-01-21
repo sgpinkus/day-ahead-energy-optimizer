@@ -98,14 +98,11 @@ onMounted(() => {
 
 <template>
   <AppNavDrawer>
-    <route-name
-      name="bus"
-      :params="{ id: bus.id }"
-    >
+    <RouterLink :to="{ name: 'bus', params: { id: bus.id } }">
       <v-list-item prepend-icon="mdi-arrow-left">
         Bus
       </v-list-item>
-    </route-name>
+    </RouterLink>
     <v-divider />
     <v-list-item
       prepend-icon="mdi-play-box"

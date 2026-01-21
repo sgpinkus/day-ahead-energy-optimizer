@@ -36,11 +36,11 @@ function reset() {
 </script>
 
 <template>
-  <route-path path="/docs">
+  <RouterLink to="/docs">
     <v-list-item prepend-icon="mdi-text-box">
       Docs
     </v-list-item>
-  </route-path>
+  </RouterLink>
   <v-divider />
   <v-list-item
     prepend-icon="mdi-refresh"

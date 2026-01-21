@@ -37,7 +37,7 @@ const icons: Partial<Record<DeviceType, string>> = {
           :item="item"
           :focused="model.focusedDeviceId === item.id"
           :icon="icons[item.type]"
-          @edit="() => router.dispatch({ name: 'device', params: { id: item.id } })"
+          @edit="() => router.push({ name: 'device', params: { id: item.id } })"
           @delete="() => bus.delete(item.id)"
           @click.stop="model.focusedDeviceId = item.id"
         />
