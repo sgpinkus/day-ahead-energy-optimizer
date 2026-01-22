@@ -9,6 +9,7 @@ const { bus } = defineProps<{ bus: Bus }>();
 
 const deviceNodes = computed(() => values(bus?.devices || {}));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
+const hubNode = computed(() => ({ title: bus.title || 'Bus' }));
 
 function onClick(id: string) {
   if (id !== undefined && id !== 'hub')
@@ -26,7 +27,7 @@ function onDoubleClick(id: string) {
     v-if="bus"
     :device-nodes="deviceNodes"
     :focused-node-id="focusedNodeId"
-    :hub-node="{ title: 'Network' }"
+    :hub-node="hubNode"
     @click="onClick"
     @dblclick="onDoubleClick"
   />

@@ -2,10 +2,9 @@
 import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
 import CollectionNavView from './CollectionNavView.vue';
-import CollectionMainBusGraphView from './CollectionMainBusGraphView.vue';
+import BusMainGraphView from '../BusView/BusMainGraphView.vue';
 
 const collection = model.collection;
-
 </script>
 
 <template>
@@ -14,7 +13,10 @@ const collection = model.collection;
   </AppNavDrawer>
   <v-main>
     <v-container class="container">
-      <CollectionMainBusGraphView :bus="model.focusedBus" />
+      <BusMainGraphView
+        v-if="model.focusedBus"
+        :bus="model.focusedBus"
+      />
     </v-container>
   </v-main>
 </template>

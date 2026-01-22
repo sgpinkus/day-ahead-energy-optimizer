@@ -8,7 +8,6 @@ import { useTemplateRef } from 'vue';
 import { ValidationError } from '@/errors';
 
 const { collection } = defineProps<{ collection: Collection }>();
-
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput');
 
 function importBus() {
