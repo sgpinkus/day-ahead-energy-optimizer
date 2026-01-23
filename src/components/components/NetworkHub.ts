@@ -57,6 +57,8 @@ export function draw(
       });
   }
 
+  // d3.select(container).selectAll('*').remove();
+
   const options: Options = merge(cloneDeep(defaultOptions), _options);
   const _hubNode = (options.hubNode as Node);
   const index = d3.local<number>();

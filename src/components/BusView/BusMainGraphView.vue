@@ -25,6 +25,7 @@ function onDoubleClick(id: string) {
 <template>
   <NetworkHubView
     v-if="bus"
+    :key="bus.id"
     :device-nodes="deviceNodes"
     :focused-node-id="focusedNodeId"
     :hub-node="hubNode"

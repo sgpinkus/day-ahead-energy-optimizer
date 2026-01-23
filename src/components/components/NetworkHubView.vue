@@ -40,7 +40,13 @@ function onDoubleClick(id: string) {
   emits('dblclick', id);
 }
 
-watch(() => deviceNodes, () => _draw());
+watch(() => deviceNodes, () => {
+  _draw();
+});
+
+watch(() => hubNode, () => {
+  _draw();
+});
 
 watchEffect(() => {
   options.value.focusedNodeId = focusedNodeId;
