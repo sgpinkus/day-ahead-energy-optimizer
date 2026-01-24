@@ -1,23 +1,17 @@
 // @import url(@mdi/font/scss/materialdesignicons.scss);
 @use 'vuetify/settings';
 
-@forward '@sgpinkus/mdi-font/scss/materialdesignicons.scss' with (
-  $mdi-version: "0",
+@forward '@sgpinkus/mdi-font/scss/materialdesignicons.scss' with ($mdi-version: "0",
   $mdi-font-path: "@sgpinkus/mdi-font/fonts",
 );
 $mdi-version: "0" !important;
-
-.v-list-group__items .v-list-item {
-  padding-inline-start: 16px !important;
-}
-
-.v-list { padding: 0; }
 
 html {
   overflow: auto;
 }
 
-h1, p {
+h1,
+p {
   margin-bottom: 1rem;
 }
 
@@ -41,4 +35,17 @@ a:hover {
 a:active {
   background-color: transparent;
   text-decoration: underline;
+}
+
+.v-list-group__items .v-list-item {
+  padding-inline-start: 16px !important;
+}
+
+.v-list {
+  padding: 0;
+}
+
+// ~Fixes double scrollbar when inner dropdowns are scollable.
+.v-navigation-drawer__content {
+  overflow-y: hidden !important;
 }

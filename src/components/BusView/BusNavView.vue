@@ -2,7 +2,7 @@
 import { Bus } from '@/model';
 import { BaseDevice } from '@/model';
 import AddDeviceActionList from './AddDeviceActionList.vue';
-import BusDeviceList from './DeviceList.vue';
+import BusDeviceList from './BusDeviceList.vue';
 import BusEditForm from './BusEditForm.vue';
 import { jsonStringify, jsonParse } from '@/model/importlib';
 import { ref, useTemplateRef } from 'vue';
@@ -137,6 +137,7 @@ function importDevice() {
     flex-flow: nowrap;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .v-btn {
