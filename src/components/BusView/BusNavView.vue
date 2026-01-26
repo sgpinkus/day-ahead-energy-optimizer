@@ -27,6 +27,7 @@ function importDevice() {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
         try {
+          if (!(typeof reader.result  === 'string')) return;
           const device = jsonParse(reader.result); // is ~sanitized via Device.reviver.
           if (!(device instanceof BaseDevice)) throw new ValidationError();
           bus.addDevice(device.clone());

@@ -15,11 +15,10 @@ function importBus() {
   if (files && files[0]) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-        if (reader.result && typeof reader.result === 'string') {
-          const { bus, devices } = Bus.fromExportObject(reader.result);
-          devices.forEach((v) => bus.addDevice(v));
-          project.add(bus);
-        }
+        if (!(typeof reader.result  === 'string')) return;
+        const { bus, devices } = Bus.fromExportObject(reader.result);
+        devices.forEach((v) => bus.addDevice(v));
+        project.add(bus);
       },
       false,
     );
