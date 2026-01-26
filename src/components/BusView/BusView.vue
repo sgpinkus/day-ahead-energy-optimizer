@@ -15,7 +15,7 @@ if (!bus) throw new NotFoundError();
   <AppNavDrawer>
     <RouterLink to="/">
       <v-list-item prepend-icon="mdi-arrow-left">
-        Collection
+        Project
       </v-list-item>
     </RouterLink>
     <v-divider />

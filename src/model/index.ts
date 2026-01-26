@@ -7,30 +7,28 @@ import { jsonParse, jsonStringify } from './importlib';
 import messages from './messages';
 import Bus from './bus';
 import { MyName } from './constant';
-import Collection from './collection';
+import Project from './project';
 import { BaseDevice } from './device';
 import type { OptimizationResult } from './optimizationResult';
 
 export { BaseDevice } from './device';
 export { default as Bus } from './bus';
 export { type OptimizationResult } from './optimizationResult';
-export { default as Collection } from './collection';
+export { default as Project } from './project';
 
 export class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
   messages = messages;
-  collection: Collection = new Collection();
-  // collections: Record<string, Collection> = {}; // WIP.
+  project: Project = new Project(); // WIP: Multiple projects.
   busses: Record<string, Bus> = {};
   optimizationResults: Record<string, OptimizationResult> = {};
   devices: Record<string, BaseDevice> = {};
   rail = false;
   focusedDeviceId?: string = undefined;
   focusedBusId?: string = undefined;
-  focusedCollectionId?: string = undefined;
-  basis = 48;
+  focusedProjectId?: string = undefined;
 
   get focusedBus() {
     return this.focusedBusId ? this.busses[this.focusedBusId] : undefined;
@@ -46,7 +44,7 @@ export class Model {
   reset() {
     window.localStorage.clear();
     this.messages.reset();
-    // this.collections = {};
+    // this.projects = {};
     this.busses = {};
     this.devices = {};
   }

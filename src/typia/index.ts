@@ -1,11 +1,11 @@
 import * as __typia_transform__accessExpressionAsString from "typia/lib/internal/_accessExpressionAsString.js";
 import * as __typia_transform__assertGuard from "typia/lib/internal/_assertGuard.js";
-import { createAssertEquals } from 'typia';
+import { createAssert, createAssertEquals } from 'typia';
 import type { DeviceCosts, IBaseDevice } from '@/model/device';
 import type { IAllRunSpec } from '@/model/runspec';
 import type { IBus, IBusExport } from '@/model/bus';
-export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av4 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.basis && (undefined === input.devices || Array.isArray(input.devices) && input.devices.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && _io1(elem, true && _exceptionable))) && (undefined === input.id || "string" === typeof input.id) && (undefined === input.collectionId || "string" === typeof input.collectionId) && (undefined === input.interval || true === _iv2.has(input.interval)) && (undefined === input.startInterval || "number" === typeof input.startInterval) && (undefined === input.startHour || "number" === typeof input.startHour) && (undefined === input.title || "string" === typeof input.title) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["basis", "devices", "id", "collectionId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av4 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.basis && (undefined === input.devices || Array.isArray(input.devices) && input.devices.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && _io1(elem, true && _exceptionable))) && (undefined === input.id || "string" === typeof input.id) && (undefined === input.projectId || "string" === typeof input.projectId) && (undefined === input.interval || true === _iv2.has(input.interval)) && (undefined === input.startInterval || "number" === typeof input.startInterval) && (undefined === input.startHour || "number" === typeof input.startHour) && (undefined === input.title || "string" === typeof input.title) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["basis", "devices", "id", "projectId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -100,11 +100,11 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     path: _path + ".id",
     expected: "(string | undefined)",
     value: input.id
-}, _errorFactory)) && (undefined === input.collectionId || "string" === typeof input.collectionId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && (undefined === input.projectId || "string" === typeof input.projectId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".collectionId",
+    path: _path + ".projectId",
     expected: "(string | undefined)",
-    value: input.collectionId
+    value: input.projectId
 }, _errorFactory)) && (undefined === input.interval || true === _av4.has(input.interval) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".interval",
@@ -126,7 +126,7 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     expected: "(string | undefined)",
     value: input.title
 }, _errorFactory)) && (1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["basis", "devices", "id", "collectionId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+    if (["basis", "devices", "id", "projectId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -603,8 +603,8 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     }
     return input;
 }; })();
-export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.collectionId || "string" === typeof input.collectionId) && "number" === typeof input.basis && true === _iv1.has(input.interval) && "number" === typeof input.startInterval && "number" === typeof input.startHour && (undefined === input.title || "string" === typeof input.title) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["id", "collectionId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.projectId || "string" === typeof input.projectId) && "number" === typeof input.basis && true === _iv1.has(input.interval) && "number" === typeof input.startInterval && "number" === typeof input.startHour && (undefined === input.title || "string" === typeof input.title) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["id", "projectId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -615,11 +615,11 @@ export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6,
     path: _path + ".id",
     expected: "string",
     value: input.id
-}, _errorFactory)) && (undefined === input.collectionId || "string" === typeof input.collectionId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && (undefined === input.projectId || "string" === typeof input.projectId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".collectionId",
+    path: _path + ".projectId",
     expected: "(string | undefined)",
-    value: input.collectionId
+    value: input.projectId
 }, _errorFactory)) && ("number" === typeof input.basis || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".basis",
@@ -646,7 +646,7 @@ export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6,
     expected: "(string | undefined)",
     value: input.title
 }, _errorFactory)) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["id", "collectionId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+    if (["id", "projectId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -1611,40 +1611,21 @@ export const assertEqualsIAllRunSpec = (() => { const _io0 = (input: any, _excep
     }
     return input;
 }; })();
-export const assertEqualsIdentified = (() => { const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["id"].some((prop: any) => key === prop))
-        return true;
-    const value = input[key];
-    if (undefined === value)
-        return true;
-    return false;
-})); const _ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("string" === typeof input.id || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
+export const assertIdentified = (() => { const _io0 = (input: any): boolean => "string" === typeof input.id; const _ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => "string" === typeof input.id || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssert",
     path: _path + ".id",
     expected: "string",
     value: input.id
-}, _errorFactory)) && (1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["id"].some((prop: any) => key === prop))
-        return true;
-    const value = input[key];
-    if (undefined === value)
-        return true;
-    return __typia_transform__assertGuard._assertGuard(_exceptionable, {
-        method: "createAssertEquals",
-        path: _path + __typia_transform__accessExpressionAsString._accessExpressionAsString(key),
-        expected: "undefined",
-        value: value
-    }, _errorFactory);
-}))); const __is = (input: any, _exceptionable: boolean = true): input is { id: string } => "object" === typeof input && null !== input && _io0(input, true); let _errorFactory: any; return (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): { id: string } => {
+}, _errorFactory); const __is = (input: any): input is { id: string } => "object" === typeof input && null !== input && _io0(input); let _errorFactory: any; return (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): { id: string } => {
     if (false === __is(input)) {
         _errorFactory = errorFactory;
         ((input: any, _path: string, _exceptionable: boolean = true) => ("object" === typeof input && null !== input || __typia_transform__assertGuard._assertGuard(true, {
-            method: "createAssertEquals",
+            method: "createAssert",
             path: _path + "",
             expected: "__type",
             value: input
         }, _errorFactory)) && _ao0(input, _path + "", true) || __typia_transform__assertGuard._assertGuard(true, {
-            method: "createAssertEquals",
+            method: "createAssert",
             path: _path + "",
             expected: "__type",
             value: input

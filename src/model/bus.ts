@@ -1,16 +1,14 @@
 import { v4 as uuid } from 'uuid';
 import model from '@/model';
-import { DefaultBasis, DefaultIntervalMinutes } from './constant';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 import { jsonParse } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
-
-type IntervalTime = 1 | 2 | 3 | 4 | 5 | 6 | 10 | 15 | 20 | 30 | 60;
+import type { IntervalTime } from '@/types';
 
 export interface IBus {
   id: string,
-  collectionId?: string,
+  projectId?: string,
   basis: number,
   interval: IntervalTime,
   startInterval: number,
@@ -25,16 +23,22 @@ export interface IBusExport extends Partial<IBus> {
 
 export default class Bus implements IBus {
   static readonly MaxItems = 20;
-  id: string = uuid();
-  collectionId?: string | undefined;
-  basis: number = DefaultBasis;
-  interval: IntervalTime = DefaultIntervalMinutes;
-  startInterval: number = 0;
-  startHour: number = 0;
+  readonly id: string;
+  projectId?: string | undefined;
+  readonly basis: number;
+  readonly interval: IntervalTime;
+  readonly startInterval: number;
+  readonly startHour: number;
   title?: string;
 
-  private constructor(init: Partial<IBus>) {
-    Object.assign(this, init);
+  private constructor(init: Omit<IBus, 'id'> & { id?: string }) {
+    this.id = init.id || uuid();
+    this.projectId = init.projectId;
+    this.basis = init.basis;
+    this.interval = init.interval;
+    this.startInterval = init.startInterval;
+    this.startHour = init.startHour;
+    this.title = init.title;
   }
 
   get length() {
@@ -79,13 +83,13 @@ export default class Bus implements IBus {
   toExportObject() {
     return {
       // id: this.id,
-      // collectionId: this.collectionId,
+      // projectId: this.projectId,
       basis: this.basis,
       devices: this.devices.map(d => d.replacer()),
     };
   }
 
-  static newBus(data: Partial<IBus>) {
+  static newBus(data: Omit<IBus, 'id'>) {
     return new Bus(data);
   }
 
@@ -94,7 +98,7 @@ export default class Bus implements IBus {
    */
   static fromExportObject(data: unknown): Bus {
     const o = assertEqualsIBusExport(jsonParse(data));
-    const bus = new Bus(o);
+    const bus = new Bus(o as any);
     (o.devices || []).forEach((device) => {
       (device as any).id = uuid();
       bus.add(device);

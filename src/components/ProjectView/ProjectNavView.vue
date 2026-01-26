@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import model, { Bus, Collection } from '@/model';
-import BusList from './BusList.vue';
+import model, { Bus, Project } from '@/model';
+import BusList from './ModelList.vue';
 import HubPlus from '@/components/icons/hub-plus';
+import ProjectEditForm from './ProjectEditForm.vue';
 import AddDataActionList from '@/components/AddDataActionList.vue';
 import DatumList from '@/components/DatumList.vue';
 import { useTemplateRef } from 'vue';
 import { ValidationError } from '@/errors';
 
-const { collection } = defineProps<{ collection: Collection }>();
+const { project } = defineProps<{ project: Project }>();
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput');
 
 function importBus() {
@@ -17,7 +18,7 @@ function importBus() {
     reader.addEventListener('load', () => {
         const bus = Bus.fromExportObject(reader.result);
         if (!(bus instanceof Bus)) throw new ValidationError();
-        collection.add(bus);
+        project.add(bus);
       },
       false,
     );
@@ -26,7 +27,7 @@ function importBus() {
 }
 
 /**
- * TODO: This resets everything since collections aren't implemented yet.
+ * TODO: This resets everything since plural projects aren't implemented yet.
  */
 function reset() {
   model.reset();
@@ -44,11 +45,45 @@ function reset() {
       Reset DB
     </v-list-item>
     <v-divider />
+    <v-dialog>
+      <template #activator="{ props }">
+        <v-list-item
+          prepend-icon="mdi-cog"
+          v-bind="props"
+        >
+          Settings
+        </v-list-item>
+      </template>
+      <template #default="{ isActive }">
+        <v-container fluid>
+          <v-row>
+            <v-col
+              xs="12"
+              md="6"
+              offset-md="3"
+            >
+              <v-card>
+                <ProjectEditForm :project="project" />
+                <template #actions>
+                  <v-btn
+                    density="compact"
+                    class="ml-auto"
+                    text="Close"
+                    @click="isActive.value = false"
+                  />
+                </template>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+    </v-dialog>
+    <v-divider />
     <v-list-item
       prepend-icon="mdi-application-import"
     >
       <v-list-item-title>
-        <label for="bus-file">Import Bus</label>
+        <label for="bus-file">Import Model</label>
       </v-list-item-title>
       <input
         id="bus-file"
@@ -60,12 +95,12 @@ function reset() {
     </v-list-item>
     <v-divider />
     <v-list-item
-      title="Add Bus"
+      title="Add Model"
       :prepend-icon="HubPlus"
-      @click="collection.addNew()"
+      @click="project.addNew()"
     />
     <v-divider />
-    <BusList :collection="collection" />
+    <BusList :project="project" />
     <v-divider />
     <AddDataActionList />
     <v-divider />

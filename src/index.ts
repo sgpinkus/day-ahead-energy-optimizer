@@ -9,6 +9,7 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import './index.scss';
+import * as config from '@/config';
 import * as errors from '@/errors';
 import { TypeGuardError } from 'typia';
 import { typeGuardErrorToString } from './utils';
@@ -44,7 +45,9 @@ async function main() {
   // window.addEventListener('load', init); // Actually triggering this from App.beforeCreate for some reason.
   app.mount('#app');
 
-  getPyodide();
+  if (config.preloadPyodide) {
+    getPyodide();
+  }
 }
 
 function shutdown() {

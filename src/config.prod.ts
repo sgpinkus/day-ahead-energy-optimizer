@@ -9,5 +9,6 @@ scipy<=1.15
 numdifftools==0.9.41
 device_kit==1.0.10
 `;
+export const preloadPyodide = true;
 // For local device_kit dev: python -m http.server -d .
 export const venvRequirementsUrls = '';

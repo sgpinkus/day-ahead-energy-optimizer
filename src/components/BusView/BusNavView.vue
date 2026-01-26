@@ -49,79 +49,78 @@ function importDevice() {
 
 <template>
   <v-list class="flex-shrink-0 details-content">
-    <v-list class="flex-shrink-0">
-      <v-dialog>
-        <template #activator="{ props }">
-          <v-list-item
-            prepend-icon="mdi-cog"
-            v-bind="props"
-          >
-            Bus Settings
-          </v-list-item>
-        </template>
-        <template #default="{ isActive }">
-          <v-container fluid>
-            <v-row>
-              <v-col
-                xs="12"
-                md="6"
-                offset-md="3"
-              >
-                <v-card>
-                  <BusEditForm :bus="bus" />
-                  <template #actions>
-                    <v-btn
-                      density="compact"
-                      class="ml-auto"
-                      text="Close"
-                      @click="isActive.value = false"
-                    />
-                  </template>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
-      </v-dialog>
-      <v-list-item
-        prepend-icon="mdi-refresh"
-        @click="bus.reset()"
-      >
-        Reset Bus Data
-      </v-list-item>
-      <v-divider />
-      <v-list-item
-        prepend-icon="mdi-application-export"
-        @click="exportModel()"
-      >
-        <a
-          :href="blobUrl"
-          :download="`bus-${bus.id}.json`"
-        >Export Bus</a>
-      </v-list-item>
-      <v-divider />
-      <v-list-item
-        prepend-icon="mdi-application-import"
-      >
-        <v-list-item-title>
-          <label for="device-file">Import Device</label>
-        </v-list-item-title>
-        <input
-          id="device-file"
-          ref="importFileInput"
-          type="file"
-          style="display: none"
-          @change="importDevice"
+    <v-list-item
+      prepend-icon="mdi-refresh"
+      @click="bus.reset()"
+    >
+      Reset Data
+    </v-list-item>
+    <v-divider />
+    <v-dialog>
+      <template #activator="{ props }">
+        <v-list-item
+          prepend-icon="mdi-cog"
+          v-bind="props"
         >
-      </v-list-item>
-      <v-list-item
-        prepend-icon="mdi-play-box"
+          Settings
+        </v-list-item>
+      </template>
+      <template #default="{ isActive }">
+        <v-container fluid>
+          <v-row>
+            <v-col
+              xs="12"
+              md="6"
+              offset-md="3"
+            >
+              <v-card>
+                <BusEditForm :bus="bus" />
+                <template #actions>
+                  <v-btn
+                    density="compact"
+                    class="ml-auto"
+                    text="Close"
+                    @click="isActive.value = false"
+                  />
+                </template>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+    </v-dialog>
+    <v-divider />
+    <v-list-item
+      prepend-icon="mdi-application-export"
+      @click="exportModel()"
+    >
+      <a
+        :href="blobUrl"
+        :download="`bus-${bus.id}.json`"
+      >Export Bus</a>
+    </v-list-item>
+    <v-divider />
+    <v-list-item
+      prepend-icon="mdi-application-import"
+    >
+      <v-list-item-title>
+        <label for="device-file">Import Device</label>
+      </v-list-item-title>
+      <input
+        id="device-file"
+        ref="importFileInput"
+        type="file"
+        style="display: none"
+        @change="importDevice"
       >
-        <RouterLink :to="{ name: 'run', params: { id: bus.id } }">
-          Optimization
-        </RouterLink>
-      </v-list-item>
-    </v-list>
+    </v-list-item>
+    <v-list-item
+      prepend-icon="mdi-play-box"
+    >
+      <RouterLink :to="{ name: 'run', params: { id: bus.id } }">
+        Optimization
+      </RouterLink>
+    </v-list-item>
     <v-divider />
     <AddDeviceActionList :bus="bus" />
     <v-divider />

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-import CollectionView from '@/components/CollectionView/CollectionView.vue';
+import ProjectView from '@/components/ProjectView/ProjectView.vue';
 import BusView from '@/components/BusView/BusView.vue';
 import DeviceView from '@/components/DeviceView/DeviceView.vue';
 import NotFoundPath from '@/components/NotFoundPath.vue';
@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'root',
-      component: CollectionView,
+      component: ProjectView,
     },
     {
       path: '/docs',

@@ -1,15 +1,16 @@
 <script setup lang='ts'>
 import model from '@/model';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
-import CollectionNavView from './CollectionNavView.vue';
+import ProjectNavView from './ProjectNavView.vue';
 import BusMainGraphView from '../BusView/BusMainGraphView.vue';
 
-const collection = model.collection;
+const project = model.project;
+
 </script>
 
 <template>
   <AppNavDrawer>
-    <CollectionNavView :collection="collection" />
+    <ProjectNavView :project="project" />
   </AppNavDrawer>
   <v-main>
     <v-container class="container">

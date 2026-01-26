@@ -20,7 +20,7 @@ import {
   FixedLoadDevice,
   ThermalLoadDevice,
 } from './device';
-import Collection from './collection';
+import Project from './project';
 import Bus from './bus';
 import { Messages } from './messages';
 import { Model } from './index';
@@ -40,7 +40,7 @@ const allowedClassNames = [
   'SupplyDevice',
   'FixedLoadDevice',
   'ThermalLoadDevice',
-  'Collection',
+  'Project',
   'Bus',
   '_Bus', // Compiler refuses not to change this name even with minify off. But Bus.constructor.name is still 'Bus' so can't use that either ..
   'Messages',

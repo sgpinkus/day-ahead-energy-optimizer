@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import model, { Collection } from '@/model';
+import model, { Project } from '@/model';
 import router from '@/router';
 import MyListItem from '../components/MyListItem.vue';
 
-const { collection } = defineProps<{ collection: Collection }>();
-const items = computed(() => collection.busses); // Needs to be computed (technically should be reactive?)
+const { project } = defineProps<{ project: Project }>();
+const items = computed(() => project.busses); // Needs to be computed (technically should be reactive?)
 const showObjectList = ref(true);
 
 </script>
@@ -17,7 +17,7 @@ const showObjectList = ref(true);
       :append-icon="showObjectList ? 'mdi-chevron-up' : 'mdi-chevron-down'"
       @click="showObjectList = !showObjectList"
     >
-      <v-list-item-title>Busses ({{ items.length || 0 }})</v-list-item-title>
+      <v-list-item-title>Models ({{ items.length || 0 }})</v-list-item-title>
     </v-list-item>
   </v-list>
   <v-divider />
@@ -31,7 +31,7 @@ const showObjectList = ref(true);
         icon="mdi-hub"
         @edit="() => router.push({ name: 'bus', params: { id: item.id } })"
         @click.stop="model.focusedBusId = item.id"
-        @delete="() => collection.delete(item.id)"
+        @delete="() => project.delete(item.id)"
       />
     </v-list>
   </template>
