@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import model from '@/model';
+import model, { type OptimizationResult } from '@/model';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 import { jsonParse } from './importlib';
@@ -51,6 +51,10 @@ export default class Bus implements IBus {
 
   get startTime() {
     return `${String(this.startHour % 24).padStart(2, '0')}:${String((this.startInterval * this.interval) % 60).padStart(2, '0')}`;
+  }
+
+  get optimizationResult() {
+    return Object.values(model.optimizationResults).find((v: OptimizationResult) => v.busId == this.id);
   }
 
   add(device: BaseDevice) {

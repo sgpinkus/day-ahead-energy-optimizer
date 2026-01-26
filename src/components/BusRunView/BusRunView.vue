@@ -2,7 +2,6 @@
 import { onMounted, ref, computed, type Ref } from 'vue';
 import { getPyodide, pyodideLoadingStateCode, pyodideLoadingStateMessage } from '@/pyodide';
 import AppNavDrawer from '@/components/AppNavDrawer.vue';
-import RunList from './RunList.vue';
 import loadScript from '@/python-scripts/load.py?raw';
 import solveScript from '@/python-scripts/solve.py?raw';
 import tablesScript from '@/python-scripts/tables.py?raw';
@@ -39,7 +38,11 @@ const stateMessage = computed(() => {
   if (optimizationStateCode.value !== 'initial') return optimizationStateMessage.value;
   return pyodideLoadingStateMessage.value;
 });
-const optimizationDisabled: Ref<boolean> = computed(() => pyodideLoadingStateCode.value !== 'ready' && optimizationStateCode.value !== 'running');
+const optimizationDisabled: Ref<boolean> = computed(() =>
+  pyodideLoadingStateCode.value !== 'ready' ||
+  optimizationStateCode.value === 'running' ||
+  !!(currentResult.value),
+);
 const plot1Src = computed(() => currentResult.value ? `data:image/png;base64,${currentResult.value?.data.plot1Image}` : undefined);
 
 function newOptimizationResult(bus: Bus, data: OptimizationResult['data']) {
@@ -65,7 +68,6 @@ async function _run() {
   const deviceset = load(JSON.stringify(modelExport));
   const [x, solveMeta] = solve(deviceset);
   solverMessage.value = solveMeta.message;
-  console.log(x, solveMeta);
   if (solveMeta.success) {
     const [flowData, totalFlowsData, totalCostsData, flowDerivsData] = tables(deviceset, x);
     const [plot1Image, plot2Image] = plots(deviceset, x);
@@ -111,10 +113,10 @@ onMounted(() => {
     >
       Run Optimization
     </v-list-item>
-    <RunList
+    <!-- <RunList
       :bus="bus"
       @focused="(id) => focusedId = id"
-    />
+    /> -->
   </AppNavDrawer>
   <v-main>
     <v-container class="container">
