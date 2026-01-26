@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import model, { type OptimizationResult } from '@/model';
 import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
-import { jsonParse } from './importlib';
+import { jsonParse, jsonStringify } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 import type { IntervalMinutes } from '@/types';
 import { startTimeString } from './utils';
@@ -78,6 +78,9 @@ export default class Bus implements IBus {
   }
 
   clone() {
+    const { bus, devices } = Bus.fromExportObject(jsonStringify(this.toExportObject()));
+    devices.forEach((v) => bus.addDevice(v));
+    model.project.add(bus);
   }
 
   reset() {
@@ -109,14 +112,12 @@ export default class Bus implements IBus {
   /**
    * @see toExportObject.
    */
-  static fromExportObject(data: unknown): Bus {
+  static fromExportObject(data: string): { bus: Bus, devices: BaseDevice[] } {
     const o = assertEqualsIBusExport(jsonParse(data));
     const bus = new Bus(o as any);
-    (o.devices || []).forEach((device) => {
-      (device as any).id = uuid();
-      bus.addDevice(device);
-    });
-    return bus;
+    const devices = (o.devices || []);
+    devices.forEach((v: any) => (v.id = uuid()));
+    return { bus, devices };
   }
 
   static reviver(data: unknown) {

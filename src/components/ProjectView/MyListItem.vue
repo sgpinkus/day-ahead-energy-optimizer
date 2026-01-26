@@ -38,6 +38,7 @@ const {
         flat
         density="compact"
         :block="false"
+        title="clone"
         @click.stop="$emit('clone')"
       >
         <v-icon>mdi-content-copy</v-icon>
@@ -46,6 +47,7 @@ const {
         flat
         density="compact"
         :block="false"
+        title="edit"
         @click.stop="$emit('edit')"
       >
         <v-icon>mdi-pencil</v-icon>
@@ -54,6 +56,7 @@ const {
         flat
         density="compact"
         :block="false"
+        title="delete"
         @click.stop="$emit('delete')"
       >
         <v-icon>mdi-delete</v-icon>

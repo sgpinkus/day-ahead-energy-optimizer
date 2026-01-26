@@ -6,7 +6,6 @@ import ProjectEditForm from './ProjectEditForm.vue';
 import AddDataActionList from '@/components/AddDataActionList.vue';
 import DatumList from '@/components/DatumList.vue';
 import { useTemplateRef } from 'vue';
-import { ValidationError } from '@/errors';
 
 const { project } = defineProps<{ project: Project }>();
 const importFileInput = useTemplateRef<HTMLInputElement>('importFileInput');
@@ -16,9 +15,11 @@ function importBus() {
   if (files && files[0]) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
-        const bus = Bus.fromExportObject(reader.result);
-        if (!(bus instanceof Bus)) throw new ValidationError();
-        project.add(bus);
+        if (reader.result && typeof reader.result === 'string') {
+          const { bus, devices } = Bus.fromExportObject(reader.result);
+          devices.forEach((v) => bus.addDevice(v));
+          project.add(bus);
+        }
       },
       false,
     );
