@@ -4,15 +4,15 @@ import { createAssert, createAssertEquals } from 'typia';
 import type { DeviceCosts, IBaseDevice } from '@/model/device';
 import type { IAllRunSpec } from '@/model/runspec';
 import type { IBus, IBusExport } from '@/model/bus';
-export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av4 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.basis && (undefined === input.devices || Array.isArray(input.devices) && input.devices.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && _io1(elem, true && _exceptionable))) && (undefined === input.id || "string" === typeof input.id) && (undefined === input.projectId || "string" === typeof input.projectId) && (undefined === input.interval || true === _iv2.has(input.interval)) && (undefined === input.startInterval || "number" === typeof input.startInterval) && (undefined === input.startHour || "number" === typeof input.startHour) && (undefined === input.title || "string" === typeof input.title) && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["basis", "devices", "id", "projectId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _iv3 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av5 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av6 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => (undefined === input.devices || Array.isArray(input.devices) && input.devices.every((elem: any, _index1: number) => "object" === typeof elem && null !== elem && _io1(elem, true && _exceptionable))) && (undefined === input.id || "string" === typeof input.id) && (undefined === input.projectId || "string" === typeof input.projectId) && (undefined === input.basis || "number" === typeof input.basis) && (undefined === input.intervalMinutes || true === _iv2.has(input.intervalMinutes)) && (undefined === input.startIntervalOffset || "number" === typeof input.startIntervalOffset) && (undefined === input.title || "string" === typeof input.title) && (0 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["devices", "id", "projectId", "basis", "intervalMinutes", "startIntervalOffset", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
         return true;
     return false;
-})); const _io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.busId || "string" === typeof input.busId) && ("fixed_load" === input.type || "load" === input.type || "supply" === input.type || "storage" === input.type || "thermal_load" === input.type) && ("object" === typeof input.attrs && null !== input.attrs && false === Array.isArray(input.attrs) && _io2(input.attrs, true && _exceptionable)) && "number" === typeof input.basis && (Array.isArray(input.hardBounds) && (input.hardBounds.length === 2 && "number" === typeof input.hardBounds[0] && "number" === typeof input.hardBounds[1])) && ("object" === typeof input.bounds && null !== input.bounds && _io3(input.bounds, true && _exceptionable)) && (undefined === input.cumulative_bounds || "object" === typeof input.cumulative_bounds && null !== input.cumulative_bounds && _io3(input.cumulative_bounds, true && _exceptionable)) && ("object" === typeof input.costs && null !== input.costs && false === Array.isArray(input.costs) && _io5(input.costs, true && _exceptionable)) && (undefined === input.title || "string" === typeof input.title) && (undefined === input.description || "string" === typeof input.description) && ("object" === typeof input.tags && null !== input.tags && false === Array.isArray(input.tags) && _io8(input.tags, true && _exceptionable)) && (undefined === input.color || "string" === typeof input.color) && (undefined === input.shape || "string" === typeof input.shape) && ("object" === typeof input.parameters && null !== input.parameters && false === Array.isArray(input.parameters) && _io9(input.parameters, true && _exceptionable)) && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["id", "busId", "type", "attrs", "basis", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
+})); const _io1 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.busId || "string" === typeof input.busId) && ("fixed_load" === input.type || "load" === input.type || "supply" === input.type || "storage" === input.type || "thermal_load" === input.type) && ("object" === typeof input.attrs && null !== input.attrs && false === Array.isArray(input.attrs) && _io2(input.attrs, true && _exceptionable)) && "number" === typeof input.basis && true === _iv3.has(input.intervalMinutes) && "number" === typeof input.startIntervalOffset && (Array.isArray(input.hardBounds) && (input.hardBounds.length === 2 && "number" === typeof input.hardBounds[0] && "number" === typeof input.hardBounds[1])) && ("object" === typeof input.bounds && null !== input.bounds && _io3(input.bounds, true && _exceptionable)) && (undefined === input.cumulative_bounds || "object" === typeof input.cumulative_bounds && null !== input.cumulative_bounds && _io3(input.cumulative_bounds, true && _exceptionable)) && ("object" === typeof input.costs && null !== input.costs && false === Array.isArray(input.costs) && _io5(input.costs, true && _exceptionable)) && (undefined === input.title || "string" === typeof input.title) && (undefined === input.description || "string" === typeof input.description) && ("object" === typeof input.tags && null !== input.tags && false === Array.isArray(input.tags) && _io8(input.tags, true && _exceptionable)) && (undefined === input.color || "string" === typeof input.color) && (undefined === input.shape || "string" === typeof input.shape) && ("object" === typeof input.parameters && null !== input.parameters && false === Array.isArray(input.parameters) && _io9(input.parameters, true && _exceptionable)) && (11 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["id", "busId", "type", "attrs", "basis", "intervalMinutes", "startIntervalOffset", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -70,24 +70,19 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     if (undefined === value)
         return true;
     return true;
-}); const _ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ("number" === typeof input.basis || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
-    path: _path + ".basis",
-    expected: "number",
-    value: input.basis
-}, _errorFactory)) && (undefined === input.devices || (Array.isArray(input.devices) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}); const _ao0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => (undefined === input.devices || (Array.isArray(input.devices) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".devices",
     expected: "(Array<BaseDevice> | undefined)",
     value: input.devices
-}, _errorFactory)) && input.devices.every((elem: any, _index3: number) => ("object" === typeof elem && null !== elem || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && input.devices.every((elem: any, _index4: number) => ("object" === typeof elem && null !== elem || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".devices[" + _index3 + "]",
+    path: _path + ".devices[" + _index4 + "]",
     expected: "BaseDevice",
     value: elem
-}, _errorFactory)) && _ao1(elem, _path + ".devices[" + _index3 + "]", true && _exceptionable) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && _ao1(elem, _path + ".devices[" + _index4 + "]", true && _exceptionable) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".devices[" + _index3 + "]",
+    path: _path + ".devices[" + _index4 + "]",
     expected: "BaseDevice",
     value: elem
 }, _errorFactory)) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
@@ -105,28 +100,28 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     path: _path + ".projectId",
     expected: "(string | undefined)",
     value: input.projectId
-}, _errorFactory)) && (undefined === input.interval || true === _av4.has(input.interval) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && (undefined === input.basis || "number" === typeof input.basis || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".interval",
+    path: _path + ".basis",
+    expected: "(number | undefined)",
+    value: input.basis
+}, _errorFactory)) && (undefined === input.intervalMinutes || true === _av5.has(input.intervalMinutes) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".intervalMinutes",
     expected: "(1 | 10 | 15 | 2 | 20 | 3 | 30 | 4 | 5 | 6 | 60 | undefined)",
-    value: input.interval
-}, _errorFactory)) && (undefined === input.startInterval || "number" === typeof input.startInterval || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    value: input.intervalMinutes
+}, _errorFactory)) && (undefined === input.startIntervalOffset || "number" === typeof input.startIntervalOffset || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".startInterval",
+    path: _path + ".startIntervalOffset",
     expected: "(number | undefined)",
-    value: input.startInterval
-}, _errorFactory)) && (undefined === input.startHour || "number" === typeof input.startHour || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
-    path: _path + ".startHour",
-    expected: "(number | undefined)",
-    value: input.startHour
+    value: input.startIntervalOffset
 }, _errorFactory)) && (undefined === input.title || "string" === typeof input.title || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".title",
     expected: "(string | undefined)",
     value: input.title
-}, _errorFactory)) && (1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["basis", "devices", "id", "projectId", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+}, _errorFactory)) && (0 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+    if (["devices", "id", "projectId", "basis", "intervalMinutes", "startIntervalOffset", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -167,6 +162,16 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     path: _path + ".basis",
     expected: "number",
     value: input.basis
+}, _errorFactory)) && (true === _av6.has(input.intervalMinutes) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".intervalMinutes",
+    expected: "(1 | 10 | 15 | 2 | 20 | 3 | 30 | 4 | 5 | 6 | 60)",
+    value: input.intervalMinutes
+}, _errorFactory)) && ("number" === typeof input.startIntervalOffset || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".startIntervalOffset",
+    expected: "number",
+    value: input.startIntervalOffset
 }, _errorFactory)) && ((Array.isArray(input.hardBounds) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".hardBounds",
@@ -262,8 +267,8 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     path: _path + ".parameters",
     expected: "Record<string, any>",
     value: input.parameters
-}, _errorFactory)) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["id", "busId", "type", "attrs", "basis", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
+}, _errorFactory)) && (11 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+    if (["id", "busId", "type", "attrs", "basis", "intervalMinutes", "startIntervalOffset", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -586,10 +591,10 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     if (undefined === value)
         return true;
     return true;
-}); const __is = (input: any, _exceptionable: boolean = true): input is IBusExport => "object" === typeof input && null !== input && _io0(input, true); let _errorFactory: any; return (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): IBusExport => {
+}); const __is = (input: any, _exceptionable: boolean = true): input is IBusExport => "object" === typeof input && null !== input && false === Array.isArray(input) && _io0(input, true); let _errorFactory: any; return (input: any, errorFactory?: (p: import("typia").TypeGuardError.IProps) => Error): IBusExport => {
     if (false === __is(input)) {
         _errorFactory = errorFactory;
-        ((input: any, _path: string, _exceptionable: boolean = true) => ("object" === typeof input && null !== input || __typia_transform__assertGuard._assertGuard(true, {
+        ((input: any, _path: string, _exceptionable: boolean = true) => ("object" === typeof input && null !== input && false === Array.isArray(input) || __typia_transform__assertGuard._assertGuard(true, {
             method: "createAssertEquals",
             path: _path + "",
             expected: "IBusExport",
@@ -603,8 +608,8 @@ export const assertEqualsIBusExport = (() => { const _iv2 = new Set([1, 2, 3, 4,
     }
     return input;
 }; })();
-export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.projectId || "string" === typeof input.projectId) && "number" === typeof input.basis && true === _iv1.has(input.interval) && "number" === typeof input.startInterval && "number" === typeof input.startHour && (undefined === input.title || "string" === typeof input.title) && (5 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["id", "projectId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.projectId || "string" === typeof input.projectId) && "number" === typeof input.basis && true === _iv1.has(input.intervalMinutes) && "number" === typeof input.startIntervalOffset && (undefined === input.title || "string" === typeof input.title) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["id", "projectId", "basis", "intervalMinutes", "startIntervalOffset", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -625,28 +630,23 @@ export const assertEqualsIBus = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6,
     path: _path + ".basis",
     expected: "number",
     value: input.basis
-}, _errorFactory)) && (true === _av2.has(input.interval) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+}, _errorFactory)) && (true === _av2.has(input.intervalMinutes) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".interval",
+    path: _path + ".intervalMinutes",
     expected: "(1 | 10 | 15 | 2 | 20 | 3 | 30 | 4 | 5 | 6 | 60)",
-    value: input.interval
-}, _errorFactory)) && ("number" === typeof input.startInterval || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    value: input.intervalMinutes
+}, _errorFactory)) && ("number" === typeof input.startIntervalOffset || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
-    path: _path + ".startInterval",
+    path: _path + ".startIntervalOffset",
     expected: "number",
-    value: input.startInterval
-}, _errorFactory)) && ("number" === typeof input.startHour || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
-    path: _path + ".startHour",
-    expected: "number",
-    value: input.startHour
+    value: input.startIntervalOffset
 }, _errorFactory)) && (undefined === input.title || "string" === typeof input.title || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".title",
     expected: "(string | undefined)",
     value: input.title
-}, _errorFactory)) && (5 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["id", "projectId", "basis", "interval", "startInterval", "startHour", "title"].some((prop: any) => key === prop))
+}, _errorFactory)) && (4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+    if (["id", "projectId", "basis", "intervalMinutes", "startIntervalOffset", "title"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -986,8 +986,8 @@ export const assertEqualsDeviceCosts = (() => { const _io0 = (input: any, _excep
     }
     return input;
 }; })();
-export const assertEqualsIBaseDevice = (() => { const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && (undefined === input.busId || "string" === typeof input.busId) && ("fixed_load" === input.type || "load" === input.type || "supply" === input.type || "storage" === input.type || "thermal_load" === input.type) && ("object" === typeof input.attrs && null !== input.attrs && false === Array.isArray(input.attrs) && _io1(input.attrs, true && _exceptionable)) && "number" === typeof input.basis && (Array.isArray(input.hardBounds) && (input.hardBounds.length === 2 && "number" === typeof input.hardBounds[0] && "number" === typeof input.hardBounds[1])) && ("object" === typeof input.bounds && null !== input.bounds && _io2(input.bounds, true && _exceptionable)) && (undefined === input.cumulative_bounds || "object" === typeof input.cumulative_bounds && null !== input.cumulative_bounds && _io2(input.cumulative_bounds, true && _exceptionable)) && ("object" === typeof input.costs && null !== input.costs && false === Array.isArray(input.costs) && _io4(input.costs, true && _exceptionable)) && (undefined === input.title || "string" === typeof input.title) && (undefined === input.description || "string" === typeof input.description) && (undefined === input.tags || "object" === typeof input.tags && null !== input.tags && false === Array.isArray(input.tags) && _io7(input.tags, true && _exceptionable)) && (undefined === input.color || "string" === typeof input.color) && (undefined === input.shape || "string" === typeof input.shape) && (undefined === input.parameters || "object" === typeof input.parameters && null !== input.parameters && false === Array.isArray(input.parameters) && _io8(input.parameters, true && _exceptionable)) && (7 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-    if (["id", "busId", "type", "attrs", "basis", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
+export const assertEqualsIBaseDevice = (() => { const _iv1 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _av2 = new Set([1, 2, 3, 4, 5, 6, 10, 15, 20, 30, 60]); const _io0 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.id && ("fixed_load" === input.type || "load" === input.type || "supply" === input.type || "storage" === input.type || "thermal_load" === input.type) && ("object" === typeof input.attrs && null !== input.attrs && false === Array.isArray(input.attrs) && _io1(input.attrs, true && _exceptionable)) && (Array.isArray(input.hardBounds) && (input.hardBounds.length === 2 && "number" === typeof input.hardBounds[0] && "number" === typeof input.hardBounds[1])) && ("object" === typeof input.bounds && null !== input.bounds && _io2(input.bounds, true && _exceptionable)) && (undefined === input.cumulative_bounds || "object" === typeof input.cumulative_bounds && null !== input.cumulative_bounds && _io2(input.cumulative_bounds, true && _exceptionable)) && ("object" === typeof input.costs && null !== input.costs && false === Array.isArray(input.costs) && _io4(input.costs, true && _exceptionable)) && "number" === typeof input.basis && true === _iv1.has(input.intervalMinutes) && "number" === typeof input.startIntervalOffset && (undefined === input.busId || "string" === typeof input.busId) && (undefined === input.title || "string" === typeof input.title) && (undefined === input.description || "string" === typeof input.description) && (undefined === input.tags || "object" === typeof input.tags && null !== input.tags && false === Array.isArray(input.tags) && _io7(input.tags, true && _exceptionable)) && (undefined === input.color || "string" === typeof input.color) && (undefined === input.shape || "string" === typeof input.shape) && (undefined === input.parameters || "object" === typeof input.parameters && null !== input.parameters && false === Array.isArray(input.parameters) && _io8(input.parameters, true && _exceptionable)) && (9 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+    if (["id", "type", "attrs", "hardBounds", "bounds", "cumulative_bounds", "costs", "basis", "intervalMinutes", "startIntervalOffset", "busId", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)
@@ -1050,11 +1050,6 @@ export const assertEqualsIBaseDevice = (() => { const _io0 = (input: any, _excep
     path: _path + ".id",
     expected: "string",
     value: input.id
-}, _errorFactory)) && (undefined === input.busId || "string" === typeof input.busId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
-    path: _path + ".busId",
-    expected: "(string | undefined)",
-    value: input.busId
 }, _errorFactory)) && ("fixed_load" === input.type || "load" === input.type || "supply" === input.type || "storage" === input.type || "thermal_load" === input.type || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".type",
@@ -1070,11 +1065,6 @@ export const assertEqualsIBaseDevice = (() => { const _io0 = (input: any, _excep
     path: _path + ".attrs",
     expected: "IAttributes",
     value: input.attrs
-}, _errorFactory)) && ("number" === typeof input.basis || __typia_transform__assertGuard._assertGuard(_exceptionable, {
-    method: "createAssertEquals",
-    path: _path + ".basis",
-    expected: "number",
-    value: input.basis
 }, _errorFactory)) && ((Array.isArray(input.hardBounds) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".hardBounds",
@@ -1130,6 +1120,26 @@ export const assertEqualsIBaseDevice = (() => { const _io0 = (input: any, _excep
     path: _path + ".costs",
     expected: "DeviceCosts",
     value: input.costs
+}, _errorFactory)) && ("number" === typeof input.basis || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".basis",
+    expected: "number",
+    value: input.basis
+}, _errorFactory)) && (true === _av2.has(input.intervalMinutes) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".intervalMinutes",
+    expected: "(1 | 10 | 15 | 2 | 20 | 3 | 30 | 4 | 5 | 6 | 60)",
+    value: input.intervalMinutes
+}, _errorFactory)) && ("number" === typeof input.startIntervalOffset || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".startIntervalOffset",
+    expected: "number",
+    value: input.startIntervalOffset
+}, _errorFactory)) && (undefined === input.busId || "string" === typeof input.busId || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+    method: "createAssertEquals",
+    path: _path + ".busId",
+    expected: "(string | undefined)",
+    value: input.busId
 }, _errorFactory)) && (undefined === input.title || "string" === typeof input.title || __typia_transform__assertGuard._assertGuard(_exceptionable, {
     method: "createAssertEquals",
     path: _path + ".title",
@@ -1170,8 +1180,8 @@ export const assertEqualsIBaseDevice = (() => { const _io0 = (input: any, _excep
     path: _path + ".parameters",
     expected: "(Record<string, any> | undefined)",
     value: input.parameters
-}, _errorFactory)) && (7 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
-    if (["id", "busId", "type", "attrs", "basis", "hardBounds", "bounds", "cumulative_bounds", "costs", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
+}, _errorFactory)) && (9 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).every((key: any) => {
+    if (["id", "type", "attrs", "hardBounds", "bounds", "cumulative_bounds", "costs", "basis", "intervalMinutes", "startIntervalOffset", "busId", "title", "description", "tags", "color", "shape", "parameters"].some((prop: any) => key === prop))
         return true;
     const value = input[key];
     if (undefined === value)

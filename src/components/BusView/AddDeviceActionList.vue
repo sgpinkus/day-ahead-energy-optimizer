@@ -56,7 +56,7 @@ const addTypes: TypeSpec[] = [
           :key="spec.type"
           :title="spec.title"
           :prepend-icon="spec.icon"
-          @click="bus.addType(spec.type)"
+          @click="bus.addDeviceType(spec.type)"
         />
       </v-list>
     </v-list-group>

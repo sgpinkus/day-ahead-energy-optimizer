@@ -4,20 +4,20 @@ import { deviceFactory, BaseDevice, type DeviceType } from './device';
 import { values } from 'lodash';
 import { jsonParse } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
-import type { IntervalTime } from '@/types';
+import type { IntervalMinutes } from '@/types';
+import { startTimeString } from './utils';
+import { utcMillisecond } from 'd3';
 
 export interface IBus {
   id: string,
   projectId?: string,
   basis: number,
-  interval: IntervalTime,
-  startInterval: number,
-  startHour: number
+  intervalMinutes: IntervalMinutes,
+  startIntervalOffset: number,
   title?: string;
 }
 
 export interface IBusExport extends Partial<IBus> {
-  basis: number,
   devices?: BaseDevice[];
 }
 
@@ -26,18 +26,17 @@ export default class Bus implements IBus {
   readonly id: string;
   projectId?: string | undefined;
   readonly basis: number;
-  readonly interval: IntervalTime;
-  readonly startInterval: number;
-  readonly startHour: number;
+  readonly intervalMinutes: IntervalMinutes;
+  readonly startIntervalOffset: number;
   title?: string;
+  description?: string;
 
   private constructor(init: Omit<IBus, 'id'> & { id?: string }) {
     this.id = init.id || uuid();
     this.projectId = init.projectId;
     this.basis = init.basis;
-    this.interval = init.interval;
-    this.startInterval = init.startInterval;
-    this.startHour = init.startHour;
+    this.intervalMinutes = init.intervalMinutes;
+    this.startIntervalOffset = init.startIntervalOffset;
     this.title = init.title;
   }
 
@@ -49,15 +48,15 @@ export default class Bus implements IBus {
     return values(model.devices).filter(d => d.busId === this.id);
   }
 
-  get startTime() {
-    return `${String(this.startHour % 24).padStart(2, '0')}:${String((this.startInterval * this.interval) % 60).padStart(2, '0')}`;
-  }
-
   get optimizationResult() {
-    return Object.values(model.optimizationResults).find((v: OptimizationResult) => v.busId == this.id);
+    return Object.values(model.optimizationResults).find((v: OptimizationResult) => v.busId === this.id);
   }
 
-  add(device: BaseDevice) {
+  get startTimeString() {
+    return startTimeString(this);
+  }
+
+  addDevice(device: BaseDevice) {
     if (device.id in model.devices) return false;
     if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
     if (device.basis !== this.basis) throw new Error('Basis mismatch');
@@ -65,14 +64,21 @@ export default class Bus implements IBus {
     model.devices[device.id] = device;
   }
 
-  addType(type: DeviceType) {
+  addDeviceType(type: DeviceType) {
     if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
-    const device = deviceFactory({ type });
-    this.add(device);
+    const device = deviceFactory({ type }, this);
+    this.addDevice(device);
   }
 
-  delete(id: string) {
+  deleteDevice(id: string) {
     delete model.devices[id];
+  }
+
+  delete() {
+    delete model.busses[this.id];
+  }
+
+  clone() {
   }
 
   reset() {
@@ -89,6 +95,10 @@ export default class Bus implements IBus {
       // id: this.id,
       // projectId: this.projectId,
       basis: this.basis,
+      intervalMinutes: this.intervalMinutes,
+      startIntervalOffset: this.startIntervalOffset,
+      title: this.title,
+      description: this.description,
       devices: this.devices.map(d => d.replacer()),
     };
   }
@@ -105,7 +115,7 @@ export default class Bus implements IBus {
     const bus = new Bus(o as any);
     (o.devices || []).forEach((device) => {
       (device as any).id = uuid();
-      bus.add(device);
+      bus.addDevice(device);
     });
     return bus;
   }

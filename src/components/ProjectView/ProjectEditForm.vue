@@ -41,13 +41,13 @@ const titleRules = [
       type="nunber"
     />
     <v-text-field
-      v-model="project.interval"
+      v-model="project.intervalMinutes"
       label="Interval Length (minutes)"
       :readonly="true"
       :disabled="true"
     />
     <v-text-field
-      v-model:model-value="project.startTime"
+      v-model:model-value="project.startTimeString"
       label="Start Time"
       :readonly="true"
       :disabled="true"

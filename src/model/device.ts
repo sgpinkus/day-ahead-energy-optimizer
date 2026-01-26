@@ -10,6 +10,7 @@ import { DefaultBasis, BigNumber } from './constant';
 import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
 import { cloneDeep, pick } from 'lodash';
 import { assertEqualsDeviceCosts, assertEqualsIBaseDevice } from '@/typia';
+import type { IntervalMinutes } from '@/types';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage' | 'thermal_load';
 
@@ -89,10 +90,11 @@ export interface IThermalLoadDevice extends IBaseDevice {
   type: 'thermal_load';
 }
 
-
 export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice | IThermalLoadDevice;
 
-export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
+export type IDeviceDescriptorUpdate = Pick<IBaseDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
+
+export type IDeviceInit = Pick<IBaseDevice, 'basis' | 'intervalMinutes' | 'startIntervalOffset' | 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
 function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): BoundsRunSpec {
   return new BoundsRunSpec(DefaultBasis, [l, h] as [number, number], hb);
@@ -100,19 +102,20 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
 
 // TODO: put descriptor in descriptors field.
 // TODO: Why is attrs in here? Coz they are readonly descriptors? Freakin ontology is unsolvable.
-const BaseDeviceDescriptors = ['title', 'description', 'shape', 'color', 'tags'];
-
+const BaseDeviceDescriptorNames = ['title', 'description', 'shape', 'color', 'tags'];
 
 export interface IBaseDevice {
   readonly id: string;
-  busId?: string;
   readonly type: DeviceType,
   readonly attrs: IAttributes,
-  readonly basis: number,
   readonly hardBounds: [number, number],
   bounds: Bounds,
   cumulative_bounds?: CumulativeBounds,
   costs: DeviceCosts,
+  readonly basis: number,
+  readonly intervalMinutes: IntervalMinutes,
+  readonly startIntervalOffset: number,
+  busId?: string;
   title?: string,
   description?: string,
   tags?: Record<string, boolean | number | string>,
@@ -126,7 +129,9 @@ export abstract class BaseDevice implements IBaseDevice {
   busId?: string;
   abstract readonly type: DeviceType;
   readonly attrs: IAttributes = {};
-  readonly basis: number = DefaultBasis;
+  readonly basis: number;
+  readonly intervalMinutes: IntervalMinutes;
+  readonly startIntervalOffset: number;
   readonly hardBounds: [number, number] = [-BigNumber, BigNumber];
   readonly bounds: Bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
   cumulative_bounds?: CumulativeBounds;
@@ -138,16 +143,20 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly shape?: string;
   readonly parameters: Record<string, any> = {};
 
-  constructor() {
+  constructor(o: IDeviceInit) {
     this.id = uuid();
+    this.basis = o.basis;
+    this.intervalMinutes = o.intervalMinutes;
+    this.startIntervalOffset = o.startIntervalOffset;
+    Object.assign(this, pick(o, BaseDeviceDescriptorNames));
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
-    Object.assign(this, pick(o, BaseDeviceDescriptors));
+    Object.assign(this, pick(o, BaseDeviceDescriptorNames));
   }
 
   getDescriptors(this: BaseDevice): Partial<IDevice> {
-    return cloneDeep({ ...pick(this, BaseDeviceDescriptors) });
+    return cloneDeep({ ...pick(this, BaseDeviceDescriptorNames) });
   }
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {
@@ -170,7 +179,7 @@ export abstract class BaseDevice implements IBaseDevice {
 
   static reviver(data: unknown) {
     // @ts-expect-error 2511 "Cannot create an instance of an abstract class" Yeah, but that's not what this does.
-    const o = new this();
+    const o = new this(data);
     assertEqualsIBaseDevice(data);
     Object.assign(o, data);
     return o;
@@ -292,13 +301,13 @@ export class ThermalLoadDevice extends BaseDevice {
 }
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;
 
-export function deviceFactory(data: { type: DeviceType }): Device {
+export function deviceFactory(data: { type: DeviceType }, o: IDeviceInit): Device {
   switch (data.type) {
-    case 'load': return new LoadDevice();
-    case 'supply': return new SupplyDevice();
-    case 'fixed_load': return new FixedLoadDevice();
-    case 'storage': return new StorageDevice();
-    case 'thermal_load': return new ThermalLoadDevice();
+    case 'load': return new LoadDevice(o);
+    case 'supply': return new SupplyDevice(o);
+    case 'fixed_load': return new FixedLoadDevice(o);
+    case 'storage': return new StorageDevice(o);
+    case 'thermal_load': return new ThermalLoadDevice(o);
     default: throw new Error(`Unknown device type [data=${data}]`);
   }
 }

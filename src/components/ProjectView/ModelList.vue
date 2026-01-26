@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import model, { Project } from '@/model';
 import router from '@/router';
-import MyListItem from '../components/MyListItem.vue';
+import MyListItem from './MyListItem.vue';
 
 const { project } = defineProps<{ project: Project }>();
 const items = computed(() => project.busses); // Needs to be computed (technically should be reactive?)
@@ -31,7 +31,8 @@ const showObjectList = ref(true);
         icon="mdi-hub"
         @edit="() => router.push({ name: 'bus', params: { id: item.id } })"
         @click.stop="model.focusedBusId = item.id"
-        @delete="() => project.delete(item.id)"
+        @delete="() => item.delete()"
+        @clone="() => item.clone()"
       />
     </v-list>
   </template>

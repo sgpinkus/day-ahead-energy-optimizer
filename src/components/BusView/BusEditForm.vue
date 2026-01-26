@@ -41,13 +41,13 @@ const titleRules = [
       type="nunber"
     />
     <v-text-field
-      v-model="bus.interval"
+      v-model="bus.intervalMinutes"
       label="Interval Length (minutes)"
       :readonly="true"
       :disabled="true"
     />
     <v-text-field
-      v-model:model-value="bus.startTime"
+      v-model:model-value="bus.startTimeString"
       label="Start Time"
       :readonly="true"
       :disabled="true"
