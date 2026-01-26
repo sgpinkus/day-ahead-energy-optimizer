@@ -1,6 +1,8 @@
 <script lang='ts' setup>
 import { version as webVersion } from '@package';
 
+// @ts-expect-error vite defined
+const gitHash = __GIT_HASH__;
 
 </script>
 
@@ -8,12 +10,11 @@ import { version as webVersion } from '@package';
   <v-container fluid>
     <h1>About</h1>
     <dl>
-      <dt>web-version</dt><dd>{{ webVersion }}</dd><br>
-      <!-- <dt>api-version</dt><dd>{{ model.connection.apiVersion?.version || 'unknown' }}</dd> -->
+      <dt>web-version</dt><dd>{{ webVersion || 'unknown' }} ({{ gitHash }})</dd><br>
     </dl>
   </v-container>
 </template>
 
 <style scoped lang="scss">
-// @use './styles.scss';
+@use '@/styles/nav-dl.scss';
 </style>
