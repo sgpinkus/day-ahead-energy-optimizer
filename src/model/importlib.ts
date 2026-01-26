@@ -83,6 +83,6 @@ export function jsonStringify(o: any) {
   return JSON.stringify(o, replacer);
 }
 
-export function jsonParse(o: any) {
+export function jsonParse(o: string) {
   return JSON.parse(o, reviver);
 }

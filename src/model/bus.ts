@@ -6,7 +6,6 @@ import { jsonParse } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 import type { IntervalMinutes } from '@/types';
 import { startTimeString } from './utils';
-import { utcMillisecond } from 'd3';
 
 export interface IBus {
   id: string,

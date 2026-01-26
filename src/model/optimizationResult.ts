@@ -6,8 +6,6 @@
 export type OptimizationResult = {
   id: string,
   busId: string,
-  // busVersion: string,
-  busExport: string,
   createdAt: string,
   data: {
     flowData: string,

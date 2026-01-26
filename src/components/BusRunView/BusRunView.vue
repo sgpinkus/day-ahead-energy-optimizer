@@ -15,12 +15,16 @@ const { id } = defineProps<{ id: string }>();
 const bus = model.busses[id];
 if (!bus) throw new NotFoundError();
 
-const busExport = JSON.stringify(bus.toExportObject());
-const busHash = md5(busExport);
-const focusedId = ref(busHash);
-const currentResult: Ref<OptimizationResult | undefined> = computed(() => model.optimizationResults[focusedId.value]);
+const busHash = computed(() => md5(JSON.stringify(bus.toExportObject())));
+const currentResult: Ref<OptimizationResult | undefined> = computed(() => model.optimizationResults[bus.id]);
+const isStale = computed(() => (!currentResult.value || (currentResult.value.id !== busHash.value)));
+
+if (isStale.value) {
+  delete model.optimizationResults[bus.id];
+}
 
 const blobUrl = ref('');
+
 function exportModel() {
   const data = jsonStringify(bus!.toExportObject());
   const blob = new Blob([data], { type: 'application/json' });
@@ -41,20 +45,18 @@ const stateMessage = computed(() => {
 const optimizationDisabled: Ref<boolean> = computed(() =>
   pyodideLoadingStateCode.value !== 'ready' ||
   optimizationStateCode.value === 'running' ||
-  !!(currentResult.value),
+  !(isStale.value),
 );
 const plot1Src = computed(() => currentResult.value ? `data:image/png;base64,${currentResult.value?.data.plot1Image}` : undefined);
 
 function newOptimizationResult(bus: Bus, data: OptimizationResult['data']) {
-  const busExport = JSON.stringify(bus.toExportObject());
   const result = {
-    id: md5(busExport),
+    id: md5(JSON.stringify(bus.toExportObject())),
     busId: bus.id,
-    busExport,
     createdAt: (new Date()).toISOString(),
     data,
   };
-  model.optimizationResults[result.id] = result;
+  model.optimizationResults[bus.id] = result;
   return result;
 }
 
@@ -113,10 +115,6 @@ onMounted(() => {
     >
       Run Optimization
     </v-list-item>
-    <!-- <RunList
-      :bus="bus"
-      @focused="(id) => focusedId = id"
-    /> -->
   </AppNavDrawer>
   <v-main>
     <v-container class="container">
