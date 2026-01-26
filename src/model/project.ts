@@ -4,14 +4,20 @@ import Bus from './bus';
 import { values } from 'lodash';
 import { assertIdentified } from '@/typia';
 import { DefaultBasis, DefaultIntervalMinutes } from './constant';
-import type { IntervalTime } from '@/types';
+import type { IntervalMinutes } from '@/types';
+import { startTimeString } from './utils';
+
+export type TimeSpec = {
+  basis: number;
+  intervalMinutes: IntervalMinutes;
+  startIntervalOffset: number;
+};
 
 export default class Project {
   static readonly MaxItems = 100;
   readonly basis: number = DefaultBasis;
-  readonly interval: IntervalTime = DefaultIntervalMinutes;
-  readonly startInterval: number = 0;
-  readonly startHour: number = 0;
+  readonly intervalMinutes: IntervalMinutes = DefaultIntervalMinutes;
+  readonly startIntervalOffset: number = 0; // start time offset from 0 in units of intervalMinutes.
   title?: string;
 
   public constructor(
@@ -26,9 +32,10 @@ export default class Project {
     return values(model.busses).filter(v => v.projectId === this.id);
   }
 
-  get startTime() {
-    return `${String(this.startHour % 24).padStart(2, '0')}:${String((this.startInterval * this.interval) % 60).padStart(2, '0')}`;
+  get startTimeString() {
+    return startTimeString(this);
   }
+
 
   add(bus: Bus) {
     if (bus.id in this.busses) return;
@@ -42,9 +49,8 @@ export default class Project {
     const bus = Bus.newBus({
       projectId: this.id,
       basis: this.basis,
-      interval: this.interval,
-      startInterval: this.startInterval,
-      startHour: this.startHour,
+      intervalMinutes: this.intervalMinutes,
+      startIntervalOffset: this.startIntervalOffset,
     });
     model.busses[bus.id] = bus;
   }

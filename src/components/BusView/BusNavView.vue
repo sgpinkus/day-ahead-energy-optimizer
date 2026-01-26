@@ -29,7 +29,7 @@ function importDevice() {
         try {
           const device = jsonParse(reader.result); // is ~sanitized via Device.reviver.
           if (!(device instanceof BaseDevice)) throw new ValidationError();
-          bus.add(device.clone());
+          bus.addDevice(device.clone());
         } catch (e) {
           if (e instanceof TypeGuardError) {
             throw new ValidationError(typeGuardErrorToString(e));
@@ -126,6 +126,7 @@ function importDevice() {
     <AddDeviceActionList :bus="bus" />
     <v-divider />
     <BusDeviceList :bus="bus" />
+    <v-list-item /> <!-- yes -->
   </v-list>
 </template>
 

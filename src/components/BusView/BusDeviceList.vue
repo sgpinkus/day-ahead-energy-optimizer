@@ -15,6 +15,7 @@ const icons: Partial<Record<DeviceType, string>> = {
   supply: 'mdi-generator-stationary',
   storage: 'mdi-battery-charging',
   fixed_load: 'mdi-cellphone-settings',
+  thermal_load: 'mdi-home-thermometer',
 };
 
 const showObjectList = ref(true);
@@ -42,7 +43,7 @@ const showObjectList = ref(true);
         :focused="model.focusedDeviceId === item.id"
         :icon="icons[item.type]"
         @edit="() => router.push({ name: 'device', params: { id: item.id } })"
-        @delete="() => bus.delete(item.id)"
+        @delete="() => bus.deleteDevice(item.id)"
         @click.stop="model.focusedDeviceId = item.id"
       />
     </v-list>
