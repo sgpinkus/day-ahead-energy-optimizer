@@ -17,7 +17,6 @@ export interface IBus {
 }
 
 export interface IBusExport extends Partial<IBus> {
-  basis: number,
   devices?: BaseDevice[];
 }
 
@@ -71,9 +70,13 @@ export default class Bus implements IBus {
     this.add(device);
   }
 
-  delete(id: string) {
-    delete model.devices[id];
+  delete() {
+    delete model.devices[this.id];
   }
+
+  clone() {
+  }
+
 
   reset() {
     for (const d of this.devices) {

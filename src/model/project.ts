@@ -31,11 +31,11 @@ export default class Project {
   }
 
   add(bus: Bus) {
-    if (!(bus.id in this.busses)) {
-      if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
-      bus.projectId = this.id;
-      model.busses[bus.id] = bus;
-    }
+    if (bus.id in this.busses) return;
+    if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
+    if (bus.basis !== this.basis) throw new Error('Incompatible basis');
+    bus.projectId = this.id;
+    model.busses[bus.id] = bus;
   }
 
   addNew() {
@@ -47,10 +47,6 @@ export default class Project {
       startHour: this.startHour,
     });
     model.busses[bus.id] = bus;
-  }
-
-  delete(id: string) {
-    delete model.busses[id];
   }
 
   reset() {

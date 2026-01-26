@@ -114,6 +114,7 @@ function importDevice() {
         @change="importDevice"
       >
     </v-list-item>
+    <v-divider />
     <v-list-item
       prepend-icon="mdi-play-box"
     >

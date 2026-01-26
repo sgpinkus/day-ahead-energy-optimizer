@@ -89,7 +89,6 @@ export interface IThermalLoadDevice extends IBaseDevice {
   type: 'thermal_load';
 }
 
-
 export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice | IThermalLoadDevice;
 
 export type IDeviceDescriptorUpdate = Pick<IDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
@@ -100,8 +99,7 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
 
 // TODO: put descriptor in descriptors field.
 // TODO: Why is attrs in here? Coz they are readonly descriptors? Freakin ontology is unsolvable.
-const BaseDeviceDescriptors = ['title', 'description', 'shape', 'color', 'tags'];
-
+const BaseDeviceDescriptorNames = ['title', 'description', 'shape', 'color', 'tags'];
 
 export interface IBaseDevice {
   readonly id: string;
@@ -143,11 +141,11 @@ export abstract class BaseDevice implements IBaseDevice {
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
-    Object.assign(this, pick(o, BaseDeviceDescriptors));
+    Object.assign(this, pick(o, BaseDeviceDescriptorNames));
   }
 
   getDescriptors(this: BaseDevice): Partial<IDevice> {
-    return cloneDeep({ ...pick(this, BaseDeviceDescriptors) });
+    return cloneDeep({ ...pick(this, BaseDeviceDescriptorNames) });
   }
 
   softBounds(type: 'bounds' | 'cumulative_bounds') {

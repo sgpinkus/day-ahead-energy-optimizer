@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import model, { Bus, Project } from '@/model';
-import BusList from './ModelList.vue';
+import ModelList from './ModelList.vue';
 import HubPlus from '@/components/icons/hub-plus';
 import ProjectEditForm from './ProjectEditForm.vue';
 import AddDataActionList from '@/components/AddDataActionList.vue';
@@ -100,7 +100,7 @@ function reset() {
       @click="project.addNew()"
     />
     <v-divider />
-    <BusList :project="project" />
+    <ModelList :project="project" />
     <v-divider />
     <AddDataActionList />
     <v-divider />
