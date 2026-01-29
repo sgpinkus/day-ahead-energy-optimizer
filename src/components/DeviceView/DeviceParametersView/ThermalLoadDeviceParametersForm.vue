@@ -4,10 +4,10 @@ import { XYRunSpecAdaptor } from '@/model/runspec';
 import { setDialog } from '@/model/infos';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { onMounted, ref, useTemplateRef, watch, type Ref } from 'vue';
+
+import { ref, useTemplateRef, watch, type Ref } from 'vue';
 import RunSpecTableView from '../RunSpecTableView.vue';
-import MyNumberTextField from '@/components/components/MyNumberTextField';
+import CsvNumberArrayInput from '@/components/components/CsvNumberArrayInput.vue';
 
 const careFactorTableValueSpec = [
   { label: 'temp', min: 0.1, max: 1e2, step: 0.1 },
@@ -19,39 +19,43 @@ const careFactorTableValueSpec = [
 
 const { device } = defineProps<{ device: ThermalLoadDevice }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
-const simpleWork = ref(newWork(device.parameters));
-// Directly mutates model.
-const temperatureVariationCareFactorWork = ref(new XYRunSpecAdaptor<number, [number]>(device.parameters.temperatureVariationCareFactor, (x) => [x], (x) => x[0]));
-const initialValue = cloneDeep(simpleWork.value);
+  const simpleValues = ref({
+    desiredTemperature: device.parameters.desiredTemperature,
+    initialTemperature: device.parameters.initialTemperature,
+    thermalSustainment: device.parameters.thermalSustainment,
+    efficiencyFactor: device.parameters.efficiencyFactor,
+  });
+const initialSimpleValues = cloneDeep(simpleValues.value);
+const temperatureVariationCareFactorWork = ref(device.parameters.temperatureVariationCareFactor.copy());
+const _temperatureVariationCareFactorWork = ref(new XYRunSpecAdaptor<number, [number]>(temperatureVariationCareFactorWork.value, (x) => [x], (x) => x[0]));
+const externalTemperatureProfileWork = ref([...device.parameters.externalTemperatureProfile]);
+
+watch(externalTemperatureProfileWork, () => {
+  console.log('externalTemperatureProfile', externalTemperatureProfileWork.value);
+});
+
+watch(_temperatureVariationCareFactorWork, () => {
+  console.log('temperatureVariationCareFactor', temperatureVariationCareFactorWork.value);
+});
+
 const valid = ref(false);
 
-function newWork(parameters: typeof device['parameters']) {
-  return {
-    desiredTemperature: parameters.desiredTemperature,
-    initialTemperature: parameters.initialTemperature,
-    thermalSustainment: parameters.thermalSustainment,
-    efficiencyFactor: parameters.thermalSustainment,
-  };
-}
-
-async function update() { // change(changeKey: string)
-  console.log('change');
+async function simpleValuesUpdate() {
   form.value!.resetValidation();
   const { valid } = await form.value!.validate();
-  const changes = deepDiffObjects2(simpleWork.value, initialValue);
-  console.log(changes);
+  const changes = deepDiffObjects2(simpleValues.value, initialSimpleValues);
   if (valid && changes) {
     Object.assign(device.parameters, changes);
   }
 }
 
-function externalTemperatureProfileUpdate(index: number, newValue: number) {
-  device.parameters.externalTemperatureProfile[index] = Number(newValue); // eslint-disable-line vue/no-mutating-props
+function temperatureVariationCareFactorUpdate() {
+  device.parameters.temperatureVariationCareFactor = temperatureVariationCareFactorWork.value.copy(); // eslint-disable-line
 }
 
-onMounted(() => {
-  console.log(device.parameters);
-});
+function externalTemperatureProfileUpdate(v: number[]) {
+  device.parameters.externalTemperatureProfile = v; // eslint-disable-line
+}
 
 </script>
 
@@ -69,13 +73,13 @@ onMounted(() => {
       </v-icon>
     </div>
     <v-text-field
-      v-model.number="simpleWork.desiredTemperature"
+      v-model.number="simpleValues.desiredTemperature"
       type="number"
       :min="-273"
       :max="1000"
       :step="0.5"
       placeholder="None"
-      @change="update"
+      @change="simpleValuesUpdate"
     />
 
     <div class="d-flex flex-row justify-space-between">
@@ -88,13 +92,13 @@ onMounted(() => {
       </v-icon>
     </div>
     <v-text-field
-      v-model.number="simpleWork.initialTemperature"
+      v-model.number="simpleValues.initialTemperature"
       type="number"
       :min="-273"
       :max="1000"
       :step="0.5"
       placeholder="None"
-      @change="update"
+      @change="simpleValuesUpdate"
     />
 
     <div class="d-flex flex-row justify-space-between">
@@ -107,13 +111,13 @@ onMounted(() => {
       </v-icon>
     </div>
     <v-text-field
-      v-model.number="simpleWork.thermalSustainment"
+      v-model.number="simpleValues.thermalSustainment"
       type="number"
       :min="0"
       :max="1"
       :step="0.01"
       placeholder="None"
-      @change="update"
+      @change="simpleValuesUpdate"
     />
 
     <div class="d-flex flex-row justify-space-between">
@@ -126,13 +130,13 @@ onMounted(() => {
       </v-icon>
     </div>
     <v-text-field
-      v-model.number="simpleWork.efficiencyFactor"
+      v-model.number="simpleValues.efficiencyFactor"
       type="number"
       :min="0"
       :max="10"
       :step="0.01"
       placeholder="None"
-      @change="update"
+      @change="simpleValuesUpdate"
     />
 
     <hr>
@@ -151,9 +155,10 @@ onMounted(() => {
     <br>
 
     <RunSpecTableView
-      :run-spec="temperatureVariationCareFactorWork"
+      :run-spec="_temperatureVariationCareFactorWork"
       :value-spec="careFactorTableValueSpec"
       :focusable="true"
+      @change="temperatureVariationCareFactorUpdate"
     />
 
     <br><hr><br>
@@ -167,38 +172,15 @@ onMounted(() => {
         mdi-information
       </v-icon>
     </div>
-
     <br>
-
-    <v-table>
-      <thead>
-        <tr>
-          <th>
-            Time
-          </th>
-          <th>Temp</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="i in (device.basis -1)"
-          :key="i"
-        >
-          <td class="temp-label">
-            <v-label>{{ i }}</v-label>
-          </td>
-          <td class="temp-value">
-            <MyNumberTextField
-              :model-value="device.parameters.externalTemperatureProfile[i]"
-              :min="-273"
-              :max="1000"
-              :step="0.5"
-              @update:model-value="(v: number) => externalTemperatureProfileUpdate(i, v)"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+    <csv-number-array-input
+      :min-length="48"
+      :max-length="48"
+      :min-value="-100"
+      :max-value="100"
+      :initial-value="externalTemperatureProfileWork"
+      @change="externalTemperatureProfileUpdate"
+    />
   </v-form>
 </template>
 

@@ -94,8 +94,6 @@ export default class Bus implements IBus {
    */
   toExportObject() {
     return {
-      // id: this.id,
-      // projectId: this.projectId,
       basis: this.basis,
       intervalMinutes: this.intervalMinutes,
       startIntervalOffset: this.startIntervalOffset,
