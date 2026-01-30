@@ -2,9 +2,9 @@
 import { computed, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
-import { RunSpec } from '@/model/runspec';
+import { RunSpec } from '@/lib/runspec';
 import { setDialog } from '@/model/infos';
-import RunSpecTableView from './RunSpecTableView.vue';
+import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';
 

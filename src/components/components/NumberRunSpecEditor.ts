@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as units from '@/model/units';
-import type { IBoundedNumberRunSpec } from '@/model/runspec';
+import type { IBoundedNumberRunSpec } from '@/lib/runspec';
 // import { scaleBand, scaleLinear, select, axisBottom, selectAll  }  from 'd3';
 
 export type Options = {
@@ -15,7 +15,7 @@ export type Options = {
 }
 
 const defaultOptions: Options = {
-  margin: { top: 20, right: 30, bottom: 60, left: 30},
+  margin: { top: 20, right: 30, bottom: 60, left: 30 },
   range: [undefined, undefined],
   autoPaddingFactor: [0.15, 0.15],
   xFormatter: null,
@@ -32,7 +32,7 @@ type Range = [number, [number, number]];
  * Draw data and set up graph based on data. data must be an array of numbers.
  * If range use that for y-axis range.
  */
-export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<number>, changed = () => {}, _options: Partial<Options> = {}) {
+export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<number>, changed = () => { }, _options: Partial<Options> = {}) {
 
   function vStarted(this: Element, event: DragEvent) {
     drawLine(event.y);
@@ -90,7 +90,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     const spread = max - min;
     const hardBoundsMin = data.hardBounds ? data.hardBounds[0] : Number.NEGATIVE_INFINITY;
     const hardBoundsMax = data.hardBounds ? data.hardBounds[1] : Number.POSITIVE_INFINITY;
-    const absTicksBound = options.ticks*1/10**options.precision;
+    const absTicksBound = options.ticks * 1 / 10 ** options.precision;
     function getMin() {
       let v = -1;
       if (options.range && options.range[0] !== undefined) {
@@ -100,7 +100,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       } else if (min !== 0) {
         v = (min < 0) ? min + options.autoPaddingFactor[0] * min : 0;
       }
-      v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
+      v = Math.max(Math.abs(v), absTicksBound) * Math.sign(v);
       return Math.max(v, hardBoundsMin);
     }
     function getMax() {
@@ -112,7 +112,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       } else if (max !== 0) {
         v = (max < 0) ? 0 : max + options.autoPaddingFactor[1] * max;
       }
-      v = Math.max(Math.abs(v), absTicksBound)*Math.sign(v);
+      v = Math.max(Math.abs(v), absTicksBound) * Math.sign(v);
       return Math.min(v, hardBoundsMax);
     }
     return [getMin(), getMax()];
@@ -123,7 +123,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       .attr('opacity', 1)
       .attr('transform', `translate(0, ${yScale(0) + eventY})`)
       .select('text')
-        .text(d3.format(`.${options.precision}f`)(yScale.invert(yScale(0) + eventY)));
+      .text(d3.format(`.${options.precision}f`)(yScale.invert(yScale(0) + eventY)));
   }
 
   const options: Options = { ...defaultOptions, ..._options };
@@ -136,15 +136,15 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   yScale.ticks(options.ticks);
   let selectedIndex: number | undefined = undefined;
   const g = svg.append('g')
-      .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
+    .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
   const dragV = d3.drag<SVGGElement, [number, [number, number]]>();
   const dragH = d3.drag<SVGRectElement, [number, [number, number]]>();
   const barGroups = g.selectAll('.bar-group').data(data.toRanges()).enter().append('g')
     .attr('transform', ([_v, range]) => `translate(${xScale(range[0])}, ${yScale(0)})`);
   const bars = barGroups
     .append('g')
-      .each(function(_d, i) { index.set(this, i); })
-      .attr('class', function() { return `bar-${index.get(this)}`; });
+    .each(function (_d, i) { index.set(this, i); })
+    .attr('class', function () { return `bar-${index.get(this)}`; });
   barGroups.exit().remove();
   if (options.vEditable) {
     bars.call(dragV.on('start', vStarted))
@@ -153,8 +153,8 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   }
   bars.append('rect')
     .classed('bar', true)
-    .attr('width', ([_v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter()*2)
-    .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) + 1)
+    .attr('width', ([_v, range]) => xScale(range[1])! - xScale(range[0])! + xScale.bandwidth() + xScale.paddingOuter() * 2)
+    .attr('height', ([v]) => Math.abs(yScale(0) - yScale(v)) + 1)
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v) || 1)})`)
     .attr('stroke', 'yellow')
     .attr('stroke-width', 4)
@@ -163,7 +163,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       d3.select(this.parentElement).select('.tool-tip')
         .attr('opacity', 1);
     })
-    .on('mouseout', function() {
+    .on('mouseout', function () {
       d3.select(this).attr('opacity', '1');
       d3.select(this.parentElement).select('.tool-tip')
         .attr('opacity', 0);
@@ -173,21 +173,21 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   }
   const hBarRect = bars.append('rect')
     .classed('bar', true)
-    .attr('width', xScale.step()*0.8)
-    .attr('height',  ([v]) => Math.abs(yScale(0) - yScale(v)) - 1)
+    .attr('width', xScale.step() * 0.8)
+    .attr('height', ([v]) => Math.abs(yScale(0) - yScale(v)) - 1)
     .attr('transform', ([v]) => `scale(1, ${-1 * Math.sign(yScale(0) - yScale(v))})`)
     .attr('stroke', 'red')
     .attr('fill', 'red')
     .on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
     })
-    .on('mouseout', function() {
+    .on('mouseout', function () {
       d3.select(this).attr('opacity', '1');
     });
   if (options.hEditable) {
     hBarRect.attr('cursor', 'grabbing')
-    .call(dragH.on('start', hStarted))
-    .call(dragH.on('end', hStopped));
+      .call(dragH.on('start', hStarted))
+      .call(dragH.on('end', hStopped));
   }
   const barTops = bars.append('g')
     .attr('transform', ([v]) => `translate(0, ${yScale(v) - yScale(0)})`);
@@ -203,7 +203,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
   if (options.hEditable) {
     barTops.append('polygon')
       .attr('points', '0,0 30,0 15,15 0,0')
-      .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!)/2 - 7.5}, -7.5)`)
+      .attr('transform', ([_v, range]) => `translate(${(xScale(range[1])! - xScale(range[0])!) / 2 - 7.5}, -7.5)`)
       .attr('fill', 'red')
       .attr('stroke', 'red')
       .attr('cursor', 'crosshair')
@@ -211,10 +211,10 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       .on('mouseover', function () {
         d3.select(this).attr('opacity', '1');
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('opacity', '0');
       })
-      .on('mousedown', function(e: Event) {
+      .on('mousedown', function (e: Event) {
         data.split(index.get(this)!);
         e.stopPropagation();
         changed();
@@ -237,28 +237,28 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
     .attr('fill', 'black');
   // xy axes.
   g.append('g')
-      .attr('class', 'axis axis--x')
-      .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(xScale).tickFormat(options.xFormatter))
-      .call(g => g.append('text')
-        .attr('x', width/2)
-        .attr('y', options.margin.bottom)
-        .attr('fill', 'currentColor')
-        .attr('text-anchor', 'end')
-        .attr('font-size', 'larger')
-        .text('Time'));
+    .attr('class', 'axis axis--x')
+    .attr('transform', `translate(0, ${height})`)
+    .call(d3.axisBottom(xScale).tickFormat(options.xFormatter))
+    .call(g => g.append('text')
+      .attr('x', width / 2)
+      .attr('y', options.margin.bottom)
+      .attr('fill', 'currentColor')
+      .attr('text-anchor', 'end')
+      .attr('font-size', 'larger')
+      .text('Time'));
   g.selectAll('.axis--x g.tick text')
-      .attr('transform', 'rotate(-90) translate(-22,-14)');
+    .attr('transform', 'rotate(-90) translate(-22,-14)');
   g.append('g')
-      .attr('class', 'axis axis--y')
-      .call(d3.axisLeft(yScale).ticks(10, ''))
-      .call(g => g.append('text')
-        .attr('x', -options.margin.left / 2)
-        .attr('y', -options.margin.top + 10)
-        .attr('fill', 'currentColor')
-        .attr('text-anchor', 'start')
-        .attr('font-size', 'larger')
-        .text(units.FlowUnitSymbol));
+    .attr('class', 'axis axis--y')
+    .call(d3.axisLeft(yScale).ticks(10, ''))
+    .call(g => g.append('text')
+      .attr('x', -options.margin.left / 2)
+      .attr('y', -options.margin.top + 10)
+      .attr('fill', 'currentColor')
+      .attr('text-anchor', 'start')
+      .attr('font-size', 'larger')
+      .text(units.FlowUnitSymbol));
   g.append('line')
     .attr('stroke', 'black')
     .attr('x1', 0)
@@ -273,7 +273,6 @@ function scaleBandInvert(scale: any) {
   const eachBand = scale.step();
   return function (value: any) {
     const index = Math.floor(((value - paddingOuter) / eachBand));
-    return domain[Math.max(-100,Math.min(index, domain.length-1))];
+    return domain[Math.max(-100, Math.min(index, domain.length - 1))];
   };
 }
-

@@ -10,7 +10,7 @@ import {
   NumberRunSpec,
   BoundsRunSpec,
   FixedBoundsRunSpec,
-} from './runspec';
+} from '../lib/runspec';
 import {
   DeviceCosts,
   BaseDevice,

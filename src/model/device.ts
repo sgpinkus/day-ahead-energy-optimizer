@@ -7,7 +7,7 @@
  */
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constant';
-import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from './runspec';
+import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from '../lib/runspec';
 import { cloneDeep, pick } from 'lodash';
 import { assertEqualsDeviceCosts, assertEqualsIBaseDevice } from '@/typia';
 import type { IntervalMinutes } from '@/types';

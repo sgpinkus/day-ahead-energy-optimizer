@@ -3,8 +3,8 @@
 import { computed, ref, watch, type Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
 import { setDialog } from '@/model/infos';
-import { BoundsRunSpec } from '@/model/runspec';
-import RunSpecTableView from './RunSpecTableView.vue';
+import { BoundsRunSpec } from '@/lib/runspec';
+import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
 import PlotView from '@/components/components/PlotView.vue';
 import { cloneDeep } from 'lodash';
 import { linspace, boundsRelativeQuadratic } from '@/utils';

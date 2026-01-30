@@ -33,8 +33,14 @@ export interface IAllRunSpec {
 }
 
 /**
- * Basically a Map<[number, number], X> that enforces certain constraints on the [number, number], also has a few useful
- * mutators. Validating the value X is beyond the scope of this class.
+ * RunSpec is an encoding of an array as a sequence of pairs x_i = [[x_ij,x_iv]].
+ * The value from x_i to x_(i+1) is given x_iv.
+ * Basically a Map<[number, number], X> that enforces certain constraints on the [number, number] with some helper methods.
+ * Some terminology:
+ *   index: the index into the logical array.
+ *   run-index: the ordinal position of the run in the list of runs.
+ *   start-index: the first index of a run.
+ * run-index, start-index is only used interally.
  */
 export class RunSpec<X> implements IRunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
@@ -83,8 +89,11 @@ export class RunSpec<X> implements IRunSpec<X> {
     }
   }
 
+  /**
+   * Lookup value at index i.
+   */
   get(i: number): X {
-    let v = this.runs[0];
+    let v: X = this.runs[0]!;
     for (const [k, x] of Object.entries(this.runs)) {
       if (Number(k) <= i) v = x;
       if (Number(k) > i) break;
@@ -93,7 +102,8 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 
   /**
-   * Get the start position of run for position i and its index in the collection of runs.
+   * Get the run-index, and the start-index of the run corresponding to index
+   * i.
    */
   getRun(i: number): [number, number] {
     let start = 0;
@@ -115,7 +125,7 @@ export class RunSpec<X> implements IRunSpec<X> {
   }
 
   /**
-   * Change start of which ever run is at runIndex so that it is newStart with conditions and sideffects.
+   * Change start of which ever run is at i so that it is newStart with conditions and sideffects.
    * Just delete every run in between current start and newstart including old start.
    */
   move(i: number, newStart: number) {

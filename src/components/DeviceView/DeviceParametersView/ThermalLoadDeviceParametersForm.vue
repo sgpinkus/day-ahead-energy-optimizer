@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { ThermalLoadDevice } from '@/model/device';
-import { XYRunSpecAdaptor } from '@/model/runspec';
+import { XYRunSpecAdaptor } from '@/lib/runspec';
 import { setDialog } from '@/model/infos';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 
 import { ref, useTemplateRef, watch, type Ref } from 'vue';
-import RunSpecTableView from '../RunSpecTableView.vue';
+import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
 import CsvNumberArrayInput from '@/components/components/CsvNumberArrayInput.vue';
 
 const careFactorTableValueSpec = [

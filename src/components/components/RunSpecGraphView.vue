@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef, computed, watch } from 'vue';
-import { draw, type Options } from '@/components/components/NumberRunSpecEditor';
+import { draw, type Options } from './NumberRunSpecEditor';
 import * as d3 from 'd3';
-import type { IRunSpec } from '@/model/runspec';
+import type { IRunSpec } from '@/lib/runspec';
 
 const emit = defineEmits(['data-changed']);
 
