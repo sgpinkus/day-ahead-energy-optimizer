@@ -1,6 +1,6 @@
 import { createAssert, createAssertEquals } from 'typia';
 import type { DeviceCosts, IBaseDevice } from '@/model/device';
-import type { IAllRunSpec } from '@/model/runspec';
+import type { IAllRunSpec } from '@/lib/runspec';
 import type { IBus, IBusExport } from '@/model/bus';
 
 export const assertEqualsIBusExport = createAssertEquals<IBusExport>();
