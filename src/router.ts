@@ -7,6 +7,7 @@ import NotFoundPath from '@/components/NotFoundPath.vue';
 import NotFoundResource from '@/components/NotFoundResource.vue';
 import BusRunView from '@/components/BusRunView/BusRunView.vue';
 import DocsView from '@/components/DocsView/DocsView.vue';
+import RunSpecTableViewTest from './components/Tests/RunSpecTableViewTest.vue';
 import { basePath } from '@config';
 
 const router = createRouter({
@@ -38,6 +39,12 @@ const router = createRouter({
       path: '/device/:id',
       name: 'device',
       component: DeviceView,
+      props: true,
+    },
+    {
+      path: '/tests/runspectableview',
+      name: 'RunSpecTableViewTest',
+      component: RunSpecTableViewTest,
       props: true,
     },
     {

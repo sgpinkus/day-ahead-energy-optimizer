@@ -45,6 +45,7 @@ export interface IAllRunSpec {
 export class RunSpec<X> implements IRunSpec<X> {
   /** Using an object over a Map as entries() is implicitly sorted -- https://exploringjs.com/es6/ch_oop-besides-classes.html#_traversal-order-of-properties */
   public readonly runs: Record<number, X> = {};
+
   constructor(
     public readonly basis: number,
     zerothValue: X,

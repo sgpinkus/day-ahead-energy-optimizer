@@ -1,18 +1,25 @@
-import { defineComponent } from 'vue';
-import { VTextField } from 'vuetify/components';
+import { defineComponent } from 'vue'
+import { VTextField } from 'vuetify/components'
+
+const commonProps = {
+  type: 'number',
+  hideDetails: true,
+  rounded: 0,
+  label: '',
+  density: 'compact',
+  flat: true
+} as const
 
 export default defineComponent({
   name: 'MyNumberTextField',
   setup(_props, { slots, attrs }) {
-    return () =>
+    return () => (
       <VTextField
-        type='number'
-        hide-details
-        rounded='0'
-        label=''
-        density='compact'
-        flat
+        {...commonProps}
         {...attrs}
-      >{slots.default && slots.default()}</VTextField>
+      >
+        {slots.default?.()}
+      </VTextField>
+    )
   },
-});
+})

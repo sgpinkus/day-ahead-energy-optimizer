@@ -22,10 +22,18 @@ const { runSpec, valueSpec, focusable = false, initialRowSelected = true } = def
   initialRowSelected?: boolean,
 }>();
 
-const emit = defineEmits(['rowSelected', 'unset', 'split', 'move', 'set', 'change']);
+const emit = defineEmits<{
+  rowSelected: [row: number | null],
+  unset: [i: number],
+  split: [i: number],
+  move: [i: number, newStart: number],
+  set: [i: number, newValue: number[]],
+  change: [],
+}>();
 
-// Just edit directly instead of a copy..
-const ranges = computed(() =>  runSpec.toRanges().map(v => ({ value: v[0], range: v[1] })));
+const ranges = computed(() => runSpec
+  .toRanges()
+  .map(v => ({ value: v[0], start: v[1][0], end: v[1][1] })));
 
 const tableKeys = computed(() => {
   return ['start', 'end', ...valueSpec.map(v => v.label)];
@@ -53,9 +61,9 @@ function splitIndex(i: number) {
   emit('change');
 }
 
-function move(i: number, newStart: any) {
-  runSpec.move(i, newStart);
-  emit('move', i, newStart);
+function move(i: number, newStart: string) {
+  runSpec.move(i, Number(newStart));
+  emit('move', i, Number(newStart));
   emit('change');
 }
 
@@ -98,20 +106,23 @@ onMounted(() => {
         @click="setFocused(i)"
       >
         <td>
+          <!-- @update:model-value is returning i-1 not the actual number input value
+           when the spin-button is used -->
           <MyNumberTextField
             min="1"
-            :max="runSpec.length-1"
+            :max="runSpec.basis"
             step="1"
             :disabled="i === 0"
-            :hide-spin-buttons="i ===0"
-            :model-value="row.range[0]"
-            @update:model-value="(newValue: number) => move(row.range[0], newValue)"
+            :hide-spin-buttons="i === 0"
+            :model-value="row.start"
+            @update:model-value="(newValue: string) => move(row.start, newValue)"
           />
         </td>
         <td>
           <MyNumberTextField
             disabled
-            :model-value="row.range[1]"
+            type="number"
+            :value="row.end"
           />
         </td>
         <template
@@ -124,7 +135,7 @@ onMounted(() => {
               :max="spec.max ?? null"
               :step="spec.step ?? null"
               :model-value="row.value[i]"
-              @update:model-value="(newValue: number) => setNumber(row.range[0], row.value, i, newValue)"
+              @update:model-value="(newValue: number) => setNumber(row.start, row.value, i, newValue)"
             />
           </td>
         </template>
@@ -139,7 +150,7 @@ onMounted(() => {
             <v-icon>mdi-delete-circle</v-icon>
           </v-btn>
           <v-btn
-            v-if="row.range[1] > row.range[0] + 1"
+            v-if="row.end > row.start + 1"
             title="split"
             flat
             size="small"
