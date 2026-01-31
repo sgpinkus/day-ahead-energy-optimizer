@@ -2,14 +2,14 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
     "env.d.ts",
-    "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "src/**/*.vue",
     "package.json"
   ],
   "exclude": [
-    "src/**/test.ts",
-    "src/**mocha*.ts",
-    // "src/typia_src/"
+    "src/**/*.test.ts",
+    "src/**/*.mocha*.ts"
   ],
   "compilerOptions": {
     "composite": true,
@@ -26,11 +26,6 @@
         "./src/config"
       ]
     },
-    "plugins": [
-      {
-        "transform": "typia/lib/transform"
-      }
-    ],
     "strictNullChecks": true,
     "strict": true,
     "skipLibCheck": true

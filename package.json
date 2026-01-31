@@ -31,7 +31,6 @@
     "vuetify": "^3.11.6"
   },
   "devDependencies": {
-    "@ryoppippi/unplugin-typia": "^2.6.5",
     "@tsconfig/node22": "^22.0.5",
     "@types/d3": "^7.4.3",
     "@types/express": "^5.0.6",

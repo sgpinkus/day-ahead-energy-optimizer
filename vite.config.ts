@@ -4,7 +4,6 @@ import { defineConfig, UserConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import vuePyodide from './vite-plugin-pyodide';
-import unpluginTypia from '@ryoppippi/unplugin-typia/vite';
 
 const gitHash = execSync('git rev-parse --short HEAD')
   .toString()
@@ -42,7 +41,6 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       vue(),
       vueJsx(),
       vuePyodide(),
-      unpluginTypia({}),
     ],
     resolve: {
       alias: {
