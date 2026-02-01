@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import model, { type OptimizationResult } from '@/model';
-import { deviceFactory, BaseDevice, type DeviceType } from './device';
-import { values } from 'lodash';
+import { deviceFactory, BaseDevice, BaseDeviceDescriptorNames, type DeviceType, type IDeviceDescriptors, type IDeviceDescriptorUpdate } from './device';
+import { cloneDeep, pick, values } from 'lodash';
 import { jsonParse, jsonStringify } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 import type { IntervalMinutes } from '@/types';
@@ -20,23 +20,25 @@ export interface IBusExport extends Partial<IBus> {
   devices?: BaseDevice[];
 }
 
-export default class Bus implements IBus {
+export default class Bus implements IBus, IDeviceDescriptors {
   static readonly MaxItems = 20;
   readonly id: string;
+  readonly type = 'bus';
   projectId?: string | undefined;
   readonly basis: number;
   readonly intervalMinutes: IntervalMinutes;
   readonly startIntervalOffset: number;
   title?: string;
   description?: string;
+  readonly attrs = {};
 
-  private constructor(init: Omit<IBus, 'id'> & { id?: string }) {
-    this.id = init.id || uuid();
-    this.projectId = init.projectId;
-    this.basis = init.basis;
-    this.intervalMinutes = init.intervalMinutes;
-    this.startIntervalOffset = init.startIntervalOffset;
-    this.title = init.title;
+  private constructor(o: Omit<IBus, 'id'> & { id?: string }) {
+    this.id = o.id || uuid();
+    this.projectId = o.projectId;
+    this.basis = o.basis;
+    this.intervalMinutes = o.intervalMinutes;
+    this.startIntervalOffset = o.startIntervalOffset;
+    this.title = o.title;
   }
 
   get length() {
@@ -53,6 +55,14 @@ export default class Bus implements IBus {
 
   get startTimeString() {
     return startTimeString(this);
+  }
+
+  updateDescriptors(o: IDeviceDescriptorUpdate) {
+    Object.assign(this, pick(o, BaseDeviceDescriptorNames));
+  }
+
+  getDescriptors(this: BaseDevice): IDeviceDescriptorUpdate {
+    return cloneDeep({ ...pick(this, BaseDeviceDescriptorNames) });
   }
 
   addDevice(device: BaseDevice) {

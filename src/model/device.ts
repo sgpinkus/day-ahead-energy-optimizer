@@ -14,25 +14,35 @@ import type { IntervalMinutes } from '@/types';
 
 export type DeviceType = 'fixed_load' | 'load' | 'supply' | 'storage' | 'thermal_load';
 
-// This is just a scrappt adhoc collection of meta data for things -
-// mostly hints to render the given device type in generic device views.
-type IAttributes = {
-  isSupply?: boolean, // Assuming optimization model reps supply as -ve flow, this is useful for require conversion..
+// This is just a scrappy adhoc collection of meta data for things -
+// mostly rendering hints, more flexible than relying on type.
+type IDeviceAttributes = {
+  // Assuming optimization model reps supply as -ve flow, this is useful for
+  // require conversion..
+  isSupply?: boolean,
   hasParameters?: boolean,
   hideBounds?: boolean,
   hideCBounds?: boolean,
   hideCosts?: boolean,
 }
 
-// type IDescriptors = {
-//   title: string,
-//   description: string,
-//   color: string,
-//   shape: string,
-//   tags: Record<string, boolean | number | string>,
-// }
+export type IDeviceDescriptors = {
+  readonly id: string,
+  readonly type: string,
+  readonly attrs: IDeviceAttributes,
+  title?: string,
+  description?: string,
+  color?: string,
+  shape?: string,
+  tags?: Record<string, boolean | number | string>,
+  getDescriptors(): IDeviceDescriptorUpdate,
+  updateDescriptors(o: IDeviceDescriptorUpdate): void
+}
 
-// NumberRunSpec is a working/presentation model to allow easy editing of these bounds. It converted to an array at optimization.
+export type IDeviceDescriptorUpdate = Pick<IDeviceDescriptors, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
+
+// NumberRunSpec is a working/presentation model to allow easy editing of these
+// bounds. It converted to an array at optimization.
 type Bounds = BoundsRunSpec;
 type CumulativeBounds = BoundsRunSpec;
 // type CostType = keyof Costs;
@@ -40,7 +50,9 @@ export type ICosts = {
   flow?: RunSpec<[number, number, number]>,
   cumulative_flow?: RunSpec<[number, number, number]>,
   flow_bounds_relative?: BoundsRunSpec,
-  cumulative_flow_bounds_relative?: [number, number], // No make sense this be a RunSpec, since low/high tightly coupled to actual constraint RunSpec.
+  // Make no sense this be a RunSpec, since low/high tightly coupled to actual
+  // constraint RunSpec.
+  cumulative_flow_bounds_relative?: [number, number],
   readonly peak_flow?: [number, number, number],
 };
 export type IWritableCosts = ICosts & { peak_flow?: ICosts['peak_flow'] };
@@ -92,8 +104,6 @@ export interface IThermalLoadDevice extends IBaseDevice {
 
 export type IDevice = ILoadDevice | ISupplyDevice | IStorageDevice | IFixedLoadDevice | IThermalLoadDevice;
 
-export type IDeviceDescriptorUpdate = Pick<IBaseDevice, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
-
 export type IDeviceInit = Pick<IBaseDevice, 'basis' | 'intervalMinutes' | 'startIntervalOffset' | 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
 function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): BoundsRunSpec {
@@ -101,13 +111,14 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
 }
 
 // TODO: put descriptor in descriptors field.
-// TODO: Why is attrs in here? Coz they are readonly descriptors? Freakin ontology is unsolvable.
-const BaseDeviceDescriptorNames = ['title', 'description', 'shape', 'color', 'tags'];
+// TODO: Why is attrs in here? Coz they are readonly descriptors? Freakin
+// ontology is unsolvable.
+export const BaseDeviceDescriptorNames = ['title', 'description', 'shape', 'color', 'tags'];
 
-export interface IBaseDevice {
+export interface IBaseDevice extends IDeviceDescriptors {
   readonly id: string;
   readonly type: DeviceType,
-  readonly attrs: IAttributes,
+  readonly attrs: IDeviceAttributes,
   readonly hardBounds: [number, number],
   bounds: Bounds,
   cumulative_bounds?: CumulativeBounds,
@@ -128,7 +139,7 @@ export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
   busId?: string;
   abstract readonly type: DeviceType;
-  readonly attrs: IAttributes = {};
+  readonly attrs: IDeviceAttributes = {};
   readonly basis: number;
   readonly intervalMinutes: IntervalMinutes;
   readonly startIntervalOffset: number;
@@ -155,7 +166,7 @@ export abstract class BaseDevice implements IBaseDevice {
     Object.assign(this, pick(o, BaseDeviceDescriptorNames));
   }
 
-  getDescriptors(this: BaseDevice): Partial<IDevice> {
+  getDescriptors(this: BaseDevice): IDeviceDescriptorUpdate {
     return cloneDeep({ ...pick(this, BaseDeviceDescriptorNames) });
   }
 
@@ -195,7 +206,7 @@ export class FixedLoadDevice extends BaseDevice {
   color = '#A9A9A9';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = new FixedBoundsRunSpec(DefaultBasis, [0, 0], [0, BigNumber]); // A fixed load device is just a device whose lbound == hbound.
-  attrs: IAttributes = {
+  attrs: IDeviceAttributes = {
     hideCosts: true,
     hideCBounds: true,
   };
@@ -221,7 +232,7 @@ export class SupplyDevice extends BaseDevice {
   color = '#FF0000';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  attrs: IAttributes = {
+  attrs: IDeviceAttributes = {
     isSupply: true,
   };
 }
@@ -248,7 +259,7 @@ export class StorageDevice extends BaseDevice {
   color = '#FFD700';
   hardBounds: [number, number] = [-BigNumber, BigNumber];
   bounds = boundsNumberRunSpec(-1, 1, [-BigNumber, BigNumber]);
-  attrs: IAttributes = {
+  attrs: IDeviceAttributes = {
     // hideBounds: true, // Currently this is how Max RoC/RoD is set.
     hideCBounds: true,
     hideCosts: true,
@@ -285,7 +296,7 @@ export class ThermalLoadDevice extends BaseDevice {
   color = '#00FFFF';
   hardBounds: [number, number] = [0, BigNumber];
   bounds = boundsNumberRunSpec(0, 1, [0, BigNumber]);
-  attrs: IAttributes = {
+  attrs: IDeviceAttributes = {
     hideCBounds: true,
     hideCosts: true,
     hasParameters: true,
