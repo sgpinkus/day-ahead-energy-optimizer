@@ -9,15 +9,15 @@ const { bus } = defineProps<{ bus: Bus }>();
 
 const deviceNodes = computed(() => values(bus?.devices || {}));
 const focusedNodeId = computed(() => model.focusedDeviceId ?? undefined);
-const hubNode = computed(() => ({ title: bus.title || 'Bus' }));
 
 function onClick(id: string) {
-  if (id !== undefined && id !== 'hub')
-  model.focusedDeviceId = id;
+  if (id !== undefined && id !== 'hub') model.focusedDeviceId = id;
+  return true;
 }
 
 function onDoubleClick(id: string) {
-  if (id !== undefined) router.push({ name: 'device', params: { id } });
+  const name = model.busses[id] ? 'bus' : model.devices[id] ? 'device' : undefined; // TODO.
+  if (name) router.push({ name, params: { id } });
 }
 
 </script>
@@ -28,7 +28,7 @@ function onDoubleClick(id: string) {
     :key="bus.id"
     :device-nodes="deviceNodes"
     :focused-node-id="focusedNodeId"
-    :hub-node="hubNode"
+    :hub-node="bus"
     @click="onClick"
     @dblclick="onDoubleClick"
   />

@@ -1,37 +1,35 @@
 import * as d3 from 'd3';
-import { cloneDeep, merge } from 'lodash';
 const { PI, cos, sin, sqrt } = Math;
 
 export type Node = {
   title?: string,
   id: string,
+  type: string,
   description?: string,
   color?: string,
   shape?: string,
 }
-const nodeDefaults = {
+const rimNodeDefaults = {
+  color: 'blue',
+  shape: 'circle',
+  title: 'Node',
+};
+const hubNodeDefaults = {
   color: 'lightblue',
   shape: 'circle',
+  title: 'Bus',
 };
 export type Data = {
   hub: Node,
   nodes: Node[],
 }
-export type Options = {
-  margin: Record<string, any>;
-  focusedNodeId: string | number
-  hubNode: Partial<Node>,
-}
-const defaultOptions: Options = {
-  margin: { top: 40, right: 40, bottom: 40, left: 40 },
-  focusedNodeId: -1,
-  hubNode: { id: 'hub', title: 'Bus', ...nodeDefaults },
-};
 
 export function draw(
   container: SVGSVGElement,
   nodes: Node[],
-  _options: Partial<Options> = {},
+  _hubNode: Node,
+  focusedNodeId: string | number = -1,
+  margin: Record<string, any> = { top: 40, right: 40, bottom: 40, left: 40 },
   click?: (id: string, index: number) => void,
   dblclick?: (id: string, index: number) => void,
 ) {
@@ -54,19 +52,17 @@ export function draw(
       });
   }
 
-  const options: Options = merge(cloneDeep(defaultOptions), _options);
-  const _hubNode = (options.hubNode as Node);
   const index = d3.local<number>();
   const svg = d3.select(container);
-  const width = svg.node()!.width.animVal.value - options.margin.left - options.margin.right;
-  const height = svg.node()!.height.animVal.value - options.margin.top - options.margin.bottom;
+  const width = svg.node()!.width.animVal.value - margin.left - margin.right;
+  const height = svg.node()!.height.animVal.value - margin.top - margin.bottom;
   const nodeR = width / 12;
   const r = width / 2 - nodeR / 2;
   const x = (i: number) => r * cos(rScale(i) + PI / 6);
   const y = (i: number) => r * sin(rScale(i) + PI / 6);
   const m = (i: number) => sqrt(x(i) ** 2 + y(i) ** 2);
   const g = svg.append('g')
-    .attr('transform', `translate(${options.margin.left}, ${options.margin.top})`);
+    .attr('transform', `translate(${margin.left}, ${margin.top})`);
   const rScale = d3.scaleLinear().range([0, 2 * PI]).domain([0, nodes.length]);
   const hub = g.append('g')
     .attr('transform', `translate(${width / 2}, ${height / 2})`);
@@ -74,7 +70,7 @@ export function draw(
     .attr('transform', (_d, i) => `translate(${x(i)}, ${y(i)})`)
     .each(function (_d, i) { index.set(this, i + 1); })
     .classed('node', true)
-    .classed('focused-node', function (d) { return [d.id, Number(index.get(this))].includes(options.focusedNodeId as any); });
+    .classed('focused-node', function (d) { return [d.id, Number(index.get(this))].includes(focusedNodeId as any); });
   rimNodes.exit().remove();
   rimNodes.append('line')
     .attr('x1', (_d, i) => -1 * (nodeR) / m(i) * x(i))
@@ -84,7 +80,7 @@ export function draw(
     .attr('stroke', 'yellow');
   rimNodes.append('circle')
     .attr('r', nodeR)
-    .attr('fill', (d) => d.color || 'pink')
+    .attr('fill', (d) => d.color || rimNodeDefaults.color)
     .attr('stroke', 'yellow');
   rimNodes.append('text')
     .text((d) => d.title || null)
@@ -103,14 +99,14 @@ export function draw(
   hubNode.classed('node', true)
     .classed('hub-node', true)
     .each(function () { index.set(this, 0); })
-    .classed('focused-node', function (d) { return [0, d.id].includes(options.focusedNodeId as any); });
+    .classed('focused-node', function (d) { return [0, d.id].includes(focusedNodeId as any); });
   hubNode.append('circle')
     .classed('node', true)
     .attr('r', nodeR)
-    .attr('fill', (d) => d.color || 'pink')
+    .attr('fill', (d) => d.color || hubNodeDefaults.color)
     .attr('stroke', 'yellow');
   hubNode.append('text')
-    .text((d) => d.title || null)
+    .text((d) => d.title ?? hubNodeDefaults.title)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle');
   nodeEffects(hubNode);

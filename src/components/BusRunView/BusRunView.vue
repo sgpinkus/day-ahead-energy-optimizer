@@ -103,9 +103,7 @@ onMounted(() => {
 <template>
   <AppNavDrawer>
     <RouterLink :to="{ name: 'bus', params: { id: bus.id } }">
-      <v-list-item prepend-icon="mdi-arrow-left">
-        Bus
-      </v-list-item>
+      <v-list-item prepend-icon="mdi-arrow-left" />
     </RouterLink>
     <v-divider />
     <v-list-item

@@ -51,9 +51,7 @@ function costStatusIcon(type: keyof ICosts) {
       <RouterLink
         :to="{ name: 'bus', params: { id: device.parentId || '' } }"
       >
-        <v-list-item prepend-icon="mdi-arrow-left">
-          Bus
-        </v-list-item>
+        <v-list-item prepend-icon="mdi-arrow-left" />
       </RouterLink>
       <v-divider />
       <v-list class="flex-shrink-0 device-components">

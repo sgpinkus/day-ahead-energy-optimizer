@@ -25,4 +25,4 @@ coverage
 .config/
 dev/
 dist-gh/
-dist-gh/
+.vite/
