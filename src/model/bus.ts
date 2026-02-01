@@ -9,7 +9,7 @@ import { startTimeString } from './utils';
 
 export interface IBus {
   id: string,
-  projectId?: string,
+  parentId?: string,
   basis: number,
   intervalMinutes: IntervalMinutes,
   startIntervalOffset: number,
@@ -24,7 +24,7 @@ export default class Bus implements IBus, IDeviceDescriptors {
   static readonly MaxItems = 20;
   readonly id: string;
   readonly type = 'bus';
-  projectId?: string | undefined;
+  parentId?: string | undefined;
   readonly basis: number;
   readonly intervalMinutes: IntervalMinutes;
   readonly startIntervalOffset: number;
@@ -34,7 +34,7 @@ export default class Bus implements IBus, IDeviceDescriptors {
 
   private constructor(o: Omit<IBus, 'id'> & { id?: string }) {
     this.id = o.id || uuid();
-    this.projectId = o.projectId;
+    this.parentId = o.parentId;
     this.basis = o.basis;
     this.intervalMinutes = o.intervalMinutes;
     this.startIntervalOffset = o.startIntervalOffset;
@@ -46,7 +46,7 @@ export default class Bus implements IBus, IDeviceDescriptors {
   }
 
   get devices() {
-    return values(model.devices).filter(d => d.busId === this.id);
+    return values(model.devices).filter(d => d.parentId === this.id);
   }
 
   get optimizationResult() {
@@ -55,6 +55,10 @@ export default class Bus implements IBus, IDeviceDescriptors {
 
   get startTimeString() {
     return startTimeString(this);
+  }
+
+  get parentLink() {
+    return { id: this.id, name: 'bus' };
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
@@ -69,7 +73,7 @@ export default class Bus implements IBus, IDeviceDescriptors {
     if (device.id in model.devices) return false;
     if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
     if (device.basis !== this.basis) throw new Error('Basis mismatch');
-    device.busId = this.id;
+    device.parentId = this.id;
     model.devices[device.id] = device;
   }
 

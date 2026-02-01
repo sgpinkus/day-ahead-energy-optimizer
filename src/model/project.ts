@@ -29,7 +29,7 @@ export default class Project {
   }
 
   get busses() {
-    return values(model.busses).filter(v => v.projectId === this.id);
+    return values(model.busses).filter(v => v.parentId === this.id);
   }
 
   get startTimeString() {
@@ -41,13 +41,13 @@ export default class Project {
     if (bus.id in this.busses) return;
     if (this.length >= Bus.MaxItems) throw new RangeError(`Too many (max=${Bus.MaxItems})`);
     if (bus.basis !== this.basis) throw new Error('Incompatible basis');
-    bus.projectId = this.id;
+    bus.parentId = this.id;
     model.busses[bus.id] = bus;
   }
 
   addNew() {
     const bus = Bus.newBus({
-      projectId: this.id,
+      parentId: this.id,
       basis: this.basis,
       intervalMinutes: this.intervalMinutes,
       startIntervalOffset: this.startIntervalOffset,

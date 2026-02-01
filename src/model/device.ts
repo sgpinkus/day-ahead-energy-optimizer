@@ -126,7 +126,7 @@ export interface IBaseDevice extends IDeviceDescriptors {
   readonly basis: number,
   readonly intervalMinutes: IntervalMinutes,
   readonly startIntervalOffset: number,
-  busId?: string;
+  parentId?: string;
   title?: string,
   description?: string,
   tags?: Record<string, boolean | number | string>,
@@ -137,7 +137,7 @@ export interface IBaseDevice extends IDeviceDescriptors {
 
 export abstract class BaseDevice implements IBaseDevice {
   readonly id: string;
-  busId?: string;
+  parentId?: string;
   abstract readonly type: DeviceType;
   readonly attrs: IDeviceAttributes = {};
   readonly basis: number;
@@ -160,6 +160,10 @@ export abstract class BaseDevice implements IBaseDevice {
     this.intervalMinutes = o.intervalMinutes;
     this.startIntervalOffset = o.startIntervalOffset;
     Object.assign(this, pick(o, BaseDeviceDescriptorNames));
+  }
+
+  get parentLink() {
+    return { id: this.parentId, name: 'bus' };
   }
 
   updateDescriptors(o: IDeviceDescriptorUpdate) {
