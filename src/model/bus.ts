@@ -7,7 +7,7 @@ import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 import type { IntervalMinutes } from '@/types';
 import { startTimeString } from './utils';
 
-export interface IBus {
+export interface IBus extends IDeviceDescriptors {
   id: string,
   parentId?: string,
   basis: number,
@@ -20,7 +20,7 @@ export interface IBusExport extends Partial<IBus> {
   devices?: BaseDevice[];
 }
 
-export default class Bus implements IBus, IDeviceDescriptors {
+export default class Bus implements IBus {
   static readonly MaxItems = 20;
   readonly id: string;
   readonly type = 'bus';

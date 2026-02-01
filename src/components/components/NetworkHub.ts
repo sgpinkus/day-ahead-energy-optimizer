@@ -35,29 +35,24 @@ export function draw(
   click?: (id: string, index: number) => void,
   dblclick?: (id: string, index: number) => void,
 ) {
-  function nodeEffects(nodes: d3.Selection<SVGGElement, any, any, any>, data?: Node) {
+  function nodeEffects(nodes: d3.Selection<SVGGElement, Node, any, any>) {
     nodes.on('mouseover', function () {
       d3.select(this).attr('opacity', '.50');
-      d3.select(this).select('.tool-tip')
-        .attr('opacity', 1);
+      d3.select(this).select('.tool-tip').attr('opacity', 1);
     })
       .on('mouseout', function () {
-        const node = d3.select(this);
-        node.attr('opacity', '1');
-        d3.select(this).select('.tool-tip')
-          .attr('opacity', 0);
+        d3.select(this).attr('opacity', '1');
+        d3.select(this).select('.tool-tip').attr('opacity', 0);
       })
       .on('click', function (_e, d) {
         const i = Number(index.get(this));
-        if (click) click(d ? d.id : data ? data.id : undefined, i);
+        if (click) click(d.id, i);
       })
       .on('dblclick', function (_e, d) {
         const i = Number(index.get(this));
-        if (dblclick) dblclick(d ? d.id : data ? data.id : undefined, i);
+        if (dblclick) dblclick(d.id, i);
       });
   }
-
-  // d3.select(container).selectAll('*').remove();
 
   const options: Options = merge(cloneDeep(defaultOptions), _options);
   const _hubNode = (options.hubNode as Node);
@@ -77,7 +72,7 @@ export function draw(
     .attr('transform', `translate(${width / 2}, ${height / 2})`);
   const rimNodes = hub.selectAll('.rim-node').data(nodes).enter().append('g')
     .attr('transform', (_d, i) => `translate(${x(i)}, ${y(i)})`)
-    .each(function (_d, i) { index.set(this, i + 1); }) // Hub is index 0.
+    .each(function (_d, i) { index.set(this, i + 1); })
     .classed('node', true)
     .classed('focused-node', function (d) { return [d.id, Number(index.get(this))].includes(options.focusedNodeId as any); });
   rimNodes.exit().remove();
@@ -104,19 +99,19 @@ export function draw(
     .attr('opacity', '0')
     .attr('y', -nodeR);
   nodeEffects(rimNodes);
-  const hubNode = hub.append('g');
+  const hubNode = hub.selectAll('.hub-node').data([_hubNode]).enter().append('g');
   hubNode.classed('node', true)
     .classed('hub-node', true)
-    .each(function () { index.set(this, 0); }) // Hub is index 0.
-    .classed('focused-node', [0, _hubNode.id].includes(options.focusedNodeId as any));
+    .each(function () { index.set(this, 0); })
+    .classed('focused-node', function (d) { return [0, d.id].includes(options.focusedNodeId as any); });
   hubNode.append('circle')
     .classed('node', true)
     .attr('r', nodeR)
-    .attr('fill', _hubNode.color || 'pink')
+    .attr('fill', (d) => d.color || 'pink')
     .attr('stroke', 'yellow');
   hubNode.append('text')
-    .text(_hubNode.title || null)
+    .text((d) => d.title || null)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle');
-  nodeEffects(hubNode, _hubNode);
+  nodeEffects(hubNode);
 }
