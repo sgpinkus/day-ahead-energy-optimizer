@@ -26,7 +26,7 @@ type IDeviceAttributes = {
   hideCosts?: boolean,
 }
 
-export type IDeviceDescriptors = {
+export interface IDeviceDescriptor {
   readonly id: string,
   readonly type: string,
   readonly attrs: IDeviceAttributes,
@@ -35,11 +35,14 @@ export type IDeviceDescriptors = {
   color?: string,
   shape?: string,
   tags?: Record<string, boolean | number | string>,
+}
+
+export interface IDeviceDescriptorModel extends IDeviceDescriptor {
   getDescriptors(): IDeviceDescriptorUpdate,
   updateDescriptors(o: IDeviceDescriptorUpdate): void
 }
 
-export type IDeviceDescriptorUpdate = Pick<IDeviceDescriptors, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
+export type IDeviceDescriptorUpdate = Pick<IDeviceDescriptor, 'title' | 'description' | 'shape' | 'color' | 'tags'>;
 
 // NumberRunSpec is a working/presentation model to allow easy editing of these
 // bounds. It converted to an array at optimization.
@@ -115,7 +118,7 @@ function boundsNumberRunSpec(l: number, h: number, hb: [number, number]): Bounds
 // ontology is unsolvable.
 export const BaseDeviceDescriptorNames = ['title', 'description', 'shape', 'color', 'tags'];
 
-export interface IBaseDevice extends IDeviceDescriptors {
+export interface IBaseDevice extends IDeviceDescriptor {
   readonly id: string;
   readonly type: DeviceType,
   readonly attrs: IDeviceAttributes,
@@ -135,7 +138,7 @@ export interface IBaseDevice extends IDeviceDescriptors {
   parameters?: Record<string, any>;
 }
 
-export abstract class BaseDevice implements IBaseDevice {
+export abstract class BaseDevice implements IBaseDevice, IDeviceDescriptorModel {
   readonly id: string;
   parentId?: string;
   abstract readonly type: DeviceType;

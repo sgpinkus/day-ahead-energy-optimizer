@@ -1,13 +1,13 @@
 import { v4 as uuid } from 'uuid';
 import model, { type OptimizationResult } from '@/model';
-import { deviceFactory, BaseDevice, BaseDeviceDescriptorNames, type DeviceType, type IDeviceDescriptors, type IDeviceDescriptorUpdate } from './device';
+import { deviceFactory, BaseDevice, BaseDeviceDescriptorNames, type DeviceType, type IDeviceDescriptor, type IDeviceDescriptorUpdate, type IDeviceDescriptorModel } from './device';
 import { cloneDeep, pick, values } from 'lodash';
 import { jsonParse, jsonStringify } from './importlib';
 import { assertEqualsIBus, assertEqualsIBusExport } from '@/typia';
 import type { IntervalMinutes } from '@/types';
 import { startTimeString } from './utils';
 
-export interface IBus extends IDeviceDescriptors {
+export interface IBus extends IDeviceDescriptor {
   id: string,
   parentId?: string,
   basis: number,
@@ -16,11 +16,13 @@ export interface IBus extends IDeviceDescriptors {
   title?: string;
 }
 
+export type IBusCreate = Omit<IBus, 'id' | 'type' | 'attrs'>;
+
 export interface IBusExport extends Partial<IBus> {
   devices?: BaseDevice[];
 }
 
-export default class Bus implements IBus {
+export default class Bus implements IBus, IDeviceDescriptorModel {
   static readonly MaxItems = 20;
   readonly id: string;
   readonly type = 'bus';
@@ -32,7 +34,7 @@ export default class Bus implements IBus {
   description?: string;
   readonly attrs = {};
 
-  private constructor(o: Omit<IBus, 'id'> & { id?: string }) {
+  private constructor(o: IBusCreate & { id?: string }) {
     this.id = o.id || uuid();
     this.parentId = o.parentId;
     this.basis = o.basis;
@@ -117,7 +119,7 @@ export default class Bus implements IBus {
     };
   }
 
-  static newBus(data: Omit<IBus, 'id'>) {
+  static newBus(data: Omit<IBus, 'id' | 'type' | 'attrs'>) {
     return new Bus(data);
   }
 

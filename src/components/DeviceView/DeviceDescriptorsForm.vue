@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { type IDeviceDescriptors } from '@/model/device';
+import { type IDeviceDescriptorModel } from '@/model/device';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 import { ref, useTemplateRef, type Ref  } from 'vue';
 
 
-const { device } = defineProps<{ device: IDeviceDescriptors }>();
+const { device } = defineProps<{ device: IDeviceDescriptorModel }>();
 const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
 const work = ref(device.getDescriptors());
 const initialValue = cloneDeep(work.value);
