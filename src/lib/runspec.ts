@@ -19,6 +19,7 @@ export interface IRunSpec<X> extends IRunSpecData<X> {
   getRun(i: number): [number, number];
   split(i: number): void;
   move(i: number, newStart: number): void;
+  clear(zerothValue: X): void;
   toRecord(): Record<number, X>;
   toArray(): X[];
   toRanges(): RunRange<X>[];
@@ -138,6 +139,21 @@ export class RunSpec<X> implements IRunSpec<X> {
     this.unsetRange(runStart, newStart);
     this.unset(runStart);
     this.set(newStart, v);
+  }
+
+  clear(zerothValue: X) {
+    (this.runs as any) = {};
+    this.runs[0] = zerothValue;
+  }
+
+  setFromArray(a: X[]) {
+    if (!a || !(a.length > 0)) throw new Error('invalid input array');
+    this.clear(a[0]!);
+    for (let i = 1; i < Math.min(this.basis, a.length); i++) {
+      if (!isEqual(a[i], a[i - 1])) {
+        this.set(i, cloneDeep(a[i])!);
+      }
+    }
   }
 
   toRecord(): Record<number, X> {
@@ -339,6 +355,11 @@ export class NumberRunSpecAdaptor<X> implements IBoundedNumberRunSpec<number> {
     return this.runSpec.move(i, newStart);
   }
 
+  clear(zerothValue: number) {
+    (this.runSpec.runs as any) = {};
+    this.set(0, zerothValue);
+  }
+
   toRecord(): Record<number, number> {
     return mapValues(this.runSpec.toRecord(), (v) => this.xToNumber(v));
   }
@@ -440,6 +461,11 @@ export class XYRunSpecAdaptor<X, Y> implements IBoundedNumberRunSpec<Y> {
 
   move(i: number, newStart: number) {
     return this.runSpec.move(i, newStart);
+  }
+
+  clear(zerothValue: Y) {
+    (this.runSpec.runs as any) = {};
+    this.set(0, zerothValue);
   }
 
   toRecord(): Record<number, Y> {

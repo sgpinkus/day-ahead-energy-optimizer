@@ -31,7 +31,8 @@ const tabs = ref('creator');
 
 function boundsArrayUpdate(v: number[]) {
   if (v) {
-    // device.bounds = NumberRunSpec.fromArray(v); // eslint-disable-line
+    const _v: [number, number][] = v.map(x => [x,x]);
+    device.bounds.setFromArray(_v);
   }
 }
 
