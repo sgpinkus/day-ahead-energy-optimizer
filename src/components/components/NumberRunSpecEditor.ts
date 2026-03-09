@@ -12,6 +12,7 @@ export type Options = {
   hEditable: boolean,
   vEditable: boolean,
   ticks: number, // vertical ticks, +ve number.
+  yLabel: string,
 }
 
 const defaultOptions: Options = {
@@ -23,6 +24,7 @@ const defaultOptions: Options = {
   ticks: 10,
   hEditable: true,
   vEditable: true,
+  yLabel: units.FlowUnitSymbol,
 };
 
 type Range = [number, [number, number]];
@@ -258,7 +260,7 @@ export function draw(container: SVGSVGElement, data: IBoundedNumberRunSpec<numbe
       .attr('fill', 'currentColor')
       .attr('text-anchor', 'start')
       .attr('font-size', 'larger')
-      .text(units.FlowUnitSymbol));
+      .text(options.yLabel));
   g.append('line')
     .attr('stroke', 'black')
     .attr('x1', 0)

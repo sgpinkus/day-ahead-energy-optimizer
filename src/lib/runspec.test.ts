@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { RunSpec } from './lib/runspec';
+import { RunSpec, NumberRunSpec } from './runspec';
 
 function getTestObject1() {
   const x = new RunSpec(20, 1);
@@ -49,6 +49,15 @@ describe('RunSpec', () => {
     console.log(x.toRanges());
   });
 });
+
+describe('NumberRunSpec', () => {
+  test('fromArray', () => {
+    const rs = NumberRunSpec.fromArray([1, 1, 1, 1, 0, 2, 3, 3, 3]);
+    console.log(rs.toArray());
+    console.log(rs.toRecord());
+  });
+});
+
 
 // describe('PolyRunSpecNumberView', () => {
 //   test('basics', () => {

@@ -7,7 +7,7 @@
  */
 import { v4 as uuid } from 'uuid';
 import { DefaultBasis, BigNumber } from './constant';
-import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec } from '../lib/runspec';
+import { RunSpec, BoundsRunSpec, FixedBoundsRunSpec, NumberRunSpec } from '../lib/runspec';
 import { cloneDeep, pick } from 'lodash';
 import { assertEqualsDeviceCosts, assertEqualsIBaseDevice } from '@/typia';
 import type { IntervalMinutes } from '@/types';
@@ -289,8 +289,8 @@ export interface IThemalLoadParameters {
   initialTemperature: number,
   thermalSustainment: number,
   efficiencyFactor: number,
-  externalTemperatureProfile: number[], // IRunSpecData<number>,
-  temperatureVariationCareFactor: RunSpec<number>, // IRunSpecData<number>,
+  externalTemperatureProfile: NumberRunSpec, // IRunSpecData<number>,
+  temperatureVariationCareFactor: NumberRunSpec, // IRunSpecData<number>,
 }
 
 
@@ -313,8 +313,8 @@ export class ThermalLoadDevice extends BaseDevice {
     thermalSustainment: 0.95,
     efficiencyFactor: 2.5,
     initialTemperature: 10,
-    externalTemperatureProfile: Array.from(Array(DefaultBasis)).map(() => 23),
-    temperatureVariationCareFactor: new RunSpec<number>(DefaultBasis, 1),
+    externalTemperatureProfile: new NumberRunSpec(DefaultBasis, 23),
+    temperatureVariationCareFactor: new NumberRunSpec(DefaultBasis, 1),
   };
 }
 export type Device = LoadDevice | SupplyDevice | StorageDevice | FixedLoadDevice;

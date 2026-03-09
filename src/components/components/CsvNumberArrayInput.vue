@@ -3,19 +3,19 @@ import { computed, ref, watch, type Ref } from 'vue';
 import { cloneDeep } from 'lodash';
 
 const emit = defineEmits(['change']);
-const { minLength, maxLength, minValue = -Infinity, maxValue = Infinity, initialValue = [] } = defineProps<{
+const { minLength, maxLength, minValue = -Infinity, maxValue = Infinity, initialValue = '' } = defineProps<{
   minLength: number,
   maxLength: number,
   minValue?: number,
   maxValue?: number,
-  initialValue?: number[],
+  initialValue?: string,
 }>();
 
-const csv: Ref<string> = ref(initialValue.join());
+const csv: Ref<string> = ref(initialValue);
 
 const parsed: Ref<{ error: string | undefined, value: number[] | undefined }> = computed(() => {
   if (!csv.value.trim()) return { error: 'Value is required', value: undefined };
-  const a = csv.value.replace(/^([\s,])|([\s,])$/, '').split(/\s*,\s*/).map(v => Number(v));
+  const a = csv.value.replace(/^([\s,])|([\s,])$/, '').split(/\s*,\s*/).map(v => v === '' ? NaN : Number(v));
   if (a.length < minLength) return { error: `Too short (${a.length} < ${minLength})`, value: undefined };
   if (a.length > maxLength) return { error: `Too long (${a.length} > ${maxLength})`, value: undefined };
   const eI = a.findIndex(v => Number.isNaN(v));
@@ -27,10 +27,9 @@ const parsed: Ref<{ error: string | undefined, value: number[] | undefined }> = 
   return { value: a, error: undefined };
 });
 
-const arr = computed(() => parsed.value.value);
-const message = computed(() => parsed.value.error);
-
-watch(arr, () => emit('change', cloneDeep(arr.value)));
+watch(parsed, () => {
+  if (parsed.value.value) emit('change', cloneDeep(parsed.value.value));
+});
 
 </script>
 
@@ -39,6 +38,6 @@ watch(arr, () => emit('change', cloneDeep(arr.value)));
     v-model:model-value="csv"
     placeholder="Enter data as CSV"
     :required="true"
-    :error-messages="message"
+    :error-messages="parsed.error"
   />
 </template>

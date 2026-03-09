@@ -5,12 +5,14 @@ export type Options = {
   margin: Record<string, any>;
   range: [number | undefined, number | undefined],
   xFormatter: any,
+  yLabel: string,
 };
 
 const defaultOptions: Options = {
   margin: { top: 20, right: 20, bottom: 40, left: 40 },
   range: [undefined, undefined],
   xFormatter: null,
+  yLabel: units.FlowUnitSymbol,
 };
 
 function getRange(data: number[]) {

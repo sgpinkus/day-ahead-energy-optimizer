@@ -2,7 +2,7 @@
 import { ref, watch, type Ref } from 'vue';
 import type { IBaseDevice } from '@/model/device';
 import { BoundsRunSpec, NumberRunSpecAdaptor } from '@/lib/runspec';
-import RunSpecGraphView from '@/components/components/RunSpecGraphView.vue';
+import RunSpecGraphView from '@/components/components/NumberRunSpecGraphView.vue';
 import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
 
 const { device } = defineProps<{

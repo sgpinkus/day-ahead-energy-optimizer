@@ -1,4 +1,4 @@
-import { cloneDeep, mapValues } from 'lodash';
+import { cloneDeep, isEqual, mapValues } from 'lodash';
 import { assertEqualsIAllRunSpec } from '@/typia';
 
 type RunRange<X> = [X, [number, number]]
@@ -215,9 +215,30 @@ export class NumberRunSpec extends RunSpec<number> implements IBoundedNumberRunS
     return cloneDeep(this);
   }
 
+  copyFromArray(a: number[]) {
+    const val = new NumberRunSpec(a.length, a[0], this.hardBounds, this.coerce);
+    for (let i = 1; i < a.length; i++) {
+      if (a[i] != a[i - 1]) {
+        val.set(i, a[i]!);
+      }
+    }
+    (this.runs as any) = val.runs;
+    return val;
+  }
+
   static _figureZero(hardBounds?: [number, number]) {
     if (hardBounds) return Math.abs(hardBounds[1]) > Math.abs(hardBounds[0]) ? hardBounds[0] : hardBounds[1];
     return 0;
+  }
+
+  static fromArray(a: number[], hardBounds?: [number, number], coerce: boolean = true) {
+    const val = new NumberRunSpec(a.length, a[0], hardBounds, coerce);
+    for (let i = 1; i < a.length; i++) {
+      if (a[i] != a[i - 1]) {
+        val.set(i, a[i]!);
+      }
+    }
+    return val;
   }
 }
 

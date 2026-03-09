@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { ThermalLoadDevice } from '@/model/device';
-import { XYRunSpecAdaptor } from '@/lib/runspec';
+import { NumberRunSpec, XYRunSpecAdaptor } from '@/lib/runspec';
 import { setDialog } from '@/model/infos';
 import { deepDiffObjects2 } from '@/utils';
 import { cloneDeep } from 'lodash';
 
-import { ref, useTemplateRef, watch, type Ref } from 'vue';
+import { computed, ref, useTemplateRef, type Ref } from 'vue';
 import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
 import CsvNumberArrayInput from '@/components/components/CsvNumberArrayInput.vue';
+import RunSpecGraphView from '@/components/components/NumberRunSpecGraphView.vue';
 
 const careFactorTableValueSpec = [
   { label: 'temp', min: 0.1, max: 1e2, step: 0.1 },
@@ -26,19 +27,13 @@ const form: Ref<HTMLFormElement | null> = useTemplateRef('form');
     efficiencyFactor: device.parameters.efficiencyFactor,
   });
 const initialSimpleValues = cloneDeep(simpleValues.value);
-const temperatureVariationCareFactorWork = ref(device.parameters.temperatureVariationCareFactor.copy());
-const _temperatureVariationCareFactorWork = ref(new XYRunSpecAdaptor<number, [number]>(temperatureVariationCareFactorWork.value, (x) => [x], (x) => x[0]));
-const externalTemperatureProfileWork = ref([...device.parameters.externalTemperatureProfile]);
+const temperatureVariationCareFactorArrayAdaptor = computed(() => new XYRunSpecAdaptor<number, [number]>(device.parameters.temperatureVariationCareFactor, (x) => [x], (x) => x[0]));
+const externalTemperatureProfileArrayAdaptor =  computed(() => new XYRunSpecAdaptor<number, [number]>(device.parameters.externalTemperatureProfile, (x) => [x], (x) => x[0]));
 
-watch(externalTemperatureProfileWork, () => {
-  console.log('externalTemperatureProfile', externalTemperatureProfileWork.value);
-});
-
-watch(_temperatureVariationCareFactorWork, () => {
-  console.log('temperatureVariationCareFactor', temperatureVariationCareFactorWork.value);
-});
 
 const valid = ref(false);
+const temperatureVariationTabs = ref('creator');
+const externalTemperatureTabs = ref('creator');
 
 async function simpleValuesUpdate() {
   form.value!.resetValidation();
@@ -49,12 +44,12 @@ async function simpleValuesUpdate() {
   }
 }
 
-function temperatureVariationCareFactorUpdate() {
-  device.parameters.temperatureVariationCareFactor = temperatureVariationCareFactorWork.value.copy(); // eslint-disable-line
+function temperatureVariationCareFactorArrayUpdate(v: number[]) {
+  if (v) device.parameters.temperatureVariationCareFactor = NumberRunSpec.fromArray(v); // eslint-disable-line
 }
 
-function externalTemperatureProfileUpdate(v: number[]) {
-  device.parameters.externalTemperatureProfile = v; // eslint-disable-line
+function externalTemperatureProfileArrayUpdate(v: number[]) {
+  if(v) device.parameters.externalTemperatureProfile = NumberRunSpec.fromArray(v); // eslint-disable-line
 }
 
 </script>
@@ -72,6 +67,7 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
+
     <v-text-field
       v-model.number="simpleValues.desiredTemperature"
       type="number"
@@ -91,6 +87,7 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
+
     <v-text-field
       v-model.number="simpleValues.initialTemperature"
       type="number"
@@ -110,6 +107,7 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
+
     <v-text-field
       v-model.number="simpleValues.thermalSustainment"
       type="number"
@@ -129,6 +127,7 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
+
     <v-text-field
       v-model.number="simpleValues.efficiencyFactor"
       type="number"
@@ -139,9 +138,6 @@ function externalTemperatureProfileUpdate(v: number[]) {
       @change="simpleValuesUpdate"
     />
 
-    <hr>
-    <br>
-
     <div class="d-flex flex-row justify-space-between">
       <v-label>Temperature Variation Care Factor</v-label>
       <v-icon
@@ -151,17 +147,40 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
-
+    <v-tabs v-model="temperatureVariationTabs">
+      <v-tab value="creator">
+        Creator
+      </v-tab>
+      <v-tab value="csv">
+        CSV
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="temperatureVariationTabs">
+      <v-tabs-window-item value="creator">
+        <br>
+        <RunSpecGraphView
+          :run-spec="device.parameters.temperatureVariationCareFactor"
+          :options="{ hEditable: true, vEditable: true, yLabel: '°C' }"
+        />
+        <RunSpecTableView
+          :run-spec="temperatureVariationCareFactorArrayAdaptor"
+          :value-spec="careFactorTableValueSpec"
+          :focusable="true"
+        />
+      </v-tabs-window-item>
+      <v-tabs-window-item value="csv">
+        <!-- TODO: Changing temperatureVariationCareFactor doesn't trigger update of initial-value -->
+        <csv-number-array-input
+          :min-length="48"
+          :max-length="48"
+          :min-value="-100"
+          :max-value="100"
+          :initial-value="device.parameters.temperatureVariationCareFactor.toArray().join()"
+          @change="temperatureVariationCareFactorArrayUpdate"
+        />
+      </v-tabs-window-item>
+    </v-tabs-window>
     <br>
-
-    <RunSpecTableView
-      :run-spec="_temperatureVariationCareFactorWork"
-      :value-spec="careFactorTableValueSpec"
-      :focusable="true"
-      @change="temperatureVariationCareFactorUpdate"
-    />
-
-    <br><hr><br>
 
     <div class="d-flex flex-row justify-space-between">
       <v-label>External Temperature</v-label>
@@ -172,15 +191,39 @@ function externalTemperatureProfileUpdate(v: number[]) {
         mdi-information
       </v-icon>
     </div>
-    <br>
-    <csv-number-array-input
-      :min-length="48"
-      :max-length="48"
-      :min-value="-100"
-      :max-value="100"
-      :initial-value="externalTemperatureProfileWork"
-      @change="externalTemperatureProfileUpdate"
-    />
+    <v-tabs v-model="externalTemperatureTabs">
+      <v-tab value="creator">
+        Creator
+      </v-tab>
+      <v-tab value="csv">
+        CSV
+      </v-tab>
+    </v-tabs>
+    <v-tabs-window v-model="externalTemperatureTabs">
+      <v-tabs-window-item value="creator">
+        <br>
+        <RunSpecGraphView
+          :run-spec="device.parameters.externalTemperatureProfile"
+          :options="{ hEditable: true, vEditable: true, yLabel: '°C' }"
+        />
+        <RunSpecTableView
+          :run-spec="externalTemperatureProfileArrayAdaptor"
+          :value-spec="careFactorTableValueSpec"
+          :focusable="true"
+        />
+      </v-tabs-window-item>
+      <v-tabs-window-item value="csv">
+        <!-- TODO: Changing externalTemperatureProfile doesn't trigger update of initial-value -->
+        <csv-number-array-input
+          :min-length="48"
+          :max-length="48"
+          :min-value="-100"
+          :max-value="100"
+          :initial-value="device.parameters.externalTemperatureProfile.toArray().join()"
+          @change="externalTemperatureProfileArrayUpdate"
+        />
+      </v-tabs-window-item>
+    </v-tabs-window>
   </v-form>
 </template>
 
