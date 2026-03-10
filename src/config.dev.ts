@@ -7,7 +7,7 @@ pandas
 matplotlib
 scipy<=1.15
 numdifftools==0.9.41
-device_kit==1.0.10
+device_kit==1.0.11
 `;
 export const preloadPyodide = false;
 // For local device_kit dev: python -m http.server -d .

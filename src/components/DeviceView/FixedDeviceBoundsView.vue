@@ -12,12 +12,12 @@ const { device } = defineProps<{
 }>();
 
 // Computed doesn't work.
-const numberRunSpecLow: Ref<XYRunSpecAdaptor<[number, number], [number]> | null> = ref(null);
+const numberRunSpecTable: Ref<XYRunSpecAdaptor<[number, number], [number]> | null> = ref(null);
 const numberRunSpecGraph: Ref<XYRunSpecAdaptor<[number, number], number> | null> = ref(null);
 
 watch(device.bounds, () => {
   console.log('watch triggered, setting new runSpec adaptor');
-  numberRunSpecLow.value = new XYRunSpecAdaptor<[number, number], [number]>(device.bounds, (x) => [x[0]], (x) => [x[0], x[0]]);
+  numberRunSpecTable.value = new XYRunSpecAdaptor<[number, number], [number]>(device.bounds, (x) => [x[0]], (x) => [x[0], x[0]]);
   numberRunSpecGraph.value = new XYRunSpecAdaptor<[number, number], number>(device.bounds, (x) => x[0], (x) => [x, x]);
 }, {
   immediate: true,
@@ -58,13 +58,13 @@ function boundsArrayUpdate(v: number[]) {
           :options="{ hEditable: true, vEditable: true, yLabel: '°C' }"
         />
         <RunSpecTableView
-          :run-spec="numberRunSpecLow!"
+          :run-spec="numberRunSpecTable!"
           :value-spec="tableValueSpec"
           :focusable="true"
         />
       </v-tabs-window-item>
       <v-tabs-window-item value="csv">
-        <!-- TODO: Changing temperatureVariationCareFactor doesn't trigger update of initial-value -->
+        <!-- TODO: .. -->
         <csv-number-array-input
           :min-length="48"
           :max-length="48"

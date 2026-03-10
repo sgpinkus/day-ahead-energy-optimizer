@@ -2,9 +2,10 @@
 import { computed, ref, watch } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 import type { BaseDevice } from '@/model/device';
-import { RunSpec } from '@/lib/runspec';
+import { RunSpec, XYRunSpecAdaptor } from '@/lib/runspec';
 import { setDialog } from '@/model/infos';
 import RunSpecTableView from '@/components/components/RunSpecTableView.vue';
+import RunSpecGraphView from '@/components/components/NumberRunSpecGraphView.vue';
 import PlotView from '@/components/components/PlotView.vue';
 import { linspace, quadratic } from '@/utils';
 
@@ -32,6 +33,7 @@ const selectedRange = computed(() => ranges.value && ranges.value.length && sele
 const domainBounds: ComputedRef<number[]> = computed(() => device.softBounds('bounds'));
 const domain = computed(() => linspace(...(domainBounds.value as [number, number])));
 const data: Ref<Record<string | number, number> | null> = ref(Object.fromEntries(domain.value.map((v) => [v, 0])));
+const graphRunSpec: Ref<null | XYRunSpecAdaptor<[number, number, number], number>> = computed(() => device.costs.flow ? new XYRunSpecAdaptor(device.costs.flow, (x) => (x[0]-x[2])**2+(x[1]-x[2]), () => [0, 0, 0]) : null);
 
 watch(selectedRange, () => {
   const params = selectedRange.value ? selectedRange.value[0] : undefined;
@@ -71,6 +73,11 @@ watch(selectedRange, () => {
           </v-btn>
         </template>
       </RunSpecTableView>
+      <RunSpecGraphView
+        v-if="graphRunSpec"
+        :run-spec="graphRunSpec"
+        :options="{ vEditable: false, yLabel: '$' }"
+      />
     </v-card>
     <v-card>
       <PlotView
