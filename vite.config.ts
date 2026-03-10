@@ -56,7 +56,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         keep_classnames: true,
         keep_fnames: true,
       },
-      outDir: 'docs',
+      outDir: 'dist',
       emptyOutDir: true, // optional but recommended
     },
   };
