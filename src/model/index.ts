@@ -20,8 +20,9 @@ export class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
+  // onBoard = true;
   messages = messages;
-  project: Project = new Project(); // WIP: Multiple projects.
+  project: Project = new Project(); // TODO: Multiple projects.
   busses: Record<string, Bus> = {};
   optimizationResults: Record<string, OptimizationResult> = {};
   devices: Record<string, BaseDevice> = {};
