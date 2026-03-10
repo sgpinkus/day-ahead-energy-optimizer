@@ -20,7 +20,7 @@ export class Model {
   doneInit = false;
   hasRouted = false;
   doneLocalStorageNotice = false;
-  // onBoard = true;
+  onBoarded = false;
   messages = messages;
   project: Project = new Project(); // TODO: Multiple projects.
   busses: Record<string, Bus> = {};
@@ -94,5 +94,5 @@ function testLocalStorage() {
   return success;
 }
 
-
-export default reactive<Model>(fromLocalStorage()) as Model;
+const model = reactive<Model>(fromLocalStorage()) as Model;
+export default model;

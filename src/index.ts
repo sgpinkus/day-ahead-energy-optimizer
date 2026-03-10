@@ -2,7 +2,7 @@ import 'vuetify/styles'; // Global CSS has to be imported
 import { createApp } from 'vue';
 import App from '@/components/App.vue';
 import router from '@/router';
-import model from '@/model';
+import model, { Bus } from '@/model';
 import { getPyodide } from '@/pyodide';
 import { createVuetify } from 'vuetify';
 //  import { VFileUpload } from 'vuetify/labs/VFileUpload';
@@ -13,6 +13,7 @@ import * as config from '@/config';
 import * as errors from '@/errors';
 import { TypeGuardError } from 'typia';
 import { typeGuardErrorToString } from './utils';
+import sample from '@/model/onboarding-sample-hub.json';
 
 let inShutDown = false;
 
@@ -47,6 +48,13 @@ async function main() {
 
   if (config.preloadPyodide) {
     getPyodide();
+  }
+
+  if (!model.onBoarded) {
+    const { bus, devices } = Bus.fromExportObject(JSON.stringify(sample));
+    devices.forEach((v) => bus.addDevice(v));
+    model.project.add(bus);
+    model.onBoarded = true;
   }
 }
 
